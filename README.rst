@@ -9,4 +9,6 @@ Read the tutorial here:
 https://docs.readthedocs.io/en/stable/tutorial/
 
 
-<span align="center"> <h1> :star: ~~Centered~~ </h1> </span>
+<span align="center">
+:star: ~~Centered~~
+</span>
