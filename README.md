@@ -10,5 +10,6 @@ https://docs.readthedocs.io/en/stable/tutorial/
 
 <span align="center">
   :star:
-  # Centered
+[![pypi](https://img.shields.io/pypi/v/stripe.svg)](https://pypi.python.org/pypi/stripe)
+
 </span>
