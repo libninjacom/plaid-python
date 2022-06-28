@@ -6,10 +6,3 @@ with some basic Sphinx docs.
 Read the tutorial here:
 
 https://docs.readthedocs.io/en/stable/tutorial/
-
-
-<span align="center">
-  :star:
-[![pypi](https://img.shields.io/pypi/v/stripe.svg)](https://pypi.python.org/pypi/stripe)
-
-</span>
