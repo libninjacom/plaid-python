@@ -6,3 +6,9 @@ version level:
         git tag v$VERSION && \
         git push origin v$VERSION
     git push
+
+
+publish:
+   FLIT_USERNAME="__token__" \
+   FLIT_PASSWORD=$PYPI_API_TOKEN \
+   flit publish
