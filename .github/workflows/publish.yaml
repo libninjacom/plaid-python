@@ -1,12 +1,13 @@
 name: Publish to PyPI
 
 on:
-- push
+  workflow_run:
+    workflows: ["Run Tests"]
+    types:
+      - completed
 
 jobs:
   publish:
-    name: to PyPI
-    needs: test
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
