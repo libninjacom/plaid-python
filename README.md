@@ -1,11 +1,6 @@
-# Template for the Read the Docs tutorial
+# Plaid
 
-This GitHub template includes fictional Python library
-with some basic Sphinx docs.
-
-Read the tutorial here:
-
-https://docs.readthedocs.io/en/stable/tutorial/
+This is a [Plaid](https://plaid.com) API client.
 
 # [Documentation](https://plaid-python.readthedocs.io/en/latest/?)
 
@@ -17,3 +12,10 @@ https://docs.readthedocs.io/en/stable/tutorial/
     pdm add plaid2
     # poetry
     poetry add plaid2
+
+# Contributing
+
+Your contribution is highly appreciated. Do not hesitate to open an issue or a pull request. Note that any contribution
+submitted for inclusion in the project will be licensed according to the terms given in the project license.
+
+*Library created with [Libninja](https://www.libninja.com).*

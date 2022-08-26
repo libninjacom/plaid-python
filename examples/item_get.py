@@ -1,5 +1,4 @@
-from plaid import PlaidClient, AsyncPlaidClient
-import asyncio
+from plaid2 import PlaidClient, AsyncPlaidClient
 
 
 def main():
@@ -16,4 +15,5 @@ async def async_main():
 
 if __name__ == "__main__":
     main()
+    # import asyncio
     # asyncio.run(async_main())
