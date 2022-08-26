@@ -10,6 +10,8 @@ description = "Lumache - Python library for cooks and food lovers."
 dependencies = [
     "requests>=2.18.4",
 ]
+requires-python = ">=3.6"
+
 [project.optional-dependencies]
 
 [tool]
