@@ -10,6 +10,11 @@ description = "Lumache - Python library for cooks and food lovers."
 dependencies = [
     "requests>=2.18.4",
 ]
+[project.optional-dependencies]
 
 [tool]
 [tool.pdm]
+[tool.pdm.dev-dependencies]
+dev = [
+    "mypy>=0.720",
+]

@@ -13,3 +13,9 @@ publish:
    FLIT_USERNAME="__token__" \
    FLIT_PASSWORD=$PYPI_API_TOKEN \
    flit publish
+
+check:
+    mypy --allow-redefinition --strict plaid2/
+
+test:
+    pytest --ignore=__pypackages__
