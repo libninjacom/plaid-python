@@ -1,10 +1,5 @@
-name: Publish to PyPI
+name: CI
 
-on:
-  workflow_run:
-    workflows: ["Run Tests"]
-    types:
-      - completed
 
 jobs:
   publish:
