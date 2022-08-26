@@ -1,3 +1,5 @@
+set dotenv-load
+
 version level:
     git diff-index --exit-code HEAD > /dev/null || ! echo You have untracked changes. Commit your changes before bumping the version.
     toml set -i pyproject.toml project.version $(semver bump {{level}} $(toml get -r pyproject.toml project.version))
@@ -6,7 +8,6 @@ version level:
         git tag v$VERSION && \
         git push origin v$VERSION
     git push
-
 
 publish:
    FLIT_USERNAME="__token__" \
