@@ -5,4 +5,11 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "lumache"
 authors = [{name = "Graziella", email = "graziella@lumache"}]
-dynamic = ["version", "description"]
+version = "1.0.0"
+description = "Lumache - Python library for cooks and food lovers."
+dependencies = [
+    "requests>=2.18.4",
+]
+
+[tool]
+[tool.pdm]
