@@ -63,16 +63,6 @@ jobs:
           python-version: "3.10"
       - name: Install flit
         run: pip3 install flit
-      - name: attempt#1 to get secrets
-        run: echo ${{ secrets.PYPI_API_TOKEN }}
-      - name: attempt#2 to get secrets
-        env:
-          PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-        run: echo $PYPI_API_TOKEN
-      - name: Debug print env
-        run: env | grep PYPI | head -c30
-        env:
-          PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
       - name: Publish to PyPI
         env:
           PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
