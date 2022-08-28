@@ -9,6 +9,8 @@ version = "0.0.8"
 description = "Lumache - Python library for cooks and food lovers."
 dependencies = [
     "requests>=2.27.1",
+    "urllib3>=1.26.12",
+    "pydantic>=1.7.4",
 ]
 requires-python = ">=3.6"
 
@@ -18,5 +20,5 @@ requires-python = ">=3.6"
 [tool.pdm]
 [tool.pdm.dev-dependencies]
 dev = [
-    "mypy>=0.720",
+    "mypy>=0.971",
 ]
