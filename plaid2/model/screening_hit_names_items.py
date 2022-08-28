@@ -5,8 +5,8 @@ from .individual_screening_hit_names import IndividualScreeningHitNames
 
 
 class ScreeningHitNamesItems(BaseModel):
-    analysis: MatchSummary
-    data: IndividualScreeningHitNames
+    analysis: Optional[MatchSummary] = None
+    data: Optional[IndividualScreeningHitNames] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

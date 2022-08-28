@@ -4,7 +4,7 @@ from .credit_bank_income import CreditBankIncome
 
 
 class CreditBankIncomeGetResponse(BaseModel):
-    bank_income: List[CreditBankIncome]
+    bank_income: Optional[List[CreditBankIncome]] = None
     request_id: str
 
     def json(self, **kwargs) -> str:

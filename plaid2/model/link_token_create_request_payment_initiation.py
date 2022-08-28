@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 class LinkTokenCreateRequestPaymentInitiation(BaseModel):
     payment_id: str
-    consent_id: str
+    consent_id: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

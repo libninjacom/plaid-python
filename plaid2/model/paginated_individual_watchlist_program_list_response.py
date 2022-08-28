@@ -5,7 +5,7 @@ from .individual_watchlist_program import IndividualWatchlistProgram
 
 class PaginatedIndividualWatchlistProgramListResponse(BaseModel):
     watchlist_programs: List[IndividualWatchlistProgram]
-    next_cursor: str = None
+    next_cursor: Optional[str] = None
     request_id: str
 
     def json(self, **kwargs) -> str:

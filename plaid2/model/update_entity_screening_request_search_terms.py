@@ -4,12 +4,12 @@ from pydantic import BaseModel, Field
 
 class UpdateEntityScreeningRequestSearchTerms(BaseModel):
     entity_watchlist_program_id: str
-    legal_name: Any = None
-    document_number: Any = None
-    email_address: Any = None
-    country: Any = None
-    phone_number: Any = None
-    url: Any = None
+    legal_name: Optional[Any] = None
+    document_number: Optional[Any] = None
+    email_address: Optional[Any] = None
+    country: Optional[Any] = None
+    phone_number: Optional[Any] = None
+    url: Optional[Any] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

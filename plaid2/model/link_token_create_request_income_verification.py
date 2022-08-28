@@ -12,14 +12,18 @@ from .link_token_create_request_user_stated_income_source import (
 
 
 class LinkTokenCreateRequestIncomeVerification(BaseModel):
-    income_verification_id: str
-    asset_report_id: str
-    precheck_id: str
-    access_tokens: List[str]
-    income_source_types: List[str]
-    bank_income: LinkTokenCreateRequestIncomeVerificationBankIncome
-    payroll_income: LinkTokenCreateRequestIncomeVerificationPayrollIncome
-    stated_income_sources: List[LinkTokenCreateRequestUserStatedIncomeSource]
+    income_verification_id: Optional[str] = None
+    asset_report_id: Optional[str] = None
+    precheck_id: Optional[str] = None
+    access_tokens: Optional[List[str]] = None
+    income_source_types: Optional[List[str]] = None
+    bank_income: Optional[LinkTokenCreateRequestIncomeVerificationBankIncome] = None
+    payroll_income: Optional[
+        LinkTokenCreateRequestIncomeVerificationPayrollIncome
+    ] = None
+    stated_income_sources: Optional[
+        List[LinkTokenCreateRequestUserStatedIncomeSource]
+    ] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -14,9 +14,9 @@ class IncomeSummary(BaseModel):
     employee_name: EmployeeIncomeSummaryFieldString
     ytd_gross_income: YtdGrossIncomeSummaryFieldNumber
     ytd_net_income: YtdNetIncomeSummaryFieldNumber
-    pay_frequency: PayFrequency = None
+    pay_frequency: Optional[PayFrequency] = None
     projected_wage: ProjectedIncomeSummaryFieldNumber
-    verified_transaction: TransactionData = None
+    verified_transaction: Optional[TransactionData] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

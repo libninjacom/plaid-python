@@ -6,16 +6,16 @@ from .user_id_number import UserIdNumber
 
 class LinkTokenCreateRequestUser(BaseModel):
     client_user_id: str
-    legal_name: str
-    name: Any
-    phone_number: str
-    phone_number_verified_time: str
-    email_address: str
-    email_address_verified_time: str
-    ssn: str
-    date_of_birth: str
-    address: UserAddress = None
-    id_number: UserIdNumber = None
+    legal_name: Optional[str] = None
+    name: Optional[Any] = None
+    phone_number: Optional[str] = None
+    phone_number_verified_time: Optional[str] = None
+    email_address: Optional[str] = None
+    email_address_verified_time: Optional[str] = None
+    ssn: Optional[str] = None
+    date_of_birth: Optional[str] = None
+    address: Optional[UserAddress] = None
+    id_number: Optional[UserIdNumber] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

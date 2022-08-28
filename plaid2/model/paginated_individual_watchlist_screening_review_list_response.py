@@ -5,7 +5,7 @@ from .watchlist_screening_review import WatchlistScreeningReview
 
 class PaginatedIndividualWatchlistScreeningReviewListResponse(BaseModel):
     watchlist_screening_reviews: List[WatchlistScreeningReview]
-    next_cursor: str = None
+    next_cursor: Optional[str] = None
     request_id: str
 
     def json(self, **kwargs) -> str:

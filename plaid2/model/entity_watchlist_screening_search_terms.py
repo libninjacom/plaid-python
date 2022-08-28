@@ -5,11 +5,11 @@ from pydantic import BaseModel, Field
 class EntityWatchlistScreeningSearchTerms(BaseModel):
     entity_watchlist_program_id: str
     legal_name: str
-    document_number: Any = None
-    email_address: Any = None
-    country: Any = None
-    phone_number: Any = None
-    url: Any = None
+    document_number: Optional[Any] = None
+    email_address: Optional[Any] = None
+    country: Optional[Any] = None
+    phone_number: Optional[Any] = None
+    url: Optional[Any] = None
     version: float
 
     def json(self, **kwargs) -> str:

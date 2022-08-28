@@ -12,11 +12,11 @@ class ProcessorBankTransferCreateRequest(BaseModel):
     amount: str
     iso_currency_code: str
     description: str
-    ach_class: str
+    ach_class: Optional[str] = None
     user: BankTransferUser
-    custom_tag: str = None
-    metadata: BankTransferMetadata = None
-    origination_account_id: str = None
+    custom_tag: Optional[str] = None
+    metadata: Optional[BankTransferMetadata] = None
+    origination_account_id: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

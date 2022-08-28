@@ -5,7 +5,7 @@ from .incident_update import IncidentUpdate
 
 class HealthIncident(BaseModel):
     start_date: str
-    end_date: str
+    end_date: Optional[str] = None
     title: str
     incident_updates: List[IncidentUpdate]
 

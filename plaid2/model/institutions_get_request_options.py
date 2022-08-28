@@ -3,12 +3,12 @@ from pydantic import BaseModel, Field
 
 
 class InstitutionsGetRequestOptions(BaseModel):
-    products: List[str] = None
-    routing_numbers: List[str] = None
-    oauth: bool = None
-    include_optional_metadata: bool
-    include_auth_metadata: bool
-    include_payment_initiation_metadata: bool
+    products: Optional[List[str]] = None
+    routing_numbers: Optional[List[str]] = None
+    oauth: Optional[bool] = None
+    include_optional_metadata: Optional[bool] = None
+    include_auth_metadata: Optional[bool] = None
+    include_payment_initiation_metadata: Optional[bool] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field
 
 
 class IncomeVerificationPrecheckMilitaryInfo(BaseModel):
-    is_active_duty: bool = None
-    branch: str = None
+    is_active_duty: Optional[bool] = None
+    branch: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

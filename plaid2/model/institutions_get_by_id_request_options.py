@@ -3,10 +3,10 @@ from pydantic import BaseModel, Field
 
 
 class InstitutionsGetByIdRequestOptions(BaseModel):
-    include_optional_metadata: bool
-    include_status: bool
-    include_auth_metadata: bool
-    include_payment_initiation_metadata: bool
+    include_optional_metadata: Optional[bool] = None
+    include_status: Optional[bool] = None
+    include_auth_metadata: Optional[bool] = None
+    include_payment_initiation_metadata: Optional[bool] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

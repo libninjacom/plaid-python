@@ -4,7 +4,7 @@ from .transactions_get_request_options import TransactionsGetRequestOptions
 
 
 class TransactionsGetRequest(BaseModel):
-    options: TransactionsGetRequestOptions
+    options: Optional[TransactionsGetRequestOptions] = None
     access_token: str
     start_date: str
     end_date: str

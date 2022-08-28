@@ -5,7 +5,7 @@ from .liabilities_get_request_options import LiabilitiesGetRequestOptions
 
 class LiabilitiesGetRequest(BaseModel):
     access_token: str
-    options: LiabilitiesGetRequestOptions
+    options: Optional[LiabilitiesGetRequestOptions] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

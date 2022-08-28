@@ -7,10 +7,10 @@ from .pay_period_details import PayPeriodDetails
 
 
 class PaystubOverride(BaseModel):
-    employer: PaystubOverrideEmployer
-    employee: PaystubOverrideEmployee
-    income_breakdown: List[IncomeBreakdown]
-    pay_period_details: PayPeriodDetails
+    employer: Optional[PaystubOverrideEmployer] = None
+    employee: Optional[PaystubOverrideEmployee] = None
+    income_breakdown: Optional[List[IncomeBreakdown]] = None
+    pay_period_details: Optional[PayPeriodDetails] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

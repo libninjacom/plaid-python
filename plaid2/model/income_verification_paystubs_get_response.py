@@ -6,9 +6,9 @@ from .plaid_error import PlaidError
 
 
 class IncomeVerificationPaystubsGetResponse(BaseModel):
-    document_metadata: List[DocumentMetadata]
+    document_metadata: Optional[List[DocumentMetadata]] = None
     paystubs: List[Paystub]
-    error: PlaidError = None
+    error: Optional[PlaidError] = None
     request_id: str
 
     def json(self, **kwargs) -> str:

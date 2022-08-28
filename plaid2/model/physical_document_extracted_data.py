@@ -3,9 +3,9 @@ from pydantic import BaseModel, Field
 
 
 class PhysicalDocumentExtractedData(BaseModel):
-    id_number: str = None
+    id_number: Optional[str] = None
     category: str
-    expiration_date: Any = None
+    expiration_date: Optional[Any] = None
     issuing_country: str
 
     def json(self, **kwargs) -> str:

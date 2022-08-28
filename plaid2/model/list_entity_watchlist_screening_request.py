@@ -4,10 +4,10 @@ from pydantic import BaseModel, Field
 
 class ListEntityWatchlistScreeningRequest(BaseModel):
     entity_watchlist_program_id: str
-    client_user_id: Any = None
-    status: Any = None
-    assignee: Any = None
-    cursor: str = None
+    client_user_id: Optional[Any] = None
+    status: Optional[Any] = None
+    assignee: Optional[Any] = None
+    cursor: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

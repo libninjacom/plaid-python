@@ -3,11 +3,11 @@ from pydantic import BaseModel, Field
 
 
 class PaystubDetails(BaseModel):
-    pay_period_start_date: str = None
-    pay_period_end_date: str = None
-    pay_date: str = None
-    paystub_provider: str = None
-    pay_frequency: str = None
+    pay_period_start_date: Optional[str] = None
+    pay_period_end_date: Optional[str] = None
+    pay_date: Optional[str] = None
+    paystub_provider: Optional[str] = None
+    pay_frequency: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -3,11 +3,11 @@ from pydantic import BaseModel, Field
 
 
 class TransferUserAddressInResponse(BaseModel):
-    street: str = None
-    city: str = None
-    region: str = None
-    postal_code: str = None
-    country: str = None
+    street: Optional[str] = None
+    city: Optional[str] = None
+    region: Optional[str] = None
+    postal_code: Optional[str] = None
+    country: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

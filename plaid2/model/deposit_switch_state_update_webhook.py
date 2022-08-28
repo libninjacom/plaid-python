@@ -3,10 +3,10 @@ from pydantic import BaseModel, Field
 
 
 class DepositSwitchStateUpdateWebhook(BaseModel):
-    webhook_type: str
-    webhook_code: str
-    state: str
-    deposit_switch_id: str
+    webhook_type: Optional[str] = None
+    webhook_code: Optional[str] = None
+    state: Optional[str] = None
+    deposit_switch_id: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

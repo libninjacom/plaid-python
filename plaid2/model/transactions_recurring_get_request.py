@@ -7,7 +7,7 @@ from .transactions_recurring_get_request_options import (
 
 class TransactionsRecurringGetRequest(BaseModel):
     access_token: str
-    options: TransactionsRecurringGetRequestOptions
+    options: Optional[TransactionsRecurringGetRequestOptions] = None
     account_ids: List[str]
 
     def json(self, **kwargs) -> str:

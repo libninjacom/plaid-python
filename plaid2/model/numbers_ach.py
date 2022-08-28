@@ -6,7 +6,7 @@ class NumbersAch(BaseModel):
     account_id: str
     account: str
     routing: str
-    wire_routing: str = None
+    wire_routing: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

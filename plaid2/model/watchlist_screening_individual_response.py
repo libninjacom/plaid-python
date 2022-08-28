@@ -7,9 +7,9 @@ from .watchlist_screening_audit_trail import WatchlistScreeningAuditTrail
 class WatchlistScreeningIndividualResponse(BaseModel):
     id: str
     search_terms: WatchlistScreeningSearchTerms
-    assignee: Any = None
+    assignee: Optional[Any] = None
     status: str
-    client_user_id: Any = None
+    client_user_id: Optional[Any] = None
     audit_trail: WatchlistScreeningAuditTrail
     request_id: str
 

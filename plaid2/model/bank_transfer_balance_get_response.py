@@ -5,7 +5,7 @@ from .bank_transfer_balance import BankTransferBalance
 
 class BankTransferBalanceGetResponse(BaseModel):
     balance: BankTransferBalance
-    origination_account_id: str = None
+    origination_account_id: Optional[str] = None
     request_id: str
 
     def json(self, **kwargs) -> str:

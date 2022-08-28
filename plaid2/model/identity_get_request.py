@@ -5,7 +5,7 @@ from .identity_get_request_options import IdentityGetRequestOptions
 
 class IdentityGetRequest(BaseModel):
     access_token: str
-    options: IdentityGetRequestOptions
+    options: Optional[IdentityGetRequestOptions] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

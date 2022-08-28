@@ -5,15 +5,15 @@ from .credit_platform_ids import CreditPlatformIds
 
 
 class CreditEmploymentVerification(BaseModel):
-    account_id: str = None
-    status: str = None
-    start_date: str = None
-    end_date: str = None
+    account_id: Optional[str] = None
+    status: Optional[str] = None
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
     employer: CreditEmployerVerification
-    title: str = None
+    title: Optional[str] = None
     platform_ids: CreditPlatformIds
-    employee_type: str = None
-    last_paystub_date: str = None
+    employee_type: Optional[str] = None
+    last_paystub_date: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

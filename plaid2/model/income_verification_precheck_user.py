@@ -4,10 +4,10 @@ from .signal_address_data import SignalAddressData
 
 
 class IncomeVerificationPrecheckUser(BaseModel):
-    first_name: str = None
-    last_name: str = None
-    email_address: str = None
-    home_address: SignalAddressData = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    email_address: Optional[str] = None
+    home_address: Optional[SignalAddressData] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

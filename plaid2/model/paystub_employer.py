@@ -4,8 +4,8 @@ from .paystub_address import PaystubAddress
 
 
 class PaystubEmployer(BaseModel):
-    address: PaystubAddress
-    name: str = None
+    address: Optional[PaystubAddress] = None
+    name: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

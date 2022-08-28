@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field
 
 
 class StudentRepaymentPlan(BaseModel):
-    description: str = None
-    type: str = None
+    description: Optional[str] = None
+    type: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

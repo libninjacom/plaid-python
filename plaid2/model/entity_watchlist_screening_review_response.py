@@ -7,7 +7,7 @@ class EntityWatchlistScreeningReviewResponse(BaseModel):
     id: str
     confirmed_hits: List[str]
     dismissed_hits: List[str]
-    comment: str = None
+    comment: Optional[str] = None
     audit_trail: WatchlistScreeningAuditTrail
     request_id: str
 

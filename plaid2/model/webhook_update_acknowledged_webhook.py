@@ -8,7 +8,7 @@ class WebhookUpdateAcknowledgedWebhook(BaseModel):
     webhook_code: str
     item_id: str
     new_webhook_url: str
-    error: PlaidError = None
+    error: Optional[PlaidError] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

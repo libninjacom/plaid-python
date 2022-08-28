@@ -5,7 +5,7 @@ from .entity_watchlist_screening_review import EntityWatchlistScreeningReview
 
 class PaginatedEntityWatchlistScreeningReviewListResponse(BaseModel):
     entity_watchlist_screening_reviews: List[EntityWatchlistScreeningReview]
-    next_cursor: str = None
+    next_cursor: Optional[str] = None
     request_id: str
 
     def json(self, **kwargs) -> str:

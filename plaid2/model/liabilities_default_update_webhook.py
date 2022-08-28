@@ -10,7 +10,7 @@ class LiabilitiesDefaultUpdateWebhook(BaseModel):
     webhook_type: str
     webhook_code: str
     item_id: str
-    error: PlaidError = None
+    error: Optional[PlaidError] = None
     account_ids_with_new_liabilities: List[str]
     account_ids_with_updated_liabilities: LiabilitiesAccountIdsWithUpdatedLiabilities
 

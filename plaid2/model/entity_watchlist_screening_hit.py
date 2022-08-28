@@ -8,13 +8,13 @@ class EntityWatchlistScreeningHit(BaseModel):
     id: str
     review_status: str
     first_active: str
-    inactive_since: str = None
-    historical_since: str = None
+    inactive_since: Optional[str] = None
+    historical_since: Optional[str] = None
     list_code: str
     plaid_uid: str
-    source_uid: str = None
-    analysis: EntityScreeningHitAnalysis
-    data: EntityScreeningHitData
+    source_uid: Optional[str] = None
+    analysis: Optional[EntityScreeningHitAnalysis] = None
+    data: Optional[EntityScreeningHitData] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

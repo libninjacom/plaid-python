@@ -6,13 +6,13 @@ from .document_risk_signal_institution_metadata import (
 
 
 class DocumentRiskSignal(BaseModel):
-    type: str = None
-    field: str = None
-    has_fraud_risk: bool = None
-    institution_metadata: DocumentRiskSignalInstitutionMetadata = None
-    expected_value: str = None
-    actual_value: str = None
-    signal_description: str = None
+    type: Optional[str] = None
+    field: Optional[str] = None
+    has_fraud_risk: Optional[bool] = None
+    institution_metadata: Optional[DocumentRiskSignalInstitutionMetadata] = None
+    expected_value: Optional[str] = None
+    actual_value: Optional[str] = None
+    signal_description: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -3,11 +3,11 @@ from pydantic import BaseModel, Field
 
 
 class PayStubEarningsTotal(BaseModel):
-    current_amount: float = None
-    hours: float = None
-    iso_currency_code: str = None
-    unofficial_currency_code: str = None
-    ytd_amount: float = None
+    current_amount: Optional[float] = None
+    hours: Optional[float] = None
+    iso_currency_code: Optional[str] = None
+    unofficial_currency_code: Optional[str] = None
+    ytd_amount: Optional[float] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

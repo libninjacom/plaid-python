@@ -5,7 +5,7 @@ from .identity_verification import IdentityVerification
 
 class PaginatedIdentityVerificationListResponse(BaseModel):
     identity_verifications: List[IdentityVerification]
-    next_cursor: str = None
+    next_cursor: Optional[str] = None
     request_id: str
 
     def json(self, **kwargs) -> str:

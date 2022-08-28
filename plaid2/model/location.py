@@ -3,14 +3,14 @@ from pydantic import BaseModel, Field
 
 
 class Location(BaseModel):
-    address: str = None
-    city: str = None
-    region: str = None
-    postal_code: str = None
-    country: str = None
-    lat: float = None
-    lon: float = None
-    store_number: str = None
+    address: Optional[str] = None
+    city: Optional[str] = None
+    region: Optional[str] = None
+    postal_code: Optional[str] = None
+    country: Optional[str] = None
+    lat: Optional[float] = None
+    lon: Optional[float] = None
+    store_number: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

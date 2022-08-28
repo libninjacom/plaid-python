@@ -11,7 +11,7 @@ class PaymentInitiationConsentCreateRequest(BaseModel):
     reference: str
     scopes: List[str]
     constraints: PaymentInitiationConsentConstraints
-    options: ExternalPaymentInitiationConsentOptions = None
+    options: Optional[ExternalPaymentInitiationConsentOptions] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

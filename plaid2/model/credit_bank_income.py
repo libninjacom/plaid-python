@@ -6,12 +6,12 @@ from .credit_bank_income_warning import CreditBankIncomeWarning
 
 
 class CreditBankIncome(BaseModel):
-    bank_income_id: str
-    generated_time: str
-    days_requested: int
-    items: List[CreditBankIncomeItem]
-    bank_income_summary: CreditBankIncomeSummary
-    warnings: List[CreditBankIncomeWarning]
+    bank_income_id: Optional[str] = None
+    generated_time: Optional[str] = None
+    days_requested: Optional[int] = None
+    items: Optional[List[CreditBankIncomeItem]] = None
+    bank_income_summary: Optional[CreditBankIncomeSummary] = None
+    warnings: Optional[List[CreditBankIncomeWarning]] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

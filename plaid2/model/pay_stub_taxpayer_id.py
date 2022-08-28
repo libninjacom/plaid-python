@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field
 
 
 class PayStubTaxpayerId(BaseModel):
-    id_type: str = None
-    id_mask: str = None
+    id_type: Optional[str] = None
+    id_mask: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

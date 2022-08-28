@@ -13,16 +13,16 @@ class IdentityVerificationResponse(BaseModel):
     id: str
     client_user_id: str
     created_at: str
-    completed_at: str = None
-    previous_attempt_id: str = None
-    shareable_url: str = None
+    completed_at: Optional[str] = None
+    previous_attempt_id: Optional[str] = None
+    shareable_url: Optional[str] = None
     template: IdentityVerificationTemplateReference
     user: IdentityVerificationUserData
     status: str
     steps: IdentityVerificationStepSummary
-    documentary_verification: DocumentaryVerification = None
-    kyc_check: KycCheckDetails = None
-    watchlist_screening_id: Any = None
+    documentary_verification: Optional[DocumentaryVerification] = None
+    kyc_check: Optional[KycCheckDetails] = None
+    watchlist_screening_id: Optional[Any] = None
     request_id: str
 
     def json(self, **kwargs) -> str:

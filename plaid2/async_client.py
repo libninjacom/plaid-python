@@ -1,8 +1,7 @@
-import aiohttp
-import requests
 import os
+import aiohttp
+from typing import Optional, List, Any
 import plaid2.model as model
-from typing import Optional
 
 
 class AsyncPlaidClient:
@@ -23,7 +22,9 @@ class AsyncPlaidClient:
         """List a user’s connected applications
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -52,7 +53,9 @@ class AsyncPlaidClient:
         Enable consumers to update product access on selected accounts for an application.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -80,7 +83,9 @@ class AsyncPlaidClient:
         Allows financial institutions to retrieve information about Plaid clients for the purpose of building control-tower experiences
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "application_id": application_id,
@@ -104,7 +109,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/items/#itemget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -133,7 +140,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/auth/#authget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -169,7 +178,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transactions/#transactionsget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "options": options,
@@ -200,7 +211,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transactions/#transactionsrefresh>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -235,7 +248,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transactions/#transactionsrecurringget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -283,7 +298,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transactions/#transactionssync>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -318,7 +335,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/institutions/#institutionsget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "count": count,
@@ -354,7 +373,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/institutions/#institutionssearch>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "query": query,
@@ -389,7 +410,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/institutions/#institutionsget_by_id>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "institution_id": institution_id,
@@ -421,7 +444,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/items/#itemremove>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -452,7 +477,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/accounts/#accountsget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -477,7 +504,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transactions/#categoriesget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {}
         async with aiohttp.ClientSession() as session:
@@ -503,7 +532,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxprocessor_tokencreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "institution_id": institution_id,
@@ -534,7 +565,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxpublic_tokencreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "institution_id": institution_id,
@@ -573,7 +606,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxitemfire_webhook>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -603,7 +638,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/balance/#accountsbalanceget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -636,7 +673,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/identity/#identityget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -668,7 +707,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/identity/#identitymatch>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -696,7 +737,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#dashboard_userget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "dashboard_user_id": dashboard_user_id,
@@ -722,7 +765,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#dashboard_userlist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "cursor": cursor,
@@ -755,7 +800,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/identity-verification/#identity_verificationcreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "is_shareable": is_shareable,
@@ -785,7 +832,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/identity-verification/#identity_verificationget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "identity_verification_id": identity_verification_id,
@@ -811,7 +860,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/identity-verification/#identity_verificationlist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "template_id": template_id,
@@ -843,7 +894,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/identity-verification/#identity_verificationretry>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "client_user_id": client_user_id,
@@ -874,7 +927,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentitycreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "search_terms": search_terms,
@@ -901,7 +956,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
@@ -927,7 +984,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityhistorylist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
@@ -956,7 +1015,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityhitlist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
@@ -990,7 +1051,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentitylist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "entity_watchlist_program_id": entity_watchlist_program_id,
@@ -1022,7 +1085,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityprogramget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "entity_watchlist_program_id": entity_watchlist_program_id,
@@ -1048,7 +1113,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityprogramlist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "cursor": cursor,
@@ -1078,7 +1145,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityreviewcreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "confirmed_hits": confirmed_hits,
@@ -1107,7 +1176,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityreviewlist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
@@ -1144,7 +1215,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityupdate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
@@ -1177,7 +1250,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualcreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "search_terms": search_terms,
@@ -1204,7 +1279,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "watchlist_screening_id": watchlist_screening_id,
@@ -1230,7 +1307,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualhistorylist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "watchlist_screening_id": watchlist_screening_id,
@@ -1261,7 +1340,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualhitlist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "watchlist_screening_id": watchlist_screening_id,
@@ -1295,7 +1376,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividuallist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "watchlist_program_id": watchlist_program_id,
@@ -1329,7 +1412,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualprogramget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "watchlist_program_id": watchlist_program_id,
@@ -1355,7 +1440,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualprogramlist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "cursor": cursor,
@@ -1387,7 +1474,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualreviewcreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "confirmed_hits": confirmed_hits,
@@ -1416,7 +1505,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualreviewlist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "watchlist_screening_id": watchlist_screening_id,
@@ -1453,7 +1544,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualupdate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "watchlist_screening_id": watchlist_screening_id,
@@ -1487,7 +1580,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/processors/#processorauthget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "processor_token": processor_token,
@@ -1525,7 +1620,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/processors/#bank_transfercreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "idempotency_key": idempotency_key,
@@ -1562,7 +1659,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/processors/#processoridentityget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "processor_token": processor_token,
@@ -1590,7 +1689,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/processors/#processorbalanceget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "processor_token": processor_token,
@@ -1617,7 +1718,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/items/#itemwebhookupdate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -1647,7 +1750,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/tokens/#itemaccess_tokeninvalidate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -1675,7 +1780,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/webhooks/webhook-verification/#webhook_verification_keyget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "key_id": key_id,
@@ -1707,7 +1814,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/liabilities/#liabilitiesget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -1741,7 +1850,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationrecipientcreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "name": name,
@@ -1773,7 +1884,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationpaymentreverse>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "payment_id": payment_id,
@@ -1801,7 +1914,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationrecipientget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "recipient_id": recipient_id,
@@ -1827,7 +1942,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationrecipientlist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {}
         async with aiohttp.ClientSession() as session:
@@ -1860,7 +1977,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationpaymentcreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "recipient_id": recipient_id,
@@ -1892,7 +2011,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/link/maintain-legacy-integration/#creating-a-payment-token>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "payment_id": payment_id,
@@ -1925,7 +2046,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationconsentcreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "recipient_id": recipient_id,
@@ -1955,7 +2078,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationconsentget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "consent_id": consent_id,
@@ -1981,7 +2106,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationconsentrevoke>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "consent_id": consent_id,
@@ -2007,7 +2134,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationconsentpaymentexecute>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "consent_id": consent_id,
@@ -2040,7 +2169,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxitemreset_login>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -2070,7 +2201,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxitemset_verification_status>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -2100,7 +2233,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/tokens/#itempublic_tokenexchange>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "public_token": public_token,
@@ -2132,7 +2267,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/tokens/#itempublic_tokencreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -2158,7 +2295,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/income/#usercreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "client_user_id": client_user_id,
@@ -2184,7 +2323,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationpaymentget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "payment_id": payment_id,
@@ -2213,7 +2354,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationpaymentlist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "count": count,
@@ -2248,7 +2391,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportcreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_tokens": access_tokens,
@@ -2281,7 +2426,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportrefresh>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "asset_report_token": asset_report_token,
@@ -2309,7 +2456,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/#asset_reportrelayrefresh>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "asset_relay_token": asset_relay_token,
@@ -2338,7 +2487,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportremove>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "asset_report_token": asset_report_token,
@@ -2370,7 +2521,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportfilter>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "asset_report_token": asset_report_token,
@@ -2404,7 +2557,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "asset_report_token": asset_report_token,
@@ -2434,7 +2589,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportpdfget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "asset_report_token": asset_report_token,
@@ -2460,7 +2617,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportaudit_copycreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "asset_report_token": asset_report_token,
@@ -2487,7 +2646,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportaudit_copyremove>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "audit_copy_token": audit_copy_token,
@@ -2518,7 +2679,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/none/>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "asset_report_token": asset_report_token,
@@ -2546,7 +2709,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/none/>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "asset_relay_token": asset_relay_token,
@@ -2572,7 +2737,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/none/>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "asset_relay_token": asset_relay_token,
@@ -2600,7 +2767,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/investments/#investmentsholdingsget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -2635,7 +2804,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/investments/#investmentstransactionsget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -2664,7 +2835,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/processors/#processortokencreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -2692,7 +2865,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/processors/#processorstripebank_account_tokencreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -2721,7 +2896,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/none/>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -2752,7 +2929,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/deposit-switch/reference#deposit_switchcreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "target_access_token": target_access_token,
@@ -2784,7 +2963,9 @@ class AsyncPlaidClient:
         Upon creating an Item via `/item/import`, Plaid will automatically begin an extraction of that Item through the Plaid Exchange infrastructure you have already integrated. This will automatically generate the Plaid native account ID for the account the user will switch their direct deposit to (`target_account_id`).
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "products": products,
@@ -2813,7 +2994,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/deposit-switch/reference#deposit_switchtokencreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "deposit_switch_id": deposit_switch_id,
@@ -2870,7 +3053,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/tokens/#linktokencreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "client_name": client_name,
@@ -2917,7 +3102,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/tokens/#linktokenget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "link_token": link_token,
@@ -2943,7 +3130,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/none/>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "audit_copy_token": audit_copy_token,
@@ -2969,7 +3158,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/deposit-switch/reference#deposit_switchget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "deposit_switch_id": deposit_switch_id,
@@ -2993,7 +3184,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "transfer_id": transfer_id,
@@ -3019,7 +3212,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transferget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "bank_transfer_id": bank_transfer_id,
@@ -3071,7 +3266,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferauthorizationcreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -3122,7 +3319,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfercreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "idempotency_key": idempotency_key,
@@ -3174,7 +3373,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfercreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "idempotency_key": idempotency_key,
@@ -3218,7 +3419,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferlist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "start_date": start_date,
@@ -3255,7 +3458,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transferlist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "start_date": start_date,
@@ -3284,7 +3489,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfercancel>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "transfer_id": transfer_id,
@@ -3310,7 +3517,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfercancel>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "bank_transfer_id": bank_transfer_id,
@@ -3346,7 +3555,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfereventlist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "start_date": start_date,
@@ -3391,7 +3602,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfereventlist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "start_date": start_date,
@@ -3426,7 +3639,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfereventsync>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "after_id": after_id,
@@ -3453,7 +3668,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfereventsync>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "after_id": after_id,
@@ -3478,7 +3695,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfersweepget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "sweep_id": sweep_id,
@@ -3504,7 +3723,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#bank_transfersweepget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "sweep_id": sweep_id,
@@ -3534,7 +3755,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfersweeplist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "start_date": start_date,
@@ -3567,7 +3790,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#bank_transfersweeplist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "origination_account_id": origination_account_id,
@@ -3600,7 +3825,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transferbalanceget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "origination_account_id": origination_account_id,
@@ -3630,7 +3857,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfermigrate_account>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "account_number": account_number,
@@ -3663,7 +3892,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfermigrate_account>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "account_number": account_number,
@@ -3702,7 +3933,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferintentcreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "account_id": account_id,
@@ -3737,7 +3970,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferintentget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "transfer_intent_id": transfer_intent_id,
@@ -3767,7 +4002,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferrepaymentlist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "start_date": start_date,
@@ -3799,7 +4036,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferrepaymentreturnlist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "repayment_id": repayment_id,
@@ -3830,7 +4069,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference/#sandboxbank_transfersimulate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "bank_transfer_id": bank_transfer_id,
@@ -3858,7 +4099,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxtransfersweepsimulate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {}
         async with aiohttp.ClientSession() as session:
@@ -3885,7 +4128,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxtransfersimulate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "transfer_id": transfer_id,
@@ -3913,7 +4158,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxtransferrepaymentsimulate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {}
         async with aiohttp.ClientSession() as session:
@@ -3937,7 +4184,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxtransferfire_webhook>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "webhook": webhook,
@@ -3965,7 +4214,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/employers/#employerssearch>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "query": query,
@@ -3995,7 +4246,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationcreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "webhook": webhook,
@@ -4027,7 +4280,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationpaystubsget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "income_verification_id": income_verification_id,
@@ -4065,7 +4320,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationdocumentsdownload>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "income_verification_id": income_verification_id,
@@ -4093,7 +4350,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationrefresh>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "income_verification_id": income_verification_id,
@@ -4124,7 +4383,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationtaxformsget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "income_verification_id": income_verification_id,
@@ -4160,7 +4421,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationprecheck>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "user": user,
@@ -4192,7 +4455,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/income/#employmentverificationget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -4222,7 +4487,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/deposit-switch/reference#deposit_switchaltcreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "target_account": target_account,
@@ -4253,7 +4520,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditaudit_copy_tokencreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "report_tokens": report_tokens,
@@ -4280,7 +4549,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditaudit_copy_tokenremove>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "audit_copy_token": audit_copy_token,
@@ -4308,7 +4579,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditbank_incomeget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "user_token": user_token,
@@ -4333,7 +4606,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditbank_incomepdfget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "user_token": user_token,
@@ -4359,7 +4634,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditbank_incomerefresh>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "user_token": user_token,
@@ -4386,7 +4663,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditpayroll_incomeget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "user_token": user_token,
@@ -4418,7 +4697,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditpayroll_incomeprecheck>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "user_token": user_token,
@@ -4447,7 +4728,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditemploymentget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "user_token": user_token,
@@ -4473,7 +4756,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditpayroll_incomerefresh>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "user_token": user_token,
@@ -4504,7 +4789,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/none/>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "report_tokens": report_tokens,
@@ -4532,7 +4819,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/none/>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "relay_token": relay_token,
@@ -4559,7 +4848,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/#creditrelayrefresh>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "relay_token": relay_token,
@@ -4587,7 +4878,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/none/>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "relay_token": relay_token,
@@ -4613,7 +4906,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference/#sandboxbank_transferfire_webhook>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "webhook": webhook,
@@ -4643,7 +4938,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxincomefire_webhook>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "item_id": item_id,
@@ -4668,7 +4965,9 @@ class AsyncPlaidClient:
         """Save the selected accounts when connecting to the Platypus Oauth institution
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "oauth_state_id": oauth_state_id,
@@ -4705,7 +5004,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/signal/reference#signalevaluate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -4741,7 +5042,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/signal/reference#signaldecisionreport>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "client_transaction_id": client_transaction_id,
@@ -4769,7 +5072,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/signal/reference#signalreturnreport>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "client_transaction_id": client_transaction_id,
@@ -4794,7 +5099,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/signal/reference#signalprepare>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -4818,7 +5125,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/#walletcreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "iso_currency_code": iso_currency_code,
@@ -4842,7 +5151,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/#walletget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "wallet_id": wallet_id,
@@ -4868,7 +5179,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/#walletlist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "iso_currency_code": iso_currency_code,
@@ -4903,7 +5216,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/#wallettransactionexecute>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "idempotency_key": idempotency_key,
@@ -4931,7 +5246,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/#wallettransactionget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "transaction_id": transaction_id,
@@ -4957,7 +5274,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/#wallettransactionslist>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "wallet_id": wallet_id,
@@ -4985,7 +5304,9 @@ class AsyncPlaidClient:
         The product is currently in beta.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "account_type": account_type,
@@ -5017,7 +5338,9 @@ class AsyncPlaidClient:
         The product is currently in beta. To request access, contact transactions-feedback@plaid.com.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -5043,7 +5366,9 @@ class AsyncPlaidClient:
         The `/transactions/rules/v1/list` returns a list of transaction rules created for the Item associated with the access token.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -5067,7 +5392,9 @@ class AsyncPlaidClient:
         The `/transactions/rules/v1/remove` endpoint is used to remove a transaction rule.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "access_token": access_token,
@@ -5092,7 +5419,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#payment_profilecreate>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {}
         async with aiohttp.ClientSession() as session:
@@ -5116,7 +5445,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#payment_profileget>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "payment_profile_id": payment_profile_id,
@@ -5142,7 +5473,9 @@ class AsyncPlaidClient:
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#payment_profileremove>.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "payment_profile_id": payment_profile_id,
@@ -5170,7 +5503,9 @@ class AsyncPlaidClient:
         The `/partner/v1/customers/create` endpoint is used by reseller partners to create an end customer client.
 
         :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {}
+        headers = {
+            "Content-Type": "application/json",
+        }
         params = {}
         data = {
             "company_name": company_name,
@@ -5190,5 +5525,5 @@ class AsyncPlaidClient:
                 return model.PartnerCustomersCreateResponse.parse_obj(data)
 
     @classmethod
-    def from_env(cls):
+    def from_env(cls) -> "AsyncPlaidClient":
         return cls(os.environ["PLAID_URL"])

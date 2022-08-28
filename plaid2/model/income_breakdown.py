@@ -3,10 +3,10 @@ from pydantic import BaseModel, Field
 
 
 class IncomeBreakdown(BaseModel):
-    type: str = None
-    rate: float = None
-    hours: float = None
-    total: float = None
+    type: Optional[str] = None
+    rate: Optional[float] = None
+    hours: Optional[float] = None
+    total: Optional[float] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -4,13 +4,13 @@ from .owner import Owner
 
 
 class CreditBankIncomeAccount(BaseModel):
-    account_id: str
-    mask: str = None
-    name: str
-    official_name: str = None
-    subtype: str
-    type: str
-    owners: List[Owner]
+    account_id: Optional[str] = None
+    mask: Optional[str] = None
+    name: Optional[str] = None
+    official_name: Optional[str] = None
+    subtype: Optional[str] = None
+    type: Optional[str] = None
+    owners: Optional[List[Owner]] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

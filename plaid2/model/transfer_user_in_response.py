@@ -5,9 +5,9 @@ from .transfer_user_address_in_response import TransferUserAddressInResponse
 
 class TransferUserInResponse(BaseModel):
     legal_name: str
-    phone_number: str = None
-    email_address: str = None
-    address: TransferUserAddressInResponse = None
+    phone_number: Optional[str] = None
+    email_address: Optional[str] = None
+    address: Optional[TransferUserAddressInResponse] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

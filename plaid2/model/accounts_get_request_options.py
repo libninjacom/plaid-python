@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 
 
 class AccountsGetRequestOptions(BaseModel):
-    account_ids: List[str]
+    account_ids: Optional[List[str]] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

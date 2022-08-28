@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 class ItemPublicTokenCreateResponse(BaseModel):
     public_token: str
-    expiration: str
+    expiration: Optional[str] = None
     request_id: str
 
     def json(self, **kwargs) -> str:

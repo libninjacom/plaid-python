@@ -5,9 +5,9 @@ from .institutions_search_request_options import InstitutionsSearchRequestOption
 
 class InstitutionsSearchRequest(BaseModel):
     query: str
-    products: List[str] = None
+    products: Optional[List[str]] = None
     country_codes: List[str]
-    options: InstitutionsSearchRequestOptions
+    options: Optional[InstitutionsSearchRequestOptions] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

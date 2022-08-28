@@ -9,10 +9,10 @@ class SignalEvaluateRequest(BaseModel):
     account_id: str
     client_transaction_id: str
     amount: float
-    user_present: bool = None
-    client_user_id: str
-    user: SignalUser
-    device: SignalDevice
+    user_present: Optional[bool] = None
+    client_user_id: Optional[str] = None
+    user: Optional[SignalUser] = None
+    device: Optional[SignalDevice] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

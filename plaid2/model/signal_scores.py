@@ -5,8 +5,8 @@ from .bank_initiated_return_risk import BankInitiatedReturnRisk
 
 
 class SignalScores(BaseModel):
-    customer_initiated_return_risk: CustomerInitiatedReturnRisk
-    bank_initiated_return_risk: BankInitiatedReturnRisk
+    customer_initiated_return_risk: Optional[CustomerInitiatedReturnRisk] = None
+    bank_initiated_return_risk: Optional[BankInitiatedReturnRisk] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

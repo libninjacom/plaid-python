@@ -5,9 +5,9 @@ from .transactions_sync_request_options import TransactionsSyncRequestOptions
 
 class TransactionsSyncRequest(BaseModel):
     access_token: str
-    cursor: str
-    count: int
-    options: TransactionsSyncRequestOptions
+    cursor: Optional[str] = None
+    count: Optional[int] = None
+    options: Optional[TransactionsSyncRequestOptions] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

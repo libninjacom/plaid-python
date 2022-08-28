@@ -6,7 +6,7 @@ from .institutions_get_by_id_request_options import InstitutionsGetByIdRequestOp
 class InstitutionsGetByIdRequest(BaseModel):
     institution_id: str
     country_codes: List[str]
-    options: InstitutionsGetByIdRequestOptions
+    options: Optional[InstitutionsGetByIdRequestOptions] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

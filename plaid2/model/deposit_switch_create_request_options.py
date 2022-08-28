@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field
 
 
 class DepositSwitchCreateRequestOptions(BaseModel):
-    webhook: str = None
-    transaction_item_access_tokens: List[str]
+    webhook: Optional[str] = None
+    transaction_item_access_tokens: Optional[List[str]] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

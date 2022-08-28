@@ -7,7 +7,7 @@ class InvestmentsDefaultUpdateWebhook(BaseModel):
     webhook_type: str
     webhook_code: str
     item_id: str
-    error: PlaidError = None
+    error: Optional[PlaidError] = None
     new_investments_transactions: float
     canceled_investments_transactions: float
 

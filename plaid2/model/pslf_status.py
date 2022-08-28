@@ -3,9 +3,9 @@ from pydantic import BaseModel, Field
 
 
 class PslfStatus(BaseModel):
-    estimated_eligibility_date: str = None
-    payments_made: float = None
-    payments_remaining: float = None
+    estimated_eligibility_date: Optional[str] = None
+    payments_made: Optional[float] = None
+    payments_remaining: Optional[float] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

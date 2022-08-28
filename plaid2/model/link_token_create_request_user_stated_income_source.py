@@ -3,12 +3,12 @@ from pydantic import BaseModel, Field
 
 
 class LinkTokenCreateRequestUserStatedIncomeSource(BaseModel):
-    employer: str
-    category: str
-    pay_per_cycle: float
-    pay_annual: float
-    pay_type: str
-    pay_frequency: str
+    employer: Optional[str] = None
+    category: Optional[str] = None
+    pay_per_cycle: Optional[float] = None
+    pay_annual: Optional[float] = None
+    pay_type: Optional[str] = None
+    pay_frequency: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

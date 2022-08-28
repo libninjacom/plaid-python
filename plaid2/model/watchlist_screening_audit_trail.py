@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 class WatchlistScreeningAuditTrail(BaseModel):
     source: str
-    dashboard_user_id: Any = None
+    dashboard_user_id: Optional[Any] = None
     timestamp: str
 
     def json(self, **kwargs) -> str:

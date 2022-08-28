@@ -6,7 +6,7 @@ from .payment_consent_periodic_amount import PaymentConsentPeriodicAmount
 
 
 class PaymentInitiationConsentConstraints(BaseModel):
-    valid_date_time: PaymentConsentValidDateTime = None
+    valid_date_time: Optional[PaymentConsentValidDateTime] = None
     max_payment_amount: PaymentConsentMaxPaymentAmount
     periodic_amounts: List[PaymentConsentPeriodicAmount]
 

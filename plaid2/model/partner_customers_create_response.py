@@ -4,9 +4,9 @@ from .partner_end_customer_client import PartnerEndCustomerClient
 
 
 class PartnerCustomersCreateResponse(BaseModel):
-    end_customer: PartnerEndCustomerClient
-    production_secret: str
-    request_id: str
+    end_customer: Optional[PartnerEndCustomerClient] = None
+    production_secret: Optional[str] = None
+    request_id: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

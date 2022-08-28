@@ -5,8 +5,8 @@ from .link_token_get_metadata_response import LinkTokenGetMetadataResponse
 
 class LinkTokenGetResponse(BaseModel):
     link_token: str
-    created_at: str = None
-    expiration: str = None
+    created_at: Optional[str] = None
+    expiration: Optional[str] = None
     metadata: LinkTokenGetMetadataResponse
     request_id: str
 

@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 
 
 class LinkTokenCreateDepositoryFilter(BaseModel):
-    account_subtypes: List[str]
+    account_subtypes: Optional[List[str]] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -6,9 +6,9 @@ from .taxpayer_id import TaxpayerId
 
 class Employee(BaseModel):
     address: PaystubAddress
-    name: str = None
-    marital_status: str = None
-    taxpayer_id: TaxpayerId
+    name: Optional[str] = None
+    marital_status: Optional[str] = None
+    taxpayer_id: Optional[TaxpayerId] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

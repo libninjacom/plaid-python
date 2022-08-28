@@ -4,8 +4,8 @@ from pydantic import BaseModel, Field
 
 class AssetReportGetRequest(BaseModel):
     asset_report_token: str
-    include_insights: bool
-    fast_report: bool
+    include_insights: Optional[bool] = None
+    fast_report: Optional[bool] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -6,10 +6,10 @@ from .plaid_error import PlaidError
 
 
 class IncomeVerificationTaxformsGetResponse(BaseModel):
-    request_id: str
+    request_id: Optional[str] = None
     document_metadata: List[DocumentMetadata]
     taxforms: List[Taxform]
-    error: PlaidError = None
+    error: Optional[PlaidError] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

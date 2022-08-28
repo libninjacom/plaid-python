@@ -3,13 +3,13 @@ from pydantic import BaseModel, Field
 
 
 class PayStubDistributionBreakdown(BaseModel):
-    account_name: str = None
-    bank_name: str = None
-    current_amount: float = None
-    iso_currency_code: str = None
-    mask: str = None
-    type: str = None
-    unofficial_currency_code: str = None
+    account_name: Optional[str] = None
+    bank_name: Optional[str] = None
+    current_amount: Optional[float] = None
+    iso_currency_code: Optional[str] = None
+    mask: Optional[str] = None
+    type: Optional[str] = None
+    unofficial_currency_code: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

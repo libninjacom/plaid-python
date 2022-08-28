@@ -5,8 +5,8 @@ from pydantic import BaseModel, Field
 class Apr(BaseModel):
     apr_percentage: float
     apr_type: str
-    balance_subject_to_apr: float = None
-    interest_charge_amount: float = None
+    balance_subject_to_apr: Optional[float] = None
+    interest_charge_amount: Optional[float] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

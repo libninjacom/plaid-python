@@ -13,19 +13,19 @@ from .income_override import IncomeOverride
 
 class OverrideAccounts(BaseModel):
     type: str
-    subtype: str = None
+    subtype: Optional[str] = None
     starting_balance: float
     force_available_balance: float
     currency: str
     meta: Meta
     numbers: Numbers
     transactions: List[TransactionOverride]
-    holdings: HoldingsOverride
-    investment_transactions: InvestmentsTransactionsOverride
+    holdings: Optional[HoldingsOverride] = None
+    investment_transactions: Optional[InvestmentsTransactionsOverride] = None
     identity: OwnerOverride
     liability: LiabilityOverride
     inflow_model: InflowModel
-    income: IncomeOverride
+    income: Optional[IncomeOverride] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

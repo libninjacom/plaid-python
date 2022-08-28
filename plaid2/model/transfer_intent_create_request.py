@@ -5,16 +5,16 @@ from .transfer_metadata import TransferMetadata
 
 
 class TransferIntentCreateRequest(BaseModel):
-    account_id: str = None
+    account_id: Optional[str] = None
     mode: str
     amount: str
     description: str
     ach_class: str
-    origination_account_id: str = None
+    origination_account_id: Optional[str] = None
     user: TransferUserInRequest
-    metadata: TransferMetadata = None
-    iso_currency_code: str
-    require_guarantee: bool = None
+    metadata: Optional[TransferMetadata] = None
+    iso_currency_code: Optional[str] = None
+    require_guarantee: Optional[bool] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

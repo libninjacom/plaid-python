@@ -5,8 +5,8 @@ from .asset_report_refresh_request_options import AssetReportRefreshRequestOptio
 
 class AssetReportRefreshRequest(BaseModel):
     asset_report_token: str
-    days_requested: int = None
-    options: AssetReportRefreshRequestOptions
+    days_requested: Optional[int] = None
+    options: Optional[AssetReportRefreshRequestOptions] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

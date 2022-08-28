@@ -5,8 +5,8 @@ from .entity_screening_hit_urls import EntityScreeningHitUrls
 
 
 class EntityScreeningHitUrlsItems(BaseModel):
-    analysis: MatchSummary
-    data: EntityScreeningHitUrls
+    analysis: Optional[MatchSummary] = None
+    data: Optional[EntityScreeningHitUrls] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

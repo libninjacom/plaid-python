@@ -4,11 +4,11 @@ from .transactions_rule_details import TransactionsRuleDetails
 
 
 class TransactionsCategoryRule(BaseModel):
-    id: str
-    item_id: str
-    created_at: str
-    personal_finance_category: str
-    rule_details: TransactionsRuleDetails
+    id: Optional[str] = None
+    item_id: Optional[str] = None
+    created_at: Optional[str] = None
+    personal_finance_category: Optional[str] = None
+    rule_details: Optional[TransactionsRuleDetails] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 
 
 class IncomeVerificationCreateRequestOptions(BaseModel):
-    access_tokens: List[str]
+    access_tokens: Optional[List[str]] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

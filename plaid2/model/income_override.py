@@ -4,7 +4,7 @@ from .paystub_override import PaystubOverride
 
 
 class IncomeOverride(BaseModel):
-    paystubs: List[PaystubOverride]
+    paystubs: Optional[List[PaystubOverride]] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -7,7 +7,7 @@ class WatchlistScreeningReview(BaseModel):
     id: str
     confirmed_hits: List[str]
     dismissed_hits: List[str]
-    comment: str = None
+    comment: Optional[str] = None
     audit_trail: WatchlistScreeningAuditTrail
 
     def json(self, **kwargs) -> str:

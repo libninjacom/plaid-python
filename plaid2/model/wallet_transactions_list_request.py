@@ -4,8 +4,8 @@ from pydantic import BaseModel, Field
 
 class WalletTransactionsListRequest(BaseModel):
     wallet_id: str
-    cursor: str
-    count: int
+    cursor: Optional[str] = None
+    count: Optional[int] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

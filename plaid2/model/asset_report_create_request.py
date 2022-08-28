@@ -6,7 +6,7 @@ from .asset_report_create_request_options import AssetReportCreateRequestOptions
 class AssetReportCreateRequest(BaseModel):
     access_tokens: List[str]
     days_requested: int
-    options: AssetReportCreateRequestOptions
+    options: Optional[AssetReportCreateRequestOptions] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

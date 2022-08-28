@@ -4,7 +4,7 @@ from .pay_stub_verification_attribute import PayStubVerificationAttribute
 
 
 class CreditPayStubVerification(BaseModel):
-    verification_status: str = None
+    verification_status: Optional[str] = None
     verification_attributes: List[PayStubVerificationAttribute]
 
     def json(self, **kwargs) -> str:

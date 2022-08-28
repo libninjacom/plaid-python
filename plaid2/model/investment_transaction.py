@@ -4,19 +4,19 @@ from pydantic import BaseModel, Field
 
 class InvestmentTransaction(BaseModel):
     investment_transaction_id: str
-    cancel_transaction_id: str = None
+    cancel_transaction_id: Optional[str] = None
     account_id: str
-    security_id: str = None
+    security_id: Optional[str] = None
     date: str
     name: str
     quantity: float
     amount: float
     price: float
-    fees: float = None
+    fees: Optional[float] = None
     type: str
     subtype: str
-    iso_currency_code: str = None
-    unofficial_currency_code: str = None
+    iso_currency_code: Optional[str] = None
+    unofficial_currency_code: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

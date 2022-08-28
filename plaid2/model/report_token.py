@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field
 
 
 class ReportToken(BaseModel):
-    report_type: str
-    token: str
+    report_type: Optional[str] = None
+    token: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

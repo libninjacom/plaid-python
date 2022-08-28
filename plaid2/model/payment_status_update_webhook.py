@@ -9,12 +9,12 @@ class PaymentStatusUpdateWebhook(BaseModel):
     payment_id: str
     new_payment_status: str
     old_payment_status: str
-    original_reference: str = None
-    adjusted_reference: str = None
-    original_start_date: str = None
-    adjusted_start_date: str = None
+    original_reference: Optional[str] = None
+    adjusted_reference: Optional[str] = None
+    original_start_date: Optional[str] = None
+    adjusted_start_date: Optional[str] = None
     timestamp: str
-    error: PlaidError = None
+    error: Optional[PlaidError] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

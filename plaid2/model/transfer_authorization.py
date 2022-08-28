@@ -15,9 +15,11 @@ class TransferAuthorization(BaseModel):
     id: str
     created: str
     decision: str
-    decision_rationale: TransferAuthorizationDecisionRationale = None
-    guarantee_decision: str = None
-    guarantee_decision_rationale: TransferAuthorizationGuaranteeDecisionRationale = None
+    decision_rationale: Optional[TransferAuthorizationDecisionRationale] = None
+    guarantee_decision: Optional[str] = None
+    guarantee_decision_rationale: Optional[
+        TransferAuthorizationGuaranteeDecisionRationale
+    ] = None
     proposed_transfer: TransferAuthorizationProposedTransfer
 
     def json(self, **kwargs) -> str:

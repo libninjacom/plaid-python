@@ -18,14 +18,16 @@ class Transfer(BaseModel):
     description: str
     created: str
     status: str
-    sweep_status: str = None
+    sweep_status: Optional[str] = None
     network: str
     cancellable: bool
-    failure_reason: TransferFailure = None
-    metadata: TransferMetadata = None
+    failure_reason: Optional[TransferFailure] = None
+    metadata: Optional[TransferMetadata] = None
     origination_account_id: str
-    guarantee_decision: str = None
-    guarantee_decision_rationale: TransferAuthorizationGuaranteeDecisionRationale = None
+    guarantee_decision: Optional[str] = None
+    guarantee_decision_rationale: Optional[
+        TransferAuthorizationGuaranteeDecisionRationale
+    ] = None
     iso_currency_code: str
 
     def json(self, **kwargs) -> str:

@@ -3,14 +3,14 @@ from pydantic import BaseModel, Field
 
 
 class PaystubAddress(BaseModel):
-    city: str = None
-    country: str = None
-    postal_code: str = None
-    region: str = None
-    street: str = None
-    line_1: str = None
-    line_2: str = None
-    state_code: str = None
+    city: Optional[str] = None
+    country: Optional[str] = None
+    postal_code: Optional[str] = None
+    region: Optional[str] = None
+    street: Optional[str] = None
+    line_1: Optional[str] = None
+    line_2: Optional[str] = None
+    state_code: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

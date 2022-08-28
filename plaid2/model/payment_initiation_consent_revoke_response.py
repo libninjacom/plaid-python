@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 
 
 class PaymentInitiationConsentRevokeResponse(BaseModel):
-    request_id: str
+    request_id: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

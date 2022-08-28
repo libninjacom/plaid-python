@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 class InitialUpdateWebhook(BaseModel):
     webhook_type: str
     webhook_code: str
-    error: str = None
+    error: Optional[str] = None
     new_transactions: float
     item_id: str
 

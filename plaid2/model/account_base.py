@@ -6,12 +6,12 @@ from .account_balance import AccountBalance
 class AccountBase(BaseModel):
     account_id: str
     balances: AccountBalance
-    mask: str = None
+    mask: Optional[str] = None
     name: str
-    official_name: str = None
+    official_name: Optional[str] = None
     type: str
-    subtype: str = None
-    verification_status: str
+    subtype: Optional[str] = None
+    verification_status: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

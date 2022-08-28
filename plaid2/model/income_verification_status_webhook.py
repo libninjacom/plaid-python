@@ -6,7 +6,7 @@ class IncomeVerificationStatusWebhook(BaseModel):
     webhook_type: str
     webhook_code: str
     item_id: str
-    user_id: str
+    user_id: Optional[str] = None
     verification_status: str
 
     def json(self, **kwargs) -> str:

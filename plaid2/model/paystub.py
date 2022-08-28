@@ -19,13 +19,13 @@ class Paystub(BaseModel):
     earnings: Earnings
     employee: Employee
     employer: PaystubEmployer
-    employment_details: EmploymentDetails
+    employment_details: Optional[EmploymentDetails] = None
     net_pay: NetPay
     pay_period_details: PayPeriodDetails
-    paystub_details: PaystubDetails
-    income_breakdown: List[IncomeBreakdown]
-    ytd_earnings: PaystubYtdDetails
-    verification: PaystubVerification = None
+    paystub_details: Optional[PaystubDetails] = None
+    income_breakdown: Optional[List[IncomeBreakdown]] = None
+    ytd_earnings: Optional[PaystubYtdDetails] = None
+    verification: Optional[PaystubVerification] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

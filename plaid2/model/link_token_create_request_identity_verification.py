@@ -4,8 +4,8 @@ from pydantic import BaseModel, Field
 
 class LinkTokenCreateRequestIdentityVerification(BaseModel):
     template_id: str
-    consent: Any
-    gave_consent: bool
+    consent: Optional[Any] = None
+    gave_consent: Optional[bool] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

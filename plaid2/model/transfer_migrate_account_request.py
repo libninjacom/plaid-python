@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 class TransferMigrateAccountRequest(BaseModel):
     account_number: str
     routing_number: str
-    wire_routing_number: str
+    wire_routing_number: Optional[str] = None
     account_type: str
 
     def json(self, **kwargs) -> str:

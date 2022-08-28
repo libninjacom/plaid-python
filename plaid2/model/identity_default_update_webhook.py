@@ -9,7 +9,7 @@ class IdentityDefaultUpdateWebhook(BaseModel):
     webhook_code: str
     item_id: str
     account_ids_with_updated_identity: AccountIdsWithUpdatedIdentity
-    error: PlaidError = None
+    error: Optional[PlaidError] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -7,7 +7,7 @@ class ItemProductReadyWebhook(BaseModel):
     webhook_type: str
     webhook_code: str
     item_id: str
-    error: PlaidError = None
+    error: Optional[PlaidError] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

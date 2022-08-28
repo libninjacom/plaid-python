@@ -4,7 +4,7 @@ from .auth_supported_methods import AuthSupportedMethods
 
 
 class AuthMetadata(BaseModel):
-    supported_methods: AuthSupportedMethods = None
+    supported_methods: Optional[AuthSupportedMethods] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -7,8 +7,8 @@ from .wallet_transaction_counterparty_international import (
 
 
 class WalletTransactionCounterpartyNumbers(BaseModel):
-    bacs: WalletTransactionCounterpartyBacs
-    international: WalletTransactionCounterpartyInternational = None
+    bacs: Optional[WalletTransactionCounterpartyBacs] = None
+    international: Optional[WalletTransactionCounterpartyInternational] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

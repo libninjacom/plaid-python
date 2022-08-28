@@ -4,8 +4,8 @@ from .pay import Pay
 
 
 class EmploymentDetails(BaseModel):
-    annual_salary: Pay
-    hire_date: str = None
+    annual_salary: Optional[Pay] = None
+    hire_date: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

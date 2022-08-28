@@ -6,7 +6,7 @@ class PartnerCustomersCreateRequest(BaseModel):
     company_name: str
     is_diligence_attested: bool
     products: List[str]
-    create_link_customization: bool
+    create_link_customization: Optional[bool] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -6,7 +6,7 @@ from .address_data_nullable import AddressDataNullable
 class Employer(BaseModel):
     employer_id: str
     name: str
-    address: AddressDataNullable = None
+    address: Optional[AddressDataNullable] = None
     confidence_score: float
 
     def json(self, **kwargs) -> str:

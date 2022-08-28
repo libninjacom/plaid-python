@@ -7,7 +7,7 @@ class InstitutionsGetRequest(BaseModel):
     count: int
     offset: int
     country_codes: List[str]
-    options: InstitutionsGetRequestOptions
+    options: Optional[InstitutionsGetRequestOptions] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 class CreditRelayRefreshResponse(BaseModel):
     relay_token: str
-    asset_report_id: str
+    asset_report_id: Optional[str] = None
     request_id: str
 
     def json(self, **kwargs) -> str:

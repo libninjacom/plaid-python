@@ -7,7 +7,7 @@ from .sandbox_processor_token_create_request_options import (
 
 class SandboxProcessorTokenCreateRequest(BaseModel):
     institution_id: str
-    options: SandboxProcessorTokenCreateRequestOptions
+    options: Optional[SandboxProcessorTokenCreateRequestOptions] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

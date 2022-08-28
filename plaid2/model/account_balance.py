@@ -3,12 +3,12 @@ from pydantic import BaseModel, Field
 
 
 class AccountBalance(BaseModel):
-    available: float = None
-    current: float = None
-    limit: float = None
-    iso_currency_code: str = None
-    unofficial_currency_code: str = None
-    last_updated_datetime: str = None
+    available: Optional[float] = None
+    current: Optional[float] = None
+    limit: Optional[float] = None
+    iso_currency_code: Optional[str] = None
+    unofficial_currency_code: Optional[str] = None
+    last_updated_datetime: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

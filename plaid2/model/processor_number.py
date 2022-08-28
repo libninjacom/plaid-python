@@ -7,10 +7,10 @@ from .numbers_bacs_nullable import NumbersBacsNullable
 
 
 class ProcessorNumber(BaseModel):
-    ach: NumbersAchNullable = None
-    eft: NumbersEftNullable = None
-    international: NumbersInternationalNullable = None
-    bacs: NumbersBacsNullable = None
+    ach: Optional[NumbersAchNullable] = None
+    eft: Optional[NumbersEftNullable] = None
+    international: Optional[NumbersInternationalNullable] = None
+    bacs: Optional[NumbersBacsNullable] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

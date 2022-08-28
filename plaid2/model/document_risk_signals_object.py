@@ -5,7 +5,7 @@ from .multi_document_risk_signal import MultiDocumentRiskSignal
 
 
 class DocumentRiskSignalsObject(BaseModel):
-    account_id: str = None
+    account_id: Optional[str] = None
     single_document_risk_signals: List[SingleDocumentRiskSignal]
     multi_document_risk_signals: List[MultiDocumentRiskSignal]
 

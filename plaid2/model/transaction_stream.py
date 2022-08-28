@@ -11,7 +11,7 @@ class TransactionStream(BaseModel):
     category_id: str
     category: List[str]
     description: str
-    merchant_name: str = None
+    merchant_name: Optional[str] = None
     first_date: str
     last_date: str
     frequency: str
@@ -20,7 +20,7 @@ class TransactionStream(BaseModel):
     last_amount: TransactionStreamAmount
     is_active: bool
     status: str
-    personal_finance_category: PersonalFinanceCategory = None
+    personal_finance_category: Optional[PersonalFinanceCategory] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -8,16 +8,16 @@ class TransferIntentCreate(BaseModel):
     id: str
     created: str
     status: str
-    account_id: str = None
+    account_id: Optional[str] = None
     origination_account_id: str
     amount: str
     mode: str
     ach_class: str
     user: TransferUserInResponse
     description: str
-    metadata: TransferMetadata = None
+    metadata: Optional[TransferMetadata] = None
     iso_currency_code: str
-    require_guarantee: bool = None
+    require_guarantee: Optional[bool] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

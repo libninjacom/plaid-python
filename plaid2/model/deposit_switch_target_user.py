@@ -8,8 +8,8 @@ class DepositSwitchTargetUser(BaseModel):
     family_name: str
     phone: str
     email: str
-    address: DepositSwitchAddressData
-    tax_payer_id: str
+    address: Optional[DepositSwitchAddressData] = None
+    tax_payer_id: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

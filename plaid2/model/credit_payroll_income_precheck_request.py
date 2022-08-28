@@ -7,10 +7,10 @@ from .income_verification_precheck_military_info import (
 
 
 class CreditPayrollIncomePrecheckRequest(BaseModel):
-    user_token: str
-    access_tokens: List[str]
-    employer: IncomeVerificationPrecheckEmployer = None
-    us_military_info: IncomeVerificationPrecheckMilitaryInfo = None
+    user_token: Optional[str] = None
+    access_tokens: Optional[List[str]] = None
+    employer: Optional[IncomeVerificationPrecheckEmployer] = None
+    us_military_info: Optional[IncomeVerificationPrecheckMilitaryInfo] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

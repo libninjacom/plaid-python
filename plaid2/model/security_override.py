@@ -3,12 +3,12 @@ from pydantic import BaseModel, Field
 
 
 class SecurityOverride(BaseModel):
-    isin: str
-    cusip: str
-    sedol: str
-    name: str
-    ticker_symbol: str
-    currency: str
+    isin: Optional[str] = None
+    cusip: Optional[str] = None
+    sedol: Optional[str] = None
+    name: Optional[str] = None
+    ticker_symbol: Optional[str] = None
+    currency: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

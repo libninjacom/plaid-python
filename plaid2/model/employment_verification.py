@@ -5,12 +5,12 @@ from .platform_ids import PlatformIds
 
 
 class EmploymentVerification(BaseModel):
-    status: str = None
-    start_date: str = None
-    end_date: str = None
-    employer: EmployerVerification
-    title: str = None
-    platform_ids: PlatformIds
+    status: Optional[str] = None
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    employer: Optional[EmployerVerification] = None
+    title: Optional[str] = None
+    platform_ids: Optional[PlatformIds] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

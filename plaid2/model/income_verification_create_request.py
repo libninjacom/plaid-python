@@ -7,8 +7,8 @@ from .income_verification_create_request_options import (
 
 class IncomeVerificationCreateRequest(BaseModel):
     webhook: str
-    precheck_id: str
-    options: IncomeVerificationCreateRequestOptions
+    precheck_id: Optional[str] = None
+    options: Optional[IncomeVerificationCreateRequestOptions] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

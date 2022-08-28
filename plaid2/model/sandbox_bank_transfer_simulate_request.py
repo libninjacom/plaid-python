@@ -6,7 +6,7 @@ from .bank_transfer_failure import BankTransferFailure
 class SandboxBankTransferSimulateRequest(BaseModel):
     bank_transfer_id: str
     event_type: str
-    failure_reason: BankTransferFailure = None
+    failure_reason: Optional[BankTransferFailure] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

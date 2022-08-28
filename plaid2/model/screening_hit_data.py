@@ -7,10 +7,10 @@ from .screening_hit_names_items import ScreeningHitNamesItems
 
 
 class ScreeningHitData(BaseModel):
-    dates_of_birth: List[ScreeningHitDateOfBirthItem]
-    documents: List[ScreeningHitDocumentsItems]
-    locations: List[GenericScreeningHitLocationItems]
-    names: List[ScreeningHitNamesItems]
+    dates_of_birth: Optional[List[ScreeningHitDateOfBirthItem]] = None
+    documents: Optional[List[ScreeningHitDocumentsItems]] = None
+    locations: Optional[List[GenericScreeningHitLocationItems]] = None
+    names: Optional[List[ScreeningHitNamesItems]] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

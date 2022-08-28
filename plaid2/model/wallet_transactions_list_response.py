@@ -5,7 +5,7 @@ from .wallet_transaction import WalletTransaction
 
 class WalletTransactionsListResponse(BaseModel):
     transactions: List[WalletTransaction]
-    next_cursor: str
+    next_cursor: Optional[str] = None
     request_id: str
 
     def json(self, **kwargs) -> str:

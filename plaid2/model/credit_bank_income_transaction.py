@@ -3,15 +3,15 @@ from pydantic import BaseModel, Field
 
 
 class CreditBankIncomeTransaction(BaseModel):
-    amount: float
-    date: str
-    name: str
-    original_description: str = None
-    pending: bool
-    transaction_id: str
-    check_number: str = None
-    iso_currency_code: str = None
-    unofficial_currency_code: str = None
+    amount: Optional[float] = None
+    date: Optional[str] = None
+    name: Optional[str] = None
+    original_description: Optional[str] = None
+    pending: Optional[bool] = None
+    transaction_id: Optional[str] = None
+    check_number: Optional[str] = None
+    iso_currency_code: Optional[str] = None
+    unofficial_currency_code: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

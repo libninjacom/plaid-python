@@ -3,10 +3,10 @@ from pydantic import BaseModel, Field
 
 
 class ScreeningHitAnalysis(BaseModel):
-    dates_of_birth: str
-    documents: str
-    locations: str
-    names: str
+    dates_of_birth: Optional[str] = None
+    documents: Optional[str] = None
+    locations: Optional[str] = None
+    names: Optional[str] = None
     search_terms_version: float
 
     def json(self, **kwargs) -> str:

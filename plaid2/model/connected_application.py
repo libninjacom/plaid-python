@@ -6,12 +6,12 @@ from .scopes_nullable import ScopesNullable
 class ConnectedApplication(BaseModel):
     application_id: str
     name: str
-    display_name: str = None
-    logo_url: str = None
-    application_url: str = None
-    reason_for_access: str = None
+    display_name: Optional[str] = None
+    logo_url: Optional[str] = None
+    application_url: Optional[str] = None
+    reason_for_access: Optional[str] = None
     created_at: str
-    scopes: ScopesNullable = None
+    scopes: Optional[ScopesNullable] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

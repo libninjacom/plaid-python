@@ -3,10 +3,10 @@ from pydantic import BaseModel, Field
 
 
 class AccountFilter(BaseModel):
-    depository: List[str]
-    credit: List[str]
-    loan: List[str]
-    investment: List[str]
+    depository: Optional[List[str]] = None
+    credit: Optional[List[str]] = None
+    loan: Optional[List[str]] = None
+    investment: Optional[List[str]] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

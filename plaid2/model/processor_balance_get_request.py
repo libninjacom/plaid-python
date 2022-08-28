@@ -5,7 +5,7 @@ from .processor_balance_get_request_options import ProcessorBalanceGetRequestOpt
 
 class ProcessorBalanceGetRequest(BaseModel):
     processor_token: str
-    options: ProcessorBalanceGetRequestOptions
+    options: Optional[ProcessorBalanceGetRequestOptions] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -5,7 +5,7 @@ from .entity_watchlist_program import EntityWatchlistProgram
 
 class PaginatedEntityWatchlistProgramListResponse(BaseModel):
     entity_watchlist_programs: List[EntityWatchlistProgram]
-    next_cursor: str = None
+    next_cursor: Optional[str] = None
     request_id: str
 
     def json(self, **kwargs) -> str:

@@ -11,7 +11,7 @@ class JwkPublicKey(BaseModel):
     x: str
     y: str
     created_at: int
-    expired_at: int = None
+    expired_at: Optional[int] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

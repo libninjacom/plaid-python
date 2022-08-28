@@ -12,17 +12,17 @@ class PaymentInitiationPayment(BaseModel):
     status: str
     recipient_id: str
     reference: str
-    adjusted_reference: str = None
+    adjusted_reference: Optional[str] = None
     last_status_update: str
-    schedule: ExternalPaymentScheduleGet = None
-    refund_details: ExternalPaymentRefundDetails = None
-    bacs: SenderBacsNullable = None
-    iban: str = None
-    refund_ids: List[str]
-    wallet_id: str = None
-    scheme: str = None
-    adjusted_scheme: str = None
-    consent_id: str = None
+    schedule: Optional[ExternalPaymentScheduleGet] = None
+    refund_details: Optional[ExternalPaymentRefundDetails] = None
+    bacs: Optional[SenderBacsNullable] = None
+    iban: Optional[str] = None
+    refund_ids: Optional[List[str]] = None
+    wallet_id: Optional[str] = None
+    scheme: Optional[str] = None
+    adjusted_scheme: Optional[str] = None
+    consent_id: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

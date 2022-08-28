@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 class TransferEventSyncRequest(BaseModel):
     after_id: int
-    count: int = None
+    count: Optional[int] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

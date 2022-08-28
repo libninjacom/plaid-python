@@ -7,7 +7,7 @@ from .item_import_request_options import ItemImportRequestOptions
 class ItemImportRequest(BaseModel):
     products: List[str]
     user_auth: ItemImportRequestUserAuth
-    options: ItemImportRequestOptions
+    options: Optional[ItemImportRequestOptions] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

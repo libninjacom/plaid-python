@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field
 
 
 class LinkTokenCreateRequestTransfer(BaseModel):
-    intent_id: str
-    payment_profile_id: str
+    intent_id: Optional[str] = None
+    payment_profile_id: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

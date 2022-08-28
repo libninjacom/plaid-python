@@ -6,10 +6,10 @@ from .income_verification_precheck_employer_address import (
 
 
 class IncomeVerificationPrecheckEmployer(BaseModel):
-    name: str = None
-    address: IncomeVerificationPrecheckEmployerAddress = None
-    tax_id: str = None
-    url: str = None
+    name: Optional[str] = None
+    address: Optional[IncomeVerificationPrecheckEmployerAddress] = None
+    tax_id: Optional[str] = None
+    url: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

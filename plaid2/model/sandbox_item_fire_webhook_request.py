@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 class SandboxItemFireWebhookRequest(BaseModel):
     access_token: str
-    webhook_type: str
+    webhook_type: Optional[str] = None
     webhook_code: str
 
     def json(self, **kwargs) -> str:

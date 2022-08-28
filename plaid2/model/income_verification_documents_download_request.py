@@ -3,9 +3,9 @@ from pydantic import BaseModel, Field
 
 
 class IncomeVerificationDocumentsDownloadRequest(BaseModel):
-    income_verification_id: str = None
-    access_token: str = None
-    document_id: str = None
+    income_verification_id: Optional[str] = None
+    access_token: Optional[str] = None
+    document_id: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -5,8 +5,8 @@ from .numbers_international_iban import NumbersInternationalIban
 
 
 class WalletNumbers(BaseModel):
-    bacs: RecipientBacs = None
-    international: NumbersInternationalIban = None
+    bacs: Optional[RecipientBacs] = None
+    international: Optional[NumbersInternationalIban] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

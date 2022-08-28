@@ -5,7 +5,7 @@ from .payment_initiation_payment import PaymentInitiationPayment
 
 class PaymentInitiationPaymentListResponse(BaseModel):
     payments: List[PaymentInitiationPayment]
-    next_cursor: str = None
+    next_cursor: Optional[str] = None
     request_id: str
 
     def json(self, **kwargs) -> str:

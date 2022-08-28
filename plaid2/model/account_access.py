@@ -5,8 +5,8 @@ from .account_product_access_nullable import AccountProductAccessNullable
 
 class AccountAccess(BaseModel):
     unique_id: str
-    authorized: bool = None
-    account_product_access: AccountProductAccessNullable = None
+    authorized: Optional[bool] = None
+    account_product_access: Optional[AccountProductAccessNullable] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

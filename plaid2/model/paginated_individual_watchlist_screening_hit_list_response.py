@@ -5,7 +5,7 @@ from .watchlist_screening_hit import WatchlistScreeningHit
 
 class PaginatedIndividualWatchlistScreeningHitListResponse(BaseModel):
     watchlist_screening_hits: List[WatchlistScreeningHit]
-    next_cursor: str = None
+    next_cursor: Optional[str] = None
     request_id: str
 
     def json(self, **kwargs) -> str:

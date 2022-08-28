@@ -5,8 +5,8 @@ from .watchlist_screening_document import WatchlistScreeningDocument
 
 
 class ScreeningHitDocumentsItems(BaseModel):
-    analysis: MatchSummary
-    data: WatchlistScreeningDocument
+    analysis: Optional[MatchSummary] = None
+    data: Optional[WatchlistScreeningDocument] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

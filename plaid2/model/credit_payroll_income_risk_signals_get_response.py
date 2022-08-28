@@ -6,7 +6,7 @@ from .plaid_error import PlaidError
 
 class CreditPayrollIncomeRiskSignalsGetResponse(BaseModel):
     items: List[PayrollRiskSignalsItem]
-    error: PlaidError = None
+    error: Optional[PlaidError] = None
     request_id: str
 
     def json(self, **kwargs) -> str:

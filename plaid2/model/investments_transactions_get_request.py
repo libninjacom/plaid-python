@@ -9,7 +9,7 @@ class InvestmentsTransactionsGetRequest(BaseModel):
     access_token: str
     start_date: str
     end_date: str
-    options: InvestmentsTransactionsGetRequestOptions
+    options: Optional[InvestmentsTransactionsGetRequestOptions] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -6,7 +6,7 @@ from .credit_1099 import Credit1099
 
 
 class PayrollIncomeObject(BaseModel):
-    account_id: str = None
+    account_id: Optional[str] = None
     pay_stubs: List[CreditPayStub]
     w_2_s: List[CreditW2]
     form_1099_s: List[Credit1099]

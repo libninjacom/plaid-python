@@ -5,13 +5,13 @@ from .pay import Pay
 
 
 class EarningsTotal(BaseModel):
-    current_amount: float = None
-    current_pay: Pay
-    ytd_pay: Pay
-    hours: float = None
-    iso_currency_code: str = None
-    unofficial_currency_code: str = None
-    ytd_amount: float = None
+    current_amount: Optional[float] = None
+    current_pay: Optional[Pay] = None
+    ytd_pay: Optional[Pay] = None
+    hours: Optional[float] = None
+    iso_currency_code: Optional[str] = None
+    unofficial_currency_code: Optional[str] = None
+    ytd_amount: Optional[float] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

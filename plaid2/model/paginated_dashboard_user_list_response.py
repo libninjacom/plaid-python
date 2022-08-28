@@ -5,7 +5,7 @@ from .dashboard_user import DashboardUser
 
 class PaginatedDashboardUserListResponse(BaseModel):
     dashboard_users: List[DashboardUser]
-    next_cursor: str = None
+    next_cursor: Optional[str] = None
     request_id: str
 
     def json(self, **kwargs) -> str:

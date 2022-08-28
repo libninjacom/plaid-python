@@ -4,9 +4,9 @@ from .w_2 import W2
 
 
 class Taxform(BaseModel):
-    doc_id: str
+    doc_id: Optional[str] = None
     document_type: str
-    w_2: W2
+    w_2: Optional[W2] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -3,11 +3,11 @@ from pydantic import BaseModel, Field
 
 
 class IncomeVerificationPrecheckEmployerAddressData(BaseModel):
-    city: str
-    country: str
-    postal_code: str
-    region: str
-    street: str
+    city: Optional[str] = None
+    country: Optional[str] = None
+    postal_code: Optional[str] = None
+    region: Optional[str] = None
+    street: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

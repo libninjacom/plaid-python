@@ -26,25 +26,25 @@ class LinkTokenCreateRequest(BaseModel):
     language: str
     country_codes: List[str]
     user: LinkTokenCreateRequestUser
-    products: List[str]
-    additional_consented_products: List[str]
-    webhook: str
-    access_token: str
-    link_customization_name: str
-    redirect_uri: str
-    android_package_name: str
-    institution_data: LinkTokenCreateInstitutionData
-    account_filters: LinkTokenAccountFilters
-    eu_config: LinkTokenEuConfig
-    institution_id: str
-    payment_initiation: LinkTokenCreateRequestPaymentInitiation
-    deposit_switch: LinkTokenCreateRequestDepositSwitch
-    income_verification: LinkTokenCreateRequestIncomeVerification
-    auth: LinkTokenCreateRequestAuth
-    transfer: LinkTokenCreateRequestTransfer
-    update: LinkTokenCreateRequestUpdate
-    identity_verification: LinkTokenCreateRequestIdentityVerification
-    user_token: str
+    products: Optional[List[str]] = None
+    additional_consented_products: Optional[List[str]] = None
+    webhook: Optional[str] = None
+    access_token: Optional[str] = None
+    link_customization_name: Optional[str] = None
+    redirect_uri: Optional[str] = None
+    android_package_name: Optional[str] = None
+    institution_data: Optional[LinkTokenCreateInstitutionData] = None
+    account_filters: Optional[LinkTokenAccountFilters] = None
+    eu_config: Optional[LinkTokenEuConfig] = None
+    institution_id: Optional[str] = None
+    payment_initiation: Optional[LinkTokenCreateRequestPaymentInitiation] = None
+    deposit_switch: Optional[LinkTokenCreateRequestDepositSwitch] = None
+    income_verification: Optional[LinkTokenCreateRequestIncomeVerification] = None
+    auth: Optional[LinkTokenCreateRequestAuth] = None
+    transfer: Optional[LinkTokenCreateRequestTransfer] = None
+    update: Optional[LinkTokenCreateRequestUpdate] = None
+    identity_verification: Optional[LinkTokenCreateRequestIdentityVerification] = None
+    user_token: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

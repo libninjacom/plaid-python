@@ -6,10 +6,10 @@ from .payment_initiation_optional_restriction_bacs import (
 
 
 class ExternalPaymentInitiationConsentOptions(BaseModel):
-    wallet_id: str = None
-    request_refund_details: bool = None
-    iban: str = None
-    bacs: PaymentInitiationOptionalRestrictionBacs = None
+    wallet_id: Optional[str] = None
+    request_refund_details: Optional[bool] = None
+    iban: Optional[str] = None
+    bacs: Optional[PaymentInitiationOptionalRestrictionBacs] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

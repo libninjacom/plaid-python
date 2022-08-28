@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 class ListIdentityVerificationRequest(BaseModel):
     template_id: str
     client_user_id: str
-    cursor: str = None
+    cursor: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

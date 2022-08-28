@@ -6,10 +6,10 @@ from .sandbox_public_token_create_request_options_transactions import (
 
 
 class SandboxPublicTokenCreateRequestOptions(BaseModel):
-    webhook: str
-    override_username: str = None
-    override_password: str = None
-    transactions: SandboxPublicTokenCreateRequestOptionsTransactions
+    webhook: Optional[str] = None
+    override_username: Optional[str] = None
+    override_password: Optional[str] = None
+    transactions: Optional[SandboxPublicTokenCreateRequestOptionsTransactions] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

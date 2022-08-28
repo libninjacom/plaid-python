@@ -4,10 +4,10 @@ from .plaid_error import PlaidError
 
 
 class NewAccountsAvailableWebhook(BaseModel):
-    webhook_type: str
-    webhook_code: str
-    item_id: str
-    error: PlaidError = None
+    webhook_type: Optional[str] = None
+    webhook_code: Optional[str] = None
+    item_id: Optional[str] = None
+    error: Optional[PlaidError] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

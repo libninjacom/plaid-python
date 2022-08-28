@@ -7,7 +7,7 @@ class TransactionOverride(BaseModel):
     date_posted: str
     amount: float
     description: str
-    currency: str
+    currency: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

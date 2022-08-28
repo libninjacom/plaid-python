@@ -4,8 +4,8 @@ from pydantic import BaseModel, Field
 
 class TransferRepaymentReturnListRequest(BaseModel):
     repayment_id: str
-    count: int = None
-    offset: int
+    count: Optional[int] = None
+    offset: Optional[int] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

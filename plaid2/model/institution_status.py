@@ -12,15 +12,15 @@ from .health_incident import HealthIncident
 
 
 class InstitutionStatus(BaseModel):
-    item_logins: ProductStatus
-    transactions_updates: ProductStatus
-    auth: ProductStatus
-    identity: ProductStatus
-    investments_updates: ProductStatus
-    liabilities_updates: ProductStatus
-    liabilities: ProductStatus
-    investments: ProductStatus
-    health_incidents: List[HealthIncident] = None
+    item_logins: Optional[ProductStatus] = None
+    transactions_updates: Optional[ProductStatus] = None
+    auth: Optional[ProductStatus] = None
+    identity: Optional[ProductStatus] = None
+    investments_updates: Optional[ProductStatus] = None
+    liabilities_updates: Optional[ProductStatus] = None
+    liabilities: Optional[ProductStatus] = None
+    investments: Optional[ProductStatus] = None
+    health_incidents: Optional[List[HealthIncident]] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

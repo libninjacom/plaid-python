@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 
 
 class LinkTokenCreateInstitutionData(BaseModel):
-    routing_number: str
+    routing_number: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

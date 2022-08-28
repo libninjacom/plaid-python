@@ -3,13 +3,13 @@ from pydantic import BaseModel, Field
 
 
 class W2StateAndLocalWages(BaseModel):
-    state: str = None
-    employer_state_id_number: str = None
-    state_wages_tips: str = None
-    state_income_tax: str = None
-    local_wages_tips: str = None
-    local_income_tax: str = None
-    locality_name: str = None
+    state: Optional[str] = None
+    employer_state_id_number: Optional[str] = None
+    state_wages_tips: Optional[str] = None
+    state_income_tax: Optional[str] = None
+    local_wages_tips: Optional[str] = None
+    local_income_tax: Optional[str] = None
+    locality_name: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -5,7 +5,7 @@ from .mfa import Mfa
 
 
 class UserCustomPassword(BaseModel):
-    version: str = None
+    version: Optional[str] = None
     seed: str
     override_accounts: List[OverrideAccounts]
     mfa: Mfa

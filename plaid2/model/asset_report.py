@@ -6,7 +6,7 @@ from .asset_report_item import AssetReportItem
 
 class AssetReport(BaseModel):
     asset_report_id: str
-    client_report_id: str = None
+    client_report_id: Optional[str] = None
     date_generated: str
     days_requested: float
     user: AssetReportUser

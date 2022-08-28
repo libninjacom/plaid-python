@@ -6,11 +6,11 @@ from .institutions_search_payment_initiation_options import (
 
 
 class InstitutionsSearchRequestOptions(BaseModel):
-    oauth: bool = None
-    include_optional_metadata: bool
-    include_auth_metadata: bool = None
-    include_payment_initiation_metadata: bool = None
-    payment_initiation: InstitutionsSearchPaymentInitiationOptions = None
+    oauth: Optional[bool] = None
+    include_optional_metadata: Optional[bool] = None
+    include_auth_metadata: Optional[bool] = None
+    include_payment_initiation_metadata: Optional[bool] = None
+    payment_initiation: Optional[InstitutionsSearchPaymentInitiationOptions] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

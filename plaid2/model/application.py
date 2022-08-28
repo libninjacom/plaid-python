@@ -5,17 +5,17 @@ from pydantic import BaseModel, Field
 class Application(BaseModel):
     application_id: str
     name: str
-    display_name: str = None
+    display_name: Optional[str] = None
     join_date: str
-    logo_url: str = None
-    application_url: str = None
-    reason_for_access: str = None
-    use_case: str = None
-    company_legal_name: str = None
-    city: str = None
-    region: str = None
-    postal_code: str = None
-    country_code: str = None
+    logo_url: Optional[str] = None
+    application_url: Optional[str] = None
+    reason_for_access: Optional[str] = None
+    use_case: Optional[str] = None
+    company_legal_name: Optional[str] = None
+    city: Optional[str] = None
+    region: Optional[str] = None
+    postal_code: Optional[str] = None
+    country_code: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -5,8 +5,8 @@ from .watchlist_screening_hit_locations import WatchlistScreeningHitLocations
 
 
 class GenericScreeningHitLocationItems(BaseModel):
-    analysis: MatchSummary
-    data: WatchlistScreeningHitLocations
+    analysis: Optional[MatchSummary] = None
+    data: Optional[WatchlistScreeningHitLocations] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

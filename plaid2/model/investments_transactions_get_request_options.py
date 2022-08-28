@@ -3,9 +3,9 @@ from pydantic import BaseModel, Field
 
 
 class InvestmentsTransactionsGetRequestOptions(BaseModel):
-    account_ids: List[str]
-    count: int
-    offset: int
+    account_ids: Optional[List[str]] = None
+    count: Optional[int] = None
+    offset: Optional[int] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

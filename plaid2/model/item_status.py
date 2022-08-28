@@ -6,9 +6,9 @@ from .item_status_last_webhook import ItemStatusLastWebhook
 
 
 class ItemStatus(BaseModel):
-    investments: ItemStatusInvestments = None
-    transactions: ItemStatusTransactions = None
-    last_webhook: ItemStatusLastWebhook = None
+    investments: Optional[ItemStatusInvestments] = None
+    transactions: Optional[ItemStatusTransactions] = None
+    last_webhook: Optional[ItemStatusLastWebhook] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

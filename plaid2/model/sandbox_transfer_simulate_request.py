@@ -6,7 +6,7 @@ from .transfer_failure import TransferFailure
 class SandboxTransferSimulateRequest(BaseModel):
     transfer_id: str
     event_type: str
-    failure_reason: TransferFailure = None
+    failure_reason: Optional[TransferFailure] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -6,8 +6,8 @@ from .deposit_switch_create_request_options import DepositSwitchCreateRequestOpt
 class DepositSwitchCreateRequest(BaseModel):
     target_access_token: str
     target_account_id: str
-    country_code: str = None
-    options: DepositSwitchCreateRequestOptions
+    country_code: Optional[str] = None
+    options: Optional[DepositSwitchCreateRequestOptions] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

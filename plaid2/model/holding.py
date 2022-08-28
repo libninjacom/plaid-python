@@ -6,13 +6,13 @@ class Holding(BaseModel):
     account_id: str
     security_id: str
     institution_price: float
-    institution_price_as_of: str = None
-    institution_price_datetime: str = None
+    institution_price_as_of: Optional[str] = None
+    institution_price_datetime: Optional[str] = None
     institution_value: float
-    cost_basis: float = None
+    cost_basis: Optional[float] = None
     quantity: float
-    iso_currency_code: str = None
-    unofficial_currency_code: str = None
+    iso_currency_code: Optional[str] = None
+    unofficial_currency_code: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

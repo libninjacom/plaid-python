@@ -6,7 +6,7 @@ from .plaid_error import PlaidError
 class AssetsErrorWebhook(BaseModel):
     webhook_type: str
     webhook_code: str
-    error: PlaidError = None
+    error: Optional[PlaidError] = None
     asset_report_id: str
 
     def json(self, **kwargs) -> str:

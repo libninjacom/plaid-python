@@ -4,9 +4,9 @@ from .asset_report_user import AssetReportUser
 
 
 class AssetReportRefreshRequestOptions(BaseModel):
-    client_report_id: str = None
-    webhook: str = None
-    user: AssetReportUser
+    client_report_id: Optional[str] = None
+    webhook: Optional[str] = None
+    user: Optional[AssetReportUser] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

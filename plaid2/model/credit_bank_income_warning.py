@@ -4,9 +4,9 @@ from .credit_bank_income_cause import CreditBankIncomeCause
 
 
 class CreditBankIncomeWarning(BaseModel):
-    warning_type: str
-    warning_code: str
-    cause: CreditBankIncomeCause
+    warning_type: Optional[str] = None
+    warning_code: Optional[str] = None
+    cause: Optional[CreditBankIncomeCause] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

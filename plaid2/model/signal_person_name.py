@@ -3,11 +3,11 @@ from pydantic import BaseModel, Field
 
 
 class SignalPersonName(BaseModel):
-    prefix: str = None
-    given_name: str = None
-    middle_name: str = None
-    family_name: str = None
-    suffix: str = None
+    prefix: Optional[str] = None
+    given_name: Optional[str] = None
+    middle_name: Optional[str] = None
+    family_name: Optional[str] = None
+    suffix: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

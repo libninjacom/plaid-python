@@ -9,8 +9,8 @@ class PaymentInitiationPaymentCreateRequest(BaseModel):
     recipient_id: str
     reference: str
     amount: PaymentAmount
-    schedule: ExternalPaymentScheduleRequest
-    options: ExternalPaymentOptions = None
+    schedule: Optional[ExternalPaymentScheduleRequest] = None
+    options: Optional[ExternalPaymentOptions] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

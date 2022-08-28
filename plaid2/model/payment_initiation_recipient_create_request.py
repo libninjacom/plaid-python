@@ -6,9 +6,9 @@ from .payment_initiation_address import PaymentInitiationAddress
 
 class PaymentInitiationRecipientCreateRequest(BaseModel):
     name: str
-    iban: str = None
-    bacs: RecipientBacsNullable = None
-    address: PaymentInitiationAddress = None
+    iban: Optional[str] = None
+    bacs: Optional[RecipientBacsNullable] = None
+    address: Optional[PaymentInitiationAddress] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

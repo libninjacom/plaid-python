@@ -13,7 +13,7 @@ class PaymentInitiationMetadata(BaseModel):
     supports_sepa_instant: bool
     maximum_payment_amount: PaymentInitiationMaximumPaymentAmount
     supports_refund_details: bool
-    standing_order_metadata: PaymentInitiationStandingOrderMetadata = None
+    standing_order_metadata: Optional[PaymentInitiationStandingOrderMetadata] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

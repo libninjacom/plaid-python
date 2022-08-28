@@ -7,9 +7,9 @@ from .deductions_total import DeductionsTotal
 
 
 class Deductions(BaseModel):
-    subtotals: List[Total]
+    subtotals: Optional[List[Total]] = None
     breakdown: List[DeductionsBreakdown]
-    totals: List[Total]
+    totals: Optional[List[Total]] = None
     total: DeductionsTotal
 
     def json(self, **kwargs) -> str:

@@ -5,8 +5,8 @@ from .recipient_bacs_nullable import RecipientBacsNullable
 
 class ExternalPaymentRefundDetails(BaseModel):
     name: str
-    iban: str = None
-    bacs: RecipientBacsNullable = None
+    iban: Optional[str] = None
+    bacs: Optional[RecipientBacsNullable] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

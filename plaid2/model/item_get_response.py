@@ -6,7 +6,7 @@ from .item_status_nullable import ItemStatusNullable
 
 class ItemGetResponse(BaseModel):
     item: Item
-    status: ItemStatusNullable = None
+    status: Optional[ItemStatusNullable] = None
     request_id: str
 
     def json(self, **kwargs) -> str:

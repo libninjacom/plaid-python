@@ -6,12 +6,12 @@ class Error(BaseModel):
     error_type: str
     error_code: str
     error_message: str
-    display_message: str = None
-    request_id: str
-    causes: List[Any]
-    status: float = None
-    documentation_url: str
-    suggested_action: str = None
+    display_message: Optional[str] = None
+    request_id: Optional[str] = None
+    causes: Optional[List[Any]] = None
+    status: Optional[float] = None
+    documentation_url: Optional[str] = None
+    suggested_action: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

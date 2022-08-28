@@ -4,7 +4,7 @@ from .simulated_transfer_sweep import SimulatedTransferSweep
 
 
 class SandboxTransferSweepSimulateResponse(BaseModel):
-    sweep: SimulatedTransferSweep
+    sweep: Optional[SimulatedTransferSweep] = None
     request_id: str
 
     def json(self, **kwargs) -> str:

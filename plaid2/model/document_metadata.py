@@ -3,10 +3,10 @@ from pydantic import BaseModel, Field
 
 
 class DocumentMetadata(BaseModel):
-    name: str
-    status: str
-    doc_id: str
-    doc_type: str
+    name: Optional[str] = None
+    status: Optional[str] = None
+    doc_id: Optional[str] = None
+    doc_type: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

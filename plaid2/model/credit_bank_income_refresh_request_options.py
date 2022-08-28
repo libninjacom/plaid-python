@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field
 
 
 class CreditBankIncomeRefreshRequestOptions(BaseModel):
-    days_requested: int
-    webhook: str
+    days_requested: Optional[int] = None
+    webhook: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

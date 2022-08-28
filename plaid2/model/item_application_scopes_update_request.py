@@ -7,7 +7,7 @@ class ItemApplicationScopesUpdateRequest(BaseModel):
     access_token: str
     application_id: str
     scopes: Scopes
-    state: str
+    state: Optional[str] = None
     context: str
 
     def json(self, **kwargs) -> str:

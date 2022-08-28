@@ -5,14 +5,14 @@ from .plaid_error import PlaidError
 
 class Item(BaseModel):
     item_id: str
-    institution_id: str = None
-    webhook: str = None
-    error: PlaidError = None
+    institution_id: Optional[str] = None
+    webhook: Optional[str] = None
+    error: Optional[PlaidError] = None
     available_products: List[str]
     billed_products: List[str]
-    products: List[str]
-    consented_products: List[str]
-    consent_expiration_time: str = None
+    products: Optional[List[str]] = None
+    consented_products: Optional[List[str]] = None
+    consent_expiration_time: Optional[str] = None
     update_type: str
 
     def json(self, **kwargs) -> str:

@@ -7,7 +7,7 @@ from .credit_bank_income_refresh_request_options import (
 
 class CreditBankIncomeRefreshRequest(BaseModel):
     user_token: str
-    options: CreditBankIncomeRefreshRequestOptions
+    options: Optional[CreditBankIncomeRefreshRequestOptions] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -4,11 +4,11 @@ from .asset_report_user import AssetReportUser
 
 
 class AssetReportCreateRequestOptions(BaseModel):
-    client_report_id: str = None
-    webhook: str = None
-    include_fast_report: bool = None
-    products: List[str]
-    user: AssetReportUser
+    client_report_id: Optional[str] = None
+    webhook: Optional[str] = None
+    include_fast_report: Optional[bool] = None
+    products: Optional[List[str]] = None
+    user: Optional[AssetReportUser] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

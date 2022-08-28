@@ -5,9 +5,9 @@ from .account_access import AccountAccess
 
 
 class Scopes(BaseModel):
-    product_access: ProductAccess
-    accounts: List[AccountAccess]
-    new_accounts: bool = None
+    product_access: Optional[ProductAccess] = None
+    accounts: Optional[List[AccountAccess]] = None
+    new_accounts: Optional[bool] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -4,21 +4,21 @@ from pydantic import BaseModel, Field
 
 class Security(BaseModel):
     security_id: str
-    isin: str = None
-    cusip: str = None
-    sedol: str = None
-    institution_security_id: str = None
-    institution_id: str = None
-    proxy_security_id: str = None
-    name: str = None
-    ticker_symbol: str = None
-    is_cash_equivalent: bool = None
-    type: str = None
-    close_price: float = None
-    close_price_as_of: str = None
-    update_datetime: str = None
-    iso_currency_code: str = None
-    unofficial_currency_code: str = None
+    isin: Optional[str] = None
+    cusip: Optional[str] = None
+    sedol: Optional[str] = None
+    institution_security_id: Optional[str] = None
+    institution_id: Optional[str] = None
+    proxy_security_id: Optional[str] = None
+    name: Optional[str] = None
+    ticker_symbol: Optional[str] = None
+    is_cash_equivalent: Optional[bool] = None
+    type: Optional[str] = None
+    close_price: Optional[float] = None
+    close_price_as_of: Optional[str] = None
+    update_datetime: Optional[str] = None
+    iso_currency_code: Optional[str] = None
+    unofficial_currency_code: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

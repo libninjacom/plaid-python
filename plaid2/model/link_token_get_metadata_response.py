@@ -6,13 +6,13 @@ from .account_filters_response import AccountFiltersResponse
 
 class LinkTokenGetMetadataResponse(BaseModel):
     initial_products: List[str]
-    webhook: str = None
+    webhook: Optional[str] = None
     country_codes: List[str]
-    language: str = None
-    institution_data: LinkTokenCreateInstitutionData
-    account_filters: AccountFiltersResponse
-    redirect_uri: str = None
-    client_name: str = None
+    language: Optional[str] = None
+    institution_data: Optional[LinkTokenCreateInstitutionData] = None
+    account_filters: Optional[AccountFiltersResponse] = None
+    redirect_uri: Optional[str] = None
+    client_name: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

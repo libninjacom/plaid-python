@@ -4,7 +4,7 @@ from .connected_application import ConnectedApplication
 
 
 class ItemApplicationListResponse(BaseModel):
-    request_id: str
+    request_id: Optional[str] = None
     applications: List[ConnectedApplication]
 
     def json(self, **kwargs) -> str:

@@ -4,15 +4,15 @@ from .apr import Apr
 
 
 class CreditCardLiability(BaseModel):
-    account_id: str = None
+    account_id: Optional[str] = None
     aprs: List[Apr]
-    is_overdue: bool = None
-    last_payment_amount: float = None
-    last_payment_date: str = None
-    last_statement_issue_date: str = None
-    last_statement_balance: float = None
-    minimum_payment_amount: float = None
-    next_payment_due_date: str = None
+    is_overdue: Optional[bool] = None
+    last_payment_amount: Optional[float] = None
+    last_payment_date: Optional[str] = None
+    last_statement_issue_date: Optional[str] = None
+    last_statement_balance: Optional[float] = None
+    minimum_payment_amount: Optional[float] = None
+    next_payment_due_date: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

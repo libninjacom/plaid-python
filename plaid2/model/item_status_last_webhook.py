@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field
 
 
 class ItemStatusLastWebhook(BaseModel):
-    sent_at: str = None
-    code_sent: str = None
+    sent_at: Optional[str] = None
+    code_sent: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

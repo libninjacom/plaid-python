@@ -3,9 +3,9 @@ from pydantic import BaseModel, Field
 
 
 class PlatformIds(BaseModel):
-    employee_id: str = None
-    payroll_id: str = None
-    position_id: str = None
+    employee_id: Optional[str] = None
+    payroll_id: Optional[str] = None
+    position_id: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -6,7 +6,7 @@ from .plaid_error import PlaidError
 class TransactionsRemovedWebhook(BaseModel):
     webhook_type: str
     webhook_code: str
-    error: PlaidError = None
+    error: Optional[PlaidError] = None
     removed_transactions: List[str]
     item_id: str
 

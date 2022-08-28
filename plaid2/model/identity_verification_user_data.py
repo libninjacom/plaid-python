@@ -6,13 +6,13 @@ from .user_id_number import UserIdNumber
 
 
 class IdentityVerificationUserData(BaseModel):
-    phone_number: str = None
-    date_of_birth: str = None
-    ip_address: str = None
-    email_address: Any = None
-    name: UserName = None
-    address: IdentityVerificationUserAddress = None
-    id_number: UserIdNumber = None
+    phone_number: Optional[str] = None
+    date_of_birth: Optional[str] = None
+    ip_address: Optional[str] = None
+    email_address: Optional[Any] = None
+    name: Optional[UserName] = None
+    address: Optional[IdentityVerificationUserAddress] = None
+    id_number: Optional[UserIdNumber] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

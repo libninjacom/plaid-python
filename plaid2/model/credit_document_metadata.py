@@ -4,9 +4,9 @@ from pydantic import BaseModel, Field
 
 class CreditDocumentMetadata(BaseModel):
     name: str
-    document_type: str = None
-    download_url: str = None
-    status: str = None
+    document_type: Optional[str] = None
+    download_url: Optional[str] = None
+    status: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

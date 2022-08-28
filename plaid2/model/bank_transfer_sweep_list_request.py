@@ -3,10 +3,10 @@ from pydantic import BaseModel, Field
 
 
 class BankTransferSweepListRequest(BaseModel):
-    origination_account_id: str = None
-    start_time: str = None
-    end_time: str = None
-    count: int = None
+    origination_account_id: Optional[str] = None
+    start_time: Optional[str] = None
+    end_time: Optional[str] = None
+    count: Optional[int] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

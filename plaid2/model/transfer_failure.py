@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field
 
 
 class TransferFailure(BaseModel):
-    ach_return_code: str = None
-    description: str
+    ach_return_code: Optional[str] = None
+    description: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

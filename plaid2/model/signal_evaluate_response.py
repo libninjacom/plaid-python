@@ -7,7 +7,7 @@ from .signal_evaluate_core_attributes import SignalEvaluateCoreAttributes
 class SignalEvaluateResponse(BaseModel):
     request_id: str
     scores: SignalScores
-    core_attributes: SignalEvaluateCoreAttributes
+    core_attributes: Optional[SignalEvaluateCoreAttributes] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

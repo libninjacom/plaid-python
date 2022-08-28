@@ -9,7 +9,7 @@ class PayrollItem(BaseModel):
     item_id: str
     accounts: List[PayrollIncomeAccountData]
     payroll_income: List[PayrollIncomeObject]
-    status: PayrollItemStatus = None
+    status: Optional[PayrollItemStatus] = None
     pull_id: str
 
     def json(self, **kwargs) -> str:

@@ -5,8 +5,8 @@ from .date_range import DateRange
 
 
 class ScreeningHitDateOfBirthItem(BaseModel):
-    analysis: MatchSummary
-    data: DateRange
+    analysis: Optional[MatchSummary] = None
+    data: Optional[DateRange] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

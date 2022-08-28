@@ -5,7 +5,7 @@ from .investment_holdings_get_request_options import InvestmentHoldingsGetReques
 
 class InvestmentsHoldingsGetRequest(BaseModel):
     access_token: str
-    options: InvestmentHoldingsGetRequestOptions
+    options: Optional[InvestmentHoldingsGetRequestOptions] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

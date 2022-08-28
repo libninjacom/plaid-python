@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field
 
 
 class SandboxPublicTokenCreateRequestOptionsTransactions(BaseModel):
-    start_date: str
-    end_date: str
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -3,9 +3,9 @@ from pydantic import BaseModel, Field
 
 
 class WalletListRequest(BaseModel):
-    iso_currency_code: str
-    cursor: str
-    count: int
+    iso_currency_code: Optional[str] = None
+    cursor: Optional[str] = None
+    count: Optional[int] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

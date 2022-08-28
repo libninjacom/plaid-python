@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field
 
 
 class AccountsBalanceGetRequestOptions(BaseModel):
-    account_ids: List[str]
-    min_last_updated_datetime: str
+    account_ids: Optional[List[str]] = None
+    min_last_updated_datetime: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

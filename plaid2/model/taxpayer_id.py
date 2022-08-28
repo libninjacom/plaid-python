@@ -3,9 +3,9 @@ from pydantic import BaseModel, Field
 
 
 class TaxpayerId(BaseModel):
-    id_type: str = None
-    id_mask: str = None
-    last_4_digits: str = None
+    id_type: Optional[str] = None
+    id_mask: Optional[str] = None
+    last_4_digits: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

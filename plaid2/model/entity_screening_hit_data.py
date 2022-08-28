@@ -11,12 +11,12 @@ from .entity_screening_hit_urls_items import EntityScreeningHitUrlsItems
 
 
 class EntityScreeningHitData(BaseModel):
-    documents: List[EntityScreeningHitDocumentsItems]
-    email_addresses: List[EntityScreeningHitEmailsItems]
-    locations: List[GenericScreeningHitLocationItems]
-    names: List[EntityScreeningHitNamesItems]
-    phone_numbers: List[EntityScreeningHitsPhoneNumberItems]
-    urls: List[EntityScreeningHitUrlsItems]
+    documents: Optional[List[EntityScreeningHitDocumentsItems]] = None
+    email_addresses: Optional[List[EntityScreeningHitEmailsItems]] = None
+    locations: Optional[List[GenericScreeningHitLocationItems]] = None
+    names: Optional[List[EntityScreeningHitNamesItems]] = None
+    phone_numbers: Optional[List[EntityScreeningHitsPhoneNumberItems]] = None
+    urls: Optional[List[EntityScreeningHitUrlsItems]] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

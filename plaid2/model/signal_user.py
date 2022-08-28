@@ -5,10 +5,10 @@ from .signal_address_data import SignalAddressData
 
 
 class SignalUser(BaseModel):
-    name: SignalPersonName = None
-    phone_number: str = None
-    email_address: str = None
-    address: SignalAddressData = None
+    name: Optional[SignalPersonName] = None
+    phone_number: Optional[str] = None
+    email_address: Optional[str] = None
+    address: Optional[SignalAddressData] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

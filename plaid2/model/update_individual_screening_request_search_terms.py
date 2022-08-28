@@ -3,11 +3,11 @@ from pydantic import BaseModel, Field
 
 
 class UpdateIndividualScreeningRequestSearchTerms(BaseModel):
-    watchlist_program_id: Any = None
-    legal_name: Any = None
-    date_of_birth: Any = None
-    document_number: Any = None
-    country: Any = None
+    watchlist_program_id: Optional[Any] = None
+    legal_name: Optional[Any] = None
+    date_of_birth: Optional[Any] = None
+    document_number: Optional[Any] = None
+    country: Optional[Any] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -4,8 +4,8 @@ from pydantic import BaseModel, Field
 
 class BankTransferUser(BaseModel):
     legal_name: str
-    email_address: str = None
-    routing_number: str
+    email_address: Optional[str] = None
+    routing_number: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

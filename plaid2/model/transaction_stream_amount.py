@@ -3,9 +3,9 @@ from pydantic import BaseModel, Field
 
 
 class TransactionStreamAmount(BaseModel):
-    amount: float
-    iso_currency_code: str = None
-    unofficial_currency_code: str = None
+    amount: Optional[float] = None
+    iso_currency_code: Optional[str] = None
+    unofficial_currency_code: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

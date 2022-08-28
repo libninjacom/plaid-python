@@ -7,7 +7,7 @@ from .watchlist_screening_request_search_terms import (
 
 class WatchlistScreeningCreateRequest(BaseModel):
     search_terms: WatchlistScreeningRequestSearchTerms
-    client_user_id: Any = None
+    client_user_id: Optional[Any] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

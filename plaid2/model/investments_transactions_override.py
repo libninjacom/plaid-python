@@ -8,10 +8,10 @@ class InvestmentsTransactionsOverride(BaseModel):
     name: str
     quantity: float
     price: float
-    fees: float
+    fees: Optional[float] = None
     type: str
     currency: str
-    security: SecurityOverride
+    security: Optional[SecurityOverride] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -3,14 +3,14 @@ from pydantic import BaseModel, Field
 
 
 class EarningsBreakdown(BaseModel):
-    canonical_description: str = None
-    current_amount: float = None
-    description: str = None
-    hours: float = None
-    iso_currency_code: str = None
-    rate: float = None
-    unofficial_currency_code: str = None
-    ytd_amount: float = None
+    canonical_description: Optional[str] = None
+    current_amount: Optional[float] = None
+    description: Optional[str] = None
+    hours: Optional[float] = None
+    iso_currency_code: Optional[str] = None
+    rate: Optional[float] = None
+    unofficial_currency_code: Optional[str] = None
+    ytd_amount: Optional[float] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

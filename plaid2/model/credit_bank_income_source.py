@@ -4,16 +4,16 @@ from .credit_bank_income_historical_summary import CreditBankIncomeHistoricalSum
 
 
 class CreditBankIncomeSource(BaseModel):
-    income_source_id: str
-    income_description: str
-    income_category: str
-    account_id: str
-    start_date: str
-    end_date: str
-    pay_frequency: str
-    total_amount: float
-    transaction_count: int
-    historical_summary: List[CreditBankIncomeHistoricalSummary]
+    income_source_id: Optional[str] = None
+    income_description: Optional[str] = None
+    income_category: Optional[str] = None
+    account_id: Optional[str] = None
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    pay_frequency: Optional[str] = None
+    total_amount: Optional[float] = None
+    transaction_count: Optional[int] = None
+    historical_summary: Optional[List[CreditBankIncomeHistoricalSummary]] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

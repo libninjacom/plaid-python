@@ -5,12 +5,12 @@ from .credit_bank_income_source import CreditBankIncomeSource
 
 
 class CreditBankIncomeItem(BaseModel):
-    bank_income_accounts: List[CreditBankIncomeAccount]
-    bank_income_sources: List[CreditBankIncomeSource]
-    last_updated_time: str
-    institution_id: str
-    institution_name: str
-    item_id: str
+    bank_income_accounts: Optional[List[CreditBankIncomeAccount]] = None
+    bank_income_sources: Optional[List[CreditBankIncomeSource]] = None
+    last_updated_time: Optional[str] = None
+    institution_id: Optional[str] = None
+    institution_name: Optional[str] = None
+    item_id: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

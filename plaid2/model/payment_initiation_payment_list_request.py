@@ -3,9 +3,9 @@ from pydantic import BaseModel, Field
 
 
 class PaymentInitiationPaymentListRequest(BaseModel):
-    count: int = None
-    cursor: str = None
-    consent_id: str = None
+    count: Optional[int] = None
+    cursor: Optional[str] = None
+    consent_id: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

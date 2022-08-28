@@ -4,10 +4,10 @@ from .address_data_nullable import AddressDataNullable
 
 
 class IdentityMatchUser(BaseModel):
-    legal_name: str = None
-    phone_number: str = None
-    email_address: str = None
-    address: AddressDataNullable = None
+    legal_name: Optional[str] = None
+    phone_number: Optional[str] = None
+    email_address: Optional[str] = None
+    address: Optional[AddressDataNullable] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

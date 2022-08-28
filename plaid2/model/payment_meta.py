@@ -3,14 +3,14 @@ from pydantic import BaseModel, Field
 
 
 class PaymentMeta(BaseModel):
-    reference_number: str = None
-    ppd_id: str = None
-    payee: str = None
-    by_order_of: str = None
-    payer: str = None
-    payment_method: str = None
-    payment_processor: str = None
-    reason: str = None
+    reference_number: Optional[str] = None
+    ppd_id: Optional[str] = None
+    payee: Optional[str] = None
+    by_order_of: Optional[str] = None
+    payer: Optional[str] = None
+    payment_method: Optional[str] = None
+    payment_processor: Optional[str] = None
+    reason: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

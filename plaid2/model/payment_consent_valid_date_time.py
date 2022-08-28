@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field
 
 
 class PaymentConsentValidDateTime(BaseModel):
-    from_: str = Field(default=None, alias="from")
-    to: str = None
+    from_: Optional[str] = Field(default=None, alias="from")
+    to: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -5,8 +5,8 @@ from .entity_document import EntityDocument
 
 
 class EntityScreeningHitDocumentsItems(BaseModel):
-    analysis: MatchSummary
-    data: EntityDocument
+    analysis: Optional[MatchSummary] = None
+    data: Optional[EntityDocument] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

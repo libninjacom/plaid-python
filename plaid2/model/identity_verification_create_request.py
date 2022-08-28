@@ -8,7 +8,7 @@ class IdentityVerificationCreateRequest(BaseModel):
     template_id: str
     gave_consent: bool
     user: IdentityVerificationRequestUser
-    is_idempotent: bool = None
+    is_idempotent: Optional[bool] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

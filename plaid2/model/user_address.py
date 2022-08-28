@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 class UserAddress(BaseModel):
     street: str
-    street_2: str = None
+    street_2: Optional[str] = None
     city: str
     region: str
     postal_code: str

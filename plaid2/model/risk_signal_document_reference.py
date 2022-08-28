@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field
 
 
 class RiskSignalDocumentReference(BaseModel):
-    document_id: str = None
-    document_name: str
+    document_id: Optional[str] = None
+    document_name: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

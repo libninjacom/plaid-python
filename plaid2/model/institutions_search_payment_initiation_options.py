@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field
 
 
 class InstitutionsSearchPaymentInitiationOptions(BaseModel):
-    payment_id: str = None
-    consent_id: str = None
+    payment_id: Optional[str] = None
+    consent_id: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

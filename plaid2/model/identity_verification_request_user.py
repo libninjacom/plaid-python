@@ -7,12 +7,12 @@ from .user_id_number import UserIdNumber
 
 class IdentityVerificationRequestUser(BaseModel):
     client_user_id: str
-    email_address: Any = None
-    phone_number: str = None
-    date_of_birth: str = None
-    name: UserName = None
-    address: UserAddress = None
-    id_number: UserIdNumber = None
+    email_address: Optional[Any] = None
+    phone_number: Optional[str] = None
+    date_of_birth: Optional[str] = None
+    name: Optional[UserName] = None
+    address: Optional[UserAddress] = None
+    id_number: Optional[UserIdNumber] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

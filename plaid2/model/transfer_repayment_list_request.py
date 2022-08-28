@@ -3,10 +3,10 @@ from pydantic import BaseModel, Field
 
 
 class TransferRepaymentListRequest(BaseModel):
-    start_date: str = None
-    end_date: str = None
-    count: int = None
-    offset: int
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    count: Optional[int] = None
+    offset: Optional[int] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

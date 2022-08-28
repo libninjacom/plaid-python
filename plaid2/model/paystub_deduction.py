@@ -3,9 +3,9 @@ from pydantic import BaseModel, Field
 
 
 class PaystubDeduction(BaseModel):
-    type: str = None
-    is_pretax: bool = None
-    total: float = None
+    type: Optional[str] = None
+    is_pretax: Optional[bool] = None
+    total: Optional[float] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

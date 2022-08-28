@@ -12,14 +12,14 @@ from .credit_pay_stub_verification import CreditPayStubVerification
 
 class CreditPayStub(BaseModel):
     deductions: CreditPayStubDeductions
-    document_id: str = None
+    document_id: Optional[str] = None
     document_metadata: CreditDocumentMetadata
     earnings: CreditPayStubEarnings
     employee: CreditPayStubEmployee
     employer: CreditPayStubEmployer
     net_pay: CreditPayStubNetPay
     pay_period_details: PayStubPayPeriodDetails
-    verification: CreditPayStubVerification = None
+    verification: Optional[CreditPayStubVerification] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

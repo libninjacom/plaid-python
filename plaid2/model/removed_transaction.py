@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 
 
 class RemovedTransaction(BaseModel):
-    transaction_id: str
+    transaction_id: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

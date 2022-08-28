@@ -6,7 +6,7 @@ class ProductStatusBreakdown(BaseModel):
     success: float
     error_plaid: float
     error_institution: float
-    refresh_interval: str
+    refresh_interval: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

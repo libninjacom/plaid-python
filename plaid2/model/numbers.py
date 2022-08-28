@@ -3,14 +3,14 @@ from pydantic import BaseModel, Field
 
 
 class Numbers(BaseModel):
-    account: str
-    ach_routing: str
-    ach_wire_routing: str
-    eft_institution: str
-    eft_branch: str
-    international_bic: str
-    international_iban: str
-    bacs_sort_code: str
+    account: Optional[str] = None
+    ach_routing: Optional[str] = None
+    ach_wire_routing: Optional[str] = None
+    eft_institution: Optional[str] = None
+    eft_branch: Optional[str] = None
+    international_bic: Optional[str] = None
+    international_iban: Optional[str] = None
+    bacs_sort_code: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

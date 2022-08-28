@@ -9,7 +9,7 @@ class IdentityVerificationRetryRequest(BaseModel):
     client_user_id: str
     template_id: str
     strategy: str
-    steps: IdentityVerificationRetryRequestStepsObject = None
+    steps: Optional[IdentityVerificationRetryRequestStepsObject] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

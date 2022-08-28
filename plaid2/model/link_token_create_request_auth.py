@@ -3,11 +3,11 @@ from pydantic import BaseModel, Field
 
 
 class LinkTokenCreateRequestAuth(BaseModel):
-    auth_type_select_enabled: bool
-    automated_microdeposits_enabled: bool
-    instant_match_enabled: bool
-    same_day_microdeposits_enabled: bool
-    flow_type: str
+    auth_type_select_enabled: Optional[bool] = None
+    automated_microdeposits_enabled: Optional[bool] = None
+    instant_match_enabled: Optional[bool] = None
+    same_day_microdeposits_enabled: Optional[bool] = None
+    flow_type: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

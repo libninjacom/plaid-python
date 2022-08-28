@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 class SignalDecisionReportRequest(BaseModel):
     client_transaction_id: str
     initiated: bool
-    days_funds_on_hold: int = None
+    days_funds_on_hold: Optional[int] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

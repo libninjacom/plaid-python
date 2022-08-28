@@ -3,12 +3,12 @@ from pydantic import BaseModel, Field
 
 
 class TransactionsGetRequestOptions(BaseModel):
-    account_ids: List[str]
-    count: int
-    offset: int
-    include_original_description: bool = None
-    include_personal_finance_category_beta: bool
-    include_personal_finance_category: bool
+    account_ids: Optional[List[str]] = None
+    count: Optional[int] = None
+    offset: Optional[int] = None
+    include_original_description: Optional[bool] = None
+    include_personal_finance_category_beta: Optional[bool] = None
+    include_personal_finance_category: Optional[bool] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

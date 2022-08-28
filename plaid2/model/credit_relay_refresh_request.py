@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 class CreditRelayRefreshRequest(BaseModel):
     relay_token: str
     report_type: str
-    webhook: str = None
+    webhook: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

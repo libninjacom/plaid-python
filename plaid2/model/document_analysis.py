@@ -8,7 +8,7 @@ from .physical_document_extracted_data_analysis import (
 class DocumentAnalysis(BaseModel):
     authenticity: str
     image_quality: str
-    extracted_data: PhysicalDocumentExtractedDataAnalysis = None
+    extracted_data: Optional[PhysicalDocumentExtractedDataAnalysis] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

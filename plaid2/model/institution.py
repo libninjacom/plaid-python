@@ -10,14 +10,14 @@ class Institution(BaseModel):
     name: str
     products: List[str]
     country_codes: List[str]
-    url: str = None
-    primary_color: str = None
-    logo: str = None
+    url: Optional[str] = None
+    primary_color: Optional[str] = None
+    logo: Optional[str] = None
     routing_numbers: List[str]
     oauth: bool
-    status: InstitutionStatus = None
-    payment_initiation_metadata: PaymentInitiationMetadata = None
-    auth_metadata: AuthMetadata = None
+    status: Optional[InstitutionStatus] = None
+    payment_initiation_metadata: Optional[PaymentInitiationMetadata] = None
+    auth_metadata: Optional[AuthMetadata] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

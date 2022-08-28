@@ -5,9 +5,9 @@ from .transfer_user_address_in_request import TransferUserAddressInRequest
 
 class TransferAuthorizationUserInRequest(BaseModel):
     legal_name: str
-    phone_number: str
-    email_address: str
-    address: TransferUserAddressInRequest
+    phone_number: Optional[str] = None
+    email_address: Optional[str] = None
+    address: Optional[TransferUserAddressInRequest] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

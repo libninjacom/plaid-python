@@ -5,8 +5,8 @@ from .security_override import SecurityOverride
 
 class HoldingsOverride(BaseModel):
     institution_price: float
-    institution_price_as_of: str
-    cost_basis: float
+    institution_price_as_of: Optional[str] = None
+    cost_basis: Optional[float] = None
     quantity: float
     currency: str
     security: SecurityOverride

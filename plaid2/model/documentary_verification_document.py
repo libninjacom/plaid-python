@@ -9,7 +9,7 @@ class DocumentaryVerificationDocument(BaseModel):
     status: str
     attempt: float
     images: PhysicalDocumentImages
-    extracted_data: PhysicalDocumentExtractedData = None
+    extracted_data: Optional[PhysicalDocumentExtractedData] = None
     analysis: DocumentAnalysis
 
     def json(self, **kwargs) -> str:

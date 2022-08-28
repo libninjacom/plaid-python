@@ -3,11 +3,11 @@ from pydantic import BaseModel, Field
 
 
 class ExternalPaymentScheduleBase(BaseModel):
-    interval: str
-    interval_execution_day: int
-    start_date: str
-    end_date: str = None
-    adjusted_start_date: str = None
+    interval: Optional[str] = None
+    interval_execution_day: Optional[int] = None
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    adjusted_start_date: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

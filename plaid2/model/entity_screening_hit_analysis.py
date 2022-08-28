@@ -3,12 +3,12 @@ from pydantic import BaseModel, Field
 
 
 class EntityScreeningHitAnalysis(BaseModel):
-    documents: str
-    email_addresses: str
-    locations: str
-    names: str
-    phone_numbers: str
-    urls: str
+    documents: Optional[str] = None
+    email_addresses: Optional[str] = None
+    locations: Optional[str] = None
+    names: Optional[str] = None
+    phone_numbers: Optional[str] = None
+    urls: Optional[str] = None
     search_terms_version: float
 
     def json(self, **kwargs) -> str:

@@ -4,14 +4,14 @@ from .distribution_breakdown import DistributionBreakdown
 
 
 class PayPeriodDetails(BaseModel):
-    check_amount: float = None
-    distribution_breakdown: List[DistributionBreakdown]
-    end_date: str = None
-    gross_earnings: float = None
-    pay_date: str = None
-    pay_frequency: str = None
-    pay_day: str = None
-    start_date: str = None
+    check_amount: Optional[float] = None
+    distribution_breakdown: Optional[List[DistributionBreakdown]] = None
+    end_date: Optional[str] = None
+    gross_earnings: Optional[float] = None
+    pay_date: Optional[str] = None
+    pay_frequency: Optional[str] = None
+    pay_day: Optional[str] = None
+    start_date: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

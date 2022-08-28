@@ -4,20 +4,20 @@ from pydantic import BaseModel, Field
 
 class DepositSwitchGetResponse(BaseModel):
     deposit_switch_id: str
-    target_account_id: str = None
-    target_item_id: str = None
+    target_account_id: Optional[str] = None
+    target_item_id: Optional[str] = None
     state: str
-    switch_method: str = None
-    account_has_multiple_allocations: bool = None
-    is_allocated_remainder: bool = None
-    percent_allocated: float = None
-    amount_allocated: float = None
-    employer_name: str = None
-    employer_id: str = None
-    institution_name: str = None
-    institution_id: str = None
+    switch_method: Optional[str] = None
+    account_has_multiple_allocations: Optional[bool] = None
+    is_allocated_remainder: Optional[bool] = None
+    percent_allocated: Optional[float] = None
+    amount_allocated: Optional[float] = None
+    employer_name: Optional[str] = None
+    employer_id: Optional[str] = None
+    institution_name: Optional[str] = None
+    institution_id: Optional[str] = None
     date_created: str
-    date_completed: str = None
+    date_completed: Optional[str] = None
     request_id: str
 
     def json(self, **kwargs) -> str:

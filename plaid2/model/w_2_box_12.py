@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field
 
 
 class W2Box12(BaseModel):
-    code: str = None
-    amount: str = None
+    code: Optional[str] = None
+    amount: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

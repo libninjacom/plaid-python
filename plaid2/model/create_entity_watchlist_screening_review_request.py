@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 class CreateEntityWatchlistScreeningReviewRequest(BaseModel):
     confirmed_hits: List[str]
     dismissed_hits: List[str]
-    comment: str = None
+    comment: Optional[str] = None
     entity_watchlist_screening_id: str
 
     def json(self, **kwargs) -> str:

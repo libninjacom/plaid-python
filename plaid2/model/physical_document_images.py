@@ -4,10 +4,10 @@ from pydantic import BaseModel, Field
 
 class PhysicalDocumentImages(BaseModel):
     original_front: str
-    original_back: str = None
-    cropped_front: str = None
-    cropped_back: str = None
-    face: str = None
+    original_back: Optional[str] = None
+    cropped_front: Optional[str] = None
+    cropped_back: Optional[str] = None
+    face: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

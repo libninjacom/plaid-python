@@ -6,8 +6,8 @@ from .pay_stub_taxpayer_id import PayStubTaxpayerId
 
 class CreditPayStubEmployee(BaseModel):
     address: CreditPayStubAddress
-    name: str = None
-    marital_status: str = None
+    name: Optional[str] = None
+    marital_status: Optional[str] = None
     taxpayer_id: PayStubTaxpayerId
 
     def json(self, **kwargs) -> str:

@@ -5,9 +5,9 @@ from .transfer_metadata import TransferMetadata
 
 
 class TransferCreateRequest(BaseModel):
-    idempotency_key: str
-    access_token: str
-    account_id: str
+    idempotency_key: Optional[str] = None
+    access_token: Optional[str] = None
+    account_id: Optional[str] = None
     authorization_id: str
     type: str
     network: str
@@ -15,10 +15,10 @@ class TransferCreateRequest(BaseModel):
     description: str
     ach_class: str
     user: TransferUserInRequest
-    metadata: TransferMetadata = None
-    origination_account_id: str = None
-    iso_currency_code: str
-    payment_profile_id: str
+    metadata: Optional[TransferMetadata] = None
+    origination_account_id: Optional[str] = None
+    iso_currency_code: Optional[str] = None
+    payment_profile_id: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

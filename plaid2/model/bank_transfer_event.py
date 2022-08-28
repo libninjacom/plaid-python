@@ -9,12 +9,12 @@ class BankTransferEvent(BaseModel):
     event_type: str
     account_id: str
     bank_transfer_id: str
-    origination_account_id: str = None
+    origination_account_id: Optional[str] = None
     bank_transfer_type: str
     bank_transfer_amount: str
     bank_transfer_iso_currency_code: str
-    failure_reason: BankTransferFailure = None
-    direction: str = None
+    failure_reason: Optional[BankTransferFailure] = None
+    direction: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

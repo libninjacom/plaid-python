@@ -5,24 +5,24 @@ from .payment_meta import PaymentMeta
 
 
 class TransactionBase(BaseModel):
-    transaction_type: str
-    pending_transaction_id: str = None
-    category_id: str = None
-    category: List[str] = None
-    location: Location
-    payment_meta: PaymentMeta
-    account_owner: str = None
-    name: str
-    original_description: str = None
+    transaction_type: Optional[str] = None
+    pending_transaction_id: Optional[str] = None
+    category_id: Optional[str] = None
+    category: Optional[List[str]] = None
+    location: Optional[Location] = None
+    payment_meta: Optional[PaymentMeta] = None
+    account_owner: Optional[str] = None
+    name: Optional[str] = None
+    original_description: Optional[str] = None
     account_id: str
     amount: float
-    iso_currency_code: str = None
-    unofficial_currency_code: str = None
+    iso_currency_code: Optional[str] = None
+    unofficial_currency_code: Optional[str] = None
     date: str
     pending: bool
     transaction_id: str
-    merchant_name: str = None
-    check_number: str = None
+    merchant_name: Optional[str] = None
+    check_number: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

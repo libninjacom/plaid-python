@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field
 
 
 class PaystubYtdDetails(BaseModel):
-    gross_earnings: float = None
-    net_earnings: float = None
+    gross_earnings: Optional[float] = None
+    net_earnings: Optional[float] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

@@ -3,15 +3,15 @@ from pydantic import BaseModel, Field
 
 
 class ProductAccess(BaseModel):
-    statements: bool = None
-    identity: bool = None
-    auth: bool = None
-    transactions: bool = None
-    accounts_details_transactions: bool = None
-    accounts_routing_number: bool = None
-    accounts_statements: bool = None
-    accounts_tax_statements: bool = None
-    customers_profiles: bool = None
+    statements: Optional[bool] = None
+    identity: Optional[bool] = None
+    auth: Optional[bool] = None
+    transactions: Optional[bool] = None
+    accounts_details_transactions: Optional[bool] = None
+    accounts_routing_number: Optional[bool] = None
+    accounts_statements: Optional[bool] = None
+    accounts_tax_statements: Optional[bool] = None
+    customers_profiles: Optional[bool] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

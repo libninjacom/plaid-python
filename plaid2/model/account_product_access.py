@@ -3,9 +3,9 @@ from pydantic import BaseModel, Field
 
 
 class AccountProductAccess(BaseModel):
-    account_data: bool = None
-    statements: bool = None
-    tax_documents: bool = None
+    account_data: Optional[bool] = None
+    statements: Optional[bool] = None
+    tax_documents: Optional[bool] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

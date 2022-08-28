@@ -4,12 +4,12 @@ from .credit_pay_stub_address import CreditPayStubAddress
 
 
 class Credit1099Recipient(BaseModel):
-    address: CreditPayStubAddress
-    name: str = None
-    tin: str = None
-    account_number: str = None
-    facta_filing_requirement: str = None
-    second_tin_exists: str = None
+    address: Optional[CreditPayStubAddress] = None
+    name: Optional[str] = None
+    tin: Optional[str] = None
+    account_number: Optional[str] = None
+    facta_filing_requirement: Optional[str] = None
+    second_tin_exists: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

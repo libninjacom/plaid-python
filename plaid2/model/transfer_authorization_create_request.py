@@ -5,18 +5,18 @@ from .transfer_authorization_device import TransferAuthorizationDevice
 
 
 class TransferAuthorizationCreateRequest(BaseModel):
-    access_token: str
-    account_id: str
+    access_token: Optional[str] = None
+    account_id: Optional[str] = None
     type: str
     network: str
     amount: str
     ach_class: str
     user: TransferAuthorizationUserInRequest
-    device: TransferAuthorizationDevice
-    origination_account_id: str
-    iso_currency_code: str
-    user_present: bool = None
-    payment_profile_id: str
+    device: Optional[TransferAuthorizationDevice] = None
+    origination_account_id: Optional[str] = None
+    iso_currency_code: Optional[str] = None
+    user_present: Optional[bool] = None
+    payment_profile_id: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

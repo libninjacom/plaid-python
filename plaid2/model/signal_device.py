@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field
 
 
 class SignalDevice(BaseModel):
-    ip_address: str = None
-    user_agent: str = None
+    ip_address: Optional[str] = None
+    user_agent: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

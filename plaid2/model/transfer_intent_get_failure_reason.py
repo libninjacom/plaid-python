@@ -3,9 +3,9 @@ from pydantic import BaseModel, Field
 
 
 class TransferIntentGetFailureReason(BaseModel):
-    error_type: str
-    error_code: str
-    error_message: str
+    error_type: Optional[str] = None
+    error_code: Optional[str] = None
+    error_message: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

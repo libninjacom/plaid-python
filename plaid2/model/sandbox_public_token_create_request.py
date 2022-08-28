@@ -8,8 +8,8 @@ from .sandbox_public_token_create_request_options import (
 class SandboxPublicTokenCreateRequest(BaseModel):
     institution_id: str
     initial_products: List[str]
-    options: SandboxPublicTokenCreateRequestOptions
-    user_token: str
+    options: Optional[SandboxPublicTokenCreateRequestOptions] = None
+    user_token: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

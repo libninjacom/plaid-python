@@ -5,7 +5,7 @@ from .auth_get_request_options import AuthGetRequestOptions
 
 class AuthGetRequest(BaseModel):
     access_token: str
-    options: AuthGetRequestOptions
+    options: Optional[AuthGetRequestOptions] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

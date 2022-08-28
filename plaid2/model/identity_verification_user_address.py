@@ -3,11 +3,11 @@ from pydantic import BaseModel, Field
 
 
 class IdentityVerificationUserAddress(BaseModel):
-    street: Any = None
-    street_2: str = None
-    city: Any = None
-    region: Any = None
-    postal_code: Any = None
+    street: Optional[Any] = None
+    street_2: Optional[str] = None
+    city: Optional[Any] = None
+    region: Optional[Any] = None
+    postal_code: Optional[Any] = None
     country: str
 
     def json(self, **kwargs) -> str:

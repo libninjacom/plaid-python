@@ -7,58 +7,60 @@ from .credit_1099_filer import Credit1099Filer
 
 
 class Credit1099(BaseModel):
-    document_id: str = None
-    document_metadata: CreditDocumentMetadata
-    form_1099_type: str
-    recipient: Credit1099Recipient
-    payer: Credit1099Payer
-    filer: Credit1099Filer
-    tax_year: str = None
-    rents: float = None
-    royalties: float = None
-    other_income: float = None
-    federal_income_tax_withheld: float = None
-    fishing_boat_proceeds: float = None
-    medical_and_healthcare_payments: float = None
-    nonemployee_compensation: float = None
-    substitute_payments_in_lieu_of_dividends_or_interest: float = None
-    payer_made_direct_sales_of_5000_or_more_of_consumer_products_to_buyer: str = None
-    crop_insurance_proceeds: float = None
-    excess_golden_parachute_payments: float = None
-    gross_proceeds_paid_to_an_attorney: float = None
-    section_409_a_deferrals: float = None
-    section_409_a_income: float = None
-    state_tax_withheld: float = None
-    state_tax_withheld_lower: float = None
-    payer_state_number: str = None
-    payer_state_number_lower: str = None
-    state_income: float = None
-    state_income_lower: float = None
-    transactions_reported: str = None
-    pse_name: str = None
-    pse_telephone_number: str = None
-    gross_amount: float = None
-    card_not_present_transaction: float = None
-    merchant_category_code: str = None
-    number_of_payment_transactions: str = None
-    january_amount: float = None
-    february_amount: float = None
-    march_amount: float = None
-    april_amount: float = None
-    may_amount: float = None
-    june_amount: float = None
-    july_amount: float = None
-    august_amount: float = None
-    september_amount: float = None
-    october_amount: float = None
-    november_amount: float = None
-    december_amount: float = None
-    primary_state: str = None
-    secondary_state: str = None
-    primary_state_id: str = None
-    secondary_state_id: str = None
-    primary_state_income_tax: float = None
-    secondary_state_income_tax: float = None
+    document_id: Optional[str] = None
+    document_metadata: Optional[CreditDocumentMetadata] = None
+    form_1099_type: Optional[str] = None
+    recipient: Optional[Credit1099Recipient] = None
+    payer: Optional[Credit1099Payer] = None
+    filer: Optional[Credit1099Filer] = None
+    tax_year: Optional[str] = None
+    rents: Optional[float] = None
+    royalties: Optional[float] = None
+    other_income: Optional[float] = None
+    federal_income_tax_withheld: Optional[float] = None
+    fishing_boat_proceeds: Optional[float] = None
+    medical_and_healthcare_payments: Optional[float] = None
+    nonemployee_compensation: Optional[float] = None
+    substitute_payments_in_lieu_of_dividends_or_interest: Optional[float] = None
+    payer_made_direct_sales_of_5000_or_more_of_consumer_products_to_buyer: Optional[
+        str
+    ] = None
+    crop_insurance_proceeds: Optional[float] = None
+    excess_golden_parachute_payments: Optional[float] = None
+    gross_proceeds_paid_to_an_attorney: Optional[float] = None
+    section_409_a_deferrals: Optional[float] = None
+    section_409_a_income: Optional[float] = None
+    state_tax_withheld: Optional[float] = None
+    state_tax_withheld_lower: Optional[float] = None
+    payer_state_number: Optional[str] = None
+    payer_state_number_lower: Optional[str] = None
+    state_income: Optional[float] = None
+    state_income_lower: Optional[float] = None
+    transactions_reported: Optional[str] = None
+    pse_name: Optional[str] = None
+    pse_telephone_number: Optional[str] = None
+    gross_amount: Optional[float] = None
+    card_not_present_transaction: Optional[float] = None
+    merchant_category_code: Optional[str] = None
+    number_of_payment_transactions: Optional[str] = None
+    january_amount: Optional[float] = None
+    february_amount: Optional[float] = None
+    march_amount: Optional[float] = None
+    april_amount: Optional[float] = None
+    may_amount: Optional[float] = None
+    june_amount: Optional[float] = None
+    july_amount: Optional[float] = None
+    august_amount: Optional[float] = None
+    september_amount: Optional[float] = None
+    october_amount: Optional[float] = None
+    november_amount: Optional[float] = None
+    december_amount: Optional[float] = None
+    primary_state: Optional[str] = None
+    secondary_state: Optional[str] = None
+    primary_state_id: Optional[str] = None
+    secondary_state_id: Optional[str] = None
+    primary_state_income_tax: Optional[float] = None
+    secondary_state_income_tax: Optional[float] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

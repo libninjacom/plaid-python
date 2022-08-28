@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field
 
 
 class LinkTokenCreateRequestIncomeVerificationBankIncome(BaseModel):
-    days_requested: int
-    enable_multiple_items: bool = None
+    days_requested: Optional[int] = None
+    enable_multiple_items: Optional[bool] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

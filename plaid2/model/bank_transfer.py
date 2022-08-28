@@ -18,11 +18,11 @@ class BankTransfer(BaseModel):
     status: str
     network: str
     cancellable: bool
-    failure_reason: BankTransferFailure = None
-    custom_tag: str = None
-    metadata: BankTransferMetadata = None
+    failure_reason: Optional[BankTransferFailure] = None
+    custom_tag: Optional[str] = None
+    metadata: Optional[BankTransferMetadata] = None
     origination_account_id: str
-    direction: str = None
+    direction: Optional[str] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

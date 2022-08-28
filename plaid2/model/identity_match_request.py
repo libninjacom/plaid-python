@@ -6,8 +6,8 @@ from .identity_match_request_options import IdentityMatchRequestOptions
 
 class IdentityMatchRequest(BaseModel):
     access_token: str
-    user: IdentityMatchUser
-    options: IdentityMatchRequestOptions
+    user: Optional[IdentityMatchUser] = None
+    options: Optional[IdentityMatchRequestOptions] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

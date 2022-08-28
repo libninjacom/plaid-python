@@ -7,10 +7,10 @@ from .earnings_total import EarningsTotal
 
 
 class Earnings(BaseModel):
-    subtotals: List[EarningsTotal]
-    totals: List[EarningsTotal]
-    breakdown: List[EarningsBreakdown]
-    total: EarningsTotal
+    subtotals: Optional[List[EarningsTotal]] = None
+    totals: Optional[List[EarningsTotal]] = None
+    breakdown: Optional[List[EarningsBreakdown]] = None
+    total: Optional[EarningsTotal] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""

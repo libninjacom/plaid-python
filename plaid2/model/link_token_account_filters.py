@@ -7,10 +7,10 @@ from .investment_filter import InvestmentFilter
 
 
 class LinkTokenAccountFilters(BaseModel):
-    depository: DepositoryFilter
-    credit: CreditFilter
-    loan: LoanFilter
-    investment: InvestmentFilter
+    depository: Optional[DepositoryFilter] = None
+    credit: Optional[CreditFilter] = None
+    loan: Optional[LoanFilter] = None
+    investment: Optional[InvestmentFilter] = None
 
     def json(self, **kwargs) -> str:
         """Return a json string representation of the object. Takes same keyword arguments as pydantic.BaseModel.json"""
