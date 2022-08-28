@@ -8,7 +8,7 @@ authors = [{name = "Graziella", email = "kurtwolfbuilds@gmail.com"}]
 version = "0.0.8"
 description = "Lumache - Python library for cooks and food lovers."
 dependencies = [
-    "requests>=2.18.4",
+    "requests>=2.27.1",
 ]
 requires-python = ">=3.6"
 
