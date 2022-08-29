@@ -10,7 +10,7 @@ from . import model
 
 
 class AsyncPlaidClient:
-    def __init__(self, base_url: str, authenticator: PlaidAuthenticator):
+    def __init__(self, base_url: str, authenticator: PlaidAuthenticator) -> None:
         self.authenticator = authenticator
         self.base_url = base_url
         self.session = aiohttp.ClientSession(
@@ -71,9 +71,9 @@ class AsyncPlaidClient:
         self, access_token: Optional[str] = None
     ) -> model.ItemApplicationListResponse:
         """List a user’s connected applications"""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
         }
         res = await self.send(
@@ -93,9 +93,9 @@ class AsyncPlaidClient:
         """Update the scopes of access for a particular application
 
         Enable consumers to update product access on selected accounts for an application."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
             "application_id": application_id,
             "scopes": None if scopes is None else scopes.dict(),
@@ -118,9 +118,9 @@ class AsyncPlaidClient:
         """Retrieve information about a Plaid application
 
         Allows financial institutions to retrieve information about Plaid clients for the purpose of building control-tower experiences"""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "application_id": application_id,
         }
         res = await self.send(
@@ -135,9 +135,9 @@ class AsyncPlaidClient:
         Returns information about the status of an Item.
 
         See endpoint docs at <https://plaid.com/docs/api/items/#itemget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
         }
         res = await self.send(
@@ -160,9 +160,9 @@ class AsyncPlaidClient:
         Versioning note: In API version 2017-03-08, the schema of the `numbers` object returned by this endpoint is substantially different. For details, see [Plaid API versioning](https://plaid.com/docs/api/versioning/#version-2018-05-22).
 
         See endpoint docs at <https://plaid.com/docs/api/products/auth/#authget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
             "options": None if options is None else options.dict(),
         }
@@ -192,9 +192,9 @@ class AsyncPlaidClient:
         Note that data may not be immediately available to `/transactions/get`. Plaid will begin to prepare transactions data upon Item link, if Link was initialized with `transactions`, or upon the first call to `/transactions/get`, if it wasn't. To be alerted when transaction data is ready to be fetched, listen for the [`INITIAL_UPDATE`](https://plaid.com/docs/api/products/transactions/#initial_update) and [`HISTORICAL_UPDATE`](https://plaid.com/docs/api/products/transactions/#historical_update) webhooks. If no transaction history is ready when `/transactions/get` is called, it will return a `PRODUCT_NOT_READY` error.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transactions/#transactionsget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "options": None if options is None else options.dict(),
             "access_token": access_token,
             "start_date": start_date,
@@ -216,9 +216,9 @@ class AsyncPlaidClient:
         Access to `/transactions/refresh` in Production is specific to certain pricing plans. If you cannot access `/transactions/refresh` in Production, [contact Sales](https://www.plaid.com/contact) for assistance.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transactions/#transactionsrefresh>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
         }
         res = await self.send(
@@ -244,9 +244,9 @@ class AsyncPlaidClient:
         After the initial call, you can call `/transactions/recurring/get` endpoint at any point in the future to retrieve the latest summary of recurring streams. Since recurring streams do not change often, it will typically not be necessary to call this endpoint more than once per day.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transactions/#transactionsrecurringget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
             "options": None if options is None else options.dict(),
             "account_ids": account_ids,
@@ -285,9 +285,9 @@ class AsyncPlaidClient:
         To be alerted when new data is available, listen for the [`SYNC_UPDATES_AVAILABLE`](https://plaid.com/docs/api/products/transactions/#sync_updates_available) webhook.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transactions/#transactionssync>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
             "cursor": cursor,
             "count": count,
@@ -313,9 +313,9 @@ class AsyncPlaidClient:
         If there is no overlap between an institution’s enabled products and a client’s enabled products, then the institution will be filtered out from the response. As a result, the number of institutions returned may not match the count specified in the call.
 
         See endpoint docs at <https://plaid.com/docs/api/institutions/#institutionsget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "count": count,
             "offset": offset,
             "country_codes": country_codes,
@@ -342,9 +342,9 @@ class AsyncPlaidClient:
 
 
         See endpoint docs at <https://plaid.com/docs/api/institutions/#institutionssearch>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "query": query,
             "products": products,
             "country_codes": country_codes,
@@ -370,9 +370,9 @@ class AsyncPlaidClient:
 
 
         See endpoint docs at <https://plaid.com/docs/api/institutions/#institutionsget_by_id>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "institution_id": institution_id,
             "country_codes": country_codes,
             "options": None if options is None else options.dict(),
@@ -395,9 +395,9 @@ class AsyncPlaidClient:
         API versions 2019-05-29 and earlier return a `removed` boolean as part of the response.
 
         See endpoint docs at <https://plaid.com/docs/api/items/#itemremove>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
         }
         res = await self.send(
@@ -419,9 +419,9 @@ class AsyncPlaidClient:
         This endpoint retrieves cached information, rather than extracting fresh information from the institution. As a result, balances returned may not be up-to-date; for realtime balance information, use `/accounts/balance/get` instead. Note that some information is nullable.
 
         See endpoint docs at <https://plaid.com/docs/api/accounts/#accountsget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
             "options": None if options is None else options.dict(),
         }
@@ -437,9 +437,9 @@ class AsyncPlaidClient:
         Send a request to the `/categories/get` endpoint to get detailed information on categories returned by Plaid. This endpoint does not require authentication.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transactions/#categoriesget>."""
-        headers = {}
-        params = {}
-        data = {}
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {}
         res = await self.send(
             "POST", self.base_url + "/categories/get", headers, params, data
         )
@@ -456,9 +456,9 @@ class AsyncPlaidClient:
         Use the `/sandbox/processor_token/create` endpoint to create a valid `processor_token` for an arbitrary institution ID and test credentials. The created `processor_token` corresponds to a new Sandbox Item. You can then use this `processor_token` with the `/processor/` API endpoints in Sandbox. You can also use `/sandbox/processor_token/create` with the [`user_custom` test username](https://plaid.com/docs/sandbox/user-custom) to generate a test account with custom data.
 
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxprocessor_tokencreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "institution_id": institution_id,
             "options": None if options is None else options.dict(),
         }
@@ -484,9 +484,9 @@ class AsyncPlaidClient:
         Use the `/sandbox/public_token/create` endpoint to create a valid `public_token`  for an arbitrary institution ID, initial products, and test credentials. The created `public_token` maps to a new Sandbox Item. You can then call `/item/public_token/exchange` to exchange the `public_token` for an `access_token` and perform all API actions. `/sandbox/public_token/create` can also be used with the [`user_custom` test username](https://plaid.com/docs/sandbox/user-custom) to generate a test account with custom data. `/sandbox/public_token/create` cannot be used with OAuth institutions.
 
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxpublic_tokencreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "institution_id": institution_id,
             "initial_products": initial_products,
             "options": None if options is None else options.dict(),
@@ -520,9 +520,9 @@ class AsyncPlaidClient:
         Note that this endpoint is provided for developer ease-of-use and is not required for testing webhooks; webhooks will also fire in Sandbox under the same conditions that they would in Production or Development.
 
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxitemfire_webhook>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
             "webhook_type": webhook_type,
             "webhook_code": webhook_code,
@@ -543,9 +543,9 @@ class AsyncPlaidClient:
         The `/accounts/balance/get` endpoint returns the real-time balance for each of an Item's accounts. While other endpoints may return a balance object, only `/accounts/balance/get` forces the available and current balance fields to be refreshed rather than cached. This endpoint can be used for existing Items that were added via any of Plaid’s other products. This endpoint can be used as long as Link has been initialized with any other product, `balance` itself is not a product that can be used to initialize Link.
 
         See endpoint docs at <https://plaid.com/docs/api/products/balance/#accountsbalanceget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
             "options": None if options is None else options.dict(),
         }
@@ -569,9 +569,9 @@ class AsyncPlaidClient:
         Note: In API versions 2018-05-22 and earlier, the `owners` object is not returned, and instead identity information is returned in the top level `identity` object. For more details, see [Plaid API versioning](https://plaid.com/docs/api/versioning/#version-2019-05-29).
 
         See endpoint docs at <https://plaid.com/docs/api/products/identity/#identityget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
             "options": None if options is None else options.dict(),
         }
@@ -594,9 +594,9 @@ class AsyncPlaidClient:
         This request may take some time to complete if Identity was not specified as an initial product when creating the Item. This is because Plaid must communicate directly with the institution to retrieve the data.
 
         See endpoint docs at <https://plaid.com/docs/api/products/identity/#identitymatch>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
             "user": None if user is None else user.dict(),
             "options": None if options is None else options.dict(),
@@ -615,9 +615,9 @@ class AsyncPlaidClient:
         Retrieve information about a dashboard user.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#dashboard_userget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "dashboard_user_id": dashboard_user_id,
         }
         res = await self.send(
@@ -634,9 +634,9 @@ class AsyncPlaidClient:
         List all dashboard users associated with your account.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#dashboard_userlist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "cursor": cursor,
         }
         res = await self.send(
@@ -660,9 +660,9 @@ class AsyncPlaidClient:
 
 
         See endpoint docs at <https://plaid.com/docs/api/products/identity-verification/#identity_verificationcreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "is_shareable": is_shareable,
             "template_id": template_id,
             "gave_consent": gave_consent,
@@ -687,9 +687,9 @@ class AsyncPlaidClient:
         Retrieve a previously created identity verification
 
         See endpoint docs at <https://plaid.com/docs/api/products/identity-verification/#identity_verificationget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "identity_verification_id": identity_verification_id,
         }
         res = await self.send(
@@ -706,9 +706,9 @@ class AsyncPlaidClient:
         Filter and list Identity Verifications created by your account
 
         See endpoint docs at <https://plaid.com/docs/api/products/identity-verification/#identity_verificationlist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "template_id": template_id,
             "client_user_id": client_user_id,
             "cursor": cursor,
@@ -731,9 +731,9 @@ class AsyncPlaidClient:
         Allow a customer to retry their identity verification
 
         See endpoint docs at <https://plaid.com/docs/api/products/identity-verification/#identity_verificationretry>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "client_user_id": client_user_id,
             "template_id": template_id,
             "strategy": strategy,
@@ -759,9 +759,9 @@ class AsyncPlaidClient:
         Create a new entity watchlist screening to check your customer against watchlists defined in the associated entity watchlist program. If your associated program has ongoing screening enabled, this is the profile information that will be used to monitor your customer over time.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentitycreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "search_terms": None if search_terms is None else search_terms.dict(),
             "client_user_id": client_user_id,
         }
@@ -783,9 +783,9 @@ class AsyncPlaidClient:
         Retrieve an entity watchlist screening.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
         }
         res = await self.send(
@@ -806,9 +806,9 @@ class AsyncPlaidClient:
         List all changes to the entity watchlist screening in reverse-chronological order. If the watchlist screening has not been edited, no history will be returned.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityhistorylist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
             "cursor": cursor,
         }
@@ -830,9 +830,9 @@ class AsyncPlaidClient:
         List all hits for the entity watchlist screening.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityhitlist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
             "cursor": cursor,
         }
@@ -859,9 +859,9 @@ class AsyncPlaidClient:
         List all entity screenings.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentitylist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "entity_watchlist_program_id": entity_watchlist_program_id,
             "client_user_id": client_user_id,
             "status": status,
@@ -886,9 +886,9 @@ class AsyncPlaidClient:
         Get an entity watchlist screening program
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityprogramget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "entity_watchlist_program_id": entity_watchlist_program_id,
         }
         res = await self.send(
@@ -909,9 +909,9 @@ class AsyncPlaidClient:
         List all entity watchlist screening programs
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityprogramlist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "cursor": cursor,
         }
         res = await self.send(
@@ -936,9 +936,9 @@ class AsyncPlaidClient:
         Create a review for an entity watchlist screening. Reviews are compliance reports created by users in your organization regarding the relevance of potential hits found by Plaid.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityreviewcreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "confirmed_hits": confirmed_hits,
             "dismissed_hits": dismissed_hits,
             "comment": comment,
@@ -962,9 +962,9 @@ class AsyncPlaidClient:
         List all reviews for a particular entity watchlist screening. Reviews are compliance reports created by users in your organization regarding the relevance of potential hits found by Plaid.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityreviewlist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
             "cursor": cursor,
         }
@@ -992,9 +992,9 @@ class AsyncPlaidClient:
         Update an entity watchlist screening.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityupdate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
             "search_terms": None if search_terms is None else search_terms.dict(),
             "assignee": assignee,
@@ -1022,9 +1022,9 @@ class AsyncPlaidClient:
         Create a new Watchlist Screening to check your customer against watchlists defined in the associated Watchlist Program. If your associated program has ongoing screening enabled, this is the profile information that will be used to monitor your customer over time.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualcreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "search_terms": None if search_terms is None else search_terms.dict(),
             "client_user_id": client_user_id,
         }
@@ -1046,9 +1046,9 @@ class AsyncPlaidClient:
         Retrieve a previously created individual watchlist screening
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "watchlist_screening_id": watchlist_screening_id,
         }
         res = await self.send(
@@ -1069,9 +1069,9 @@ class AsyncPlaidClient:
         List all changes to the individual watchlist screening in reverse-chronological order. If the watchlist screening has not been edited, no history will be returned.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualhistorylist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "watchlist_screening_id": watchlist_screening_id,
             "cursor": cursor,
         }
@@ -1093,9 +1093,9 @@ class AsyncPlaidClient:
         List all hits found by Plaid for a particular individual watchlist screening.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualhitlist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "watchlist_screening_id": watchlist_screening_id,
             "cursor": cursor,
         }
@@ -1124,9 +1124,9 @@ class AsyncPlaidClient:
         List previously created watchlist screenings for individuals
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividuallist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "watchlist_program_id": watchlist_program_id,
             "client_user_id": client_user_id,
             "status": status,
@@ -1151,9 +1151,9 @@ class AsyncPlaidClient:
         Get an individual watchlist screening program
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualprogramget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "watchlist_program_id": watchlist_program_id,
         }
         res = await self.send(
@@ -1174,9 +1174,9 @@ class AsyncPlaidClient:
         List all individual watchlist screening programs
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualprogramlist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "cursor": cursor,
         }
         res = await self.send(
@@ -1201,9 +1201,9 @@ class AsyncPlaidClient:
         Create a review for the individual watchlist screening. Reviews are compliance reports created by users in your organization regarding the relevance of potential hits found by Plaid.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualreviewcreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "confirmed_hits": confirmed_hits,
             "dismissed_hits": dismissed_hits,
             "comment": comment,
@@ -1227,9 +1227,9 @@ class AsyncPlaidClient:
         List all reviews for the individual watchlist screening.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualreviewlist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "watchlist_screening_id": watchlist_screening_id,
             "cursor": cursor,
         }
@@ -1261,9 +1261,9 @@ class AsyncPlaidClient:
         Update a specific individual watchlist screening. This endpoint can be used to add additional customer information, correct outdated information, add a reference id, assign the individual to a reviewer, and update which program it is associated with. Please note that you may not update `search_terms` and `status` at the same time since editing `search_terms` may trigger an automatic `status` change.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualupdate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "watchlist_screening_id": watchlist_screening_id,
             "search_terms": None if search_terms is None else search_terms.dict(),
             "assignee": assignee,
@@ -1292,9 +1292,9 @@ class AsyncPlaidClient:
 
 
         See endpoint docs at <https://plaid.com/docs/api/processors/#processorauthget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "processor_token": processor_token,
         }
         res = await self.send(
@@ -1323,9 +1323,9 @@ class AsyncPlaidClient:
         Use the `/processor/bank_transfer/create` endpoint to initiate a new bank transfer as a processor
 
         See endpoint docs at <https://plaid.com/docs/api/processors/#bank_transfercreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "idempotency_key": idempotency_key,
             "processor_token": processor_token,
             "type": type,
@@ -1357,9 +1357,9 @@ class AsyncPlaidClient:
         The `/processor/identity/get` endpoint allows you to retrieve various account holder information on file with the financial institution, including names, emails, phone numbers, and addresses.
 
         See endpoint docs at <https://plaid.com/docs/api/processors/#processoridentityget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "processor_token": processor_token,
         }
         res = await self.send(
@@ -1378,9 +1378,9 @@ class AsyncPlaidClient:
         The `/processor/balance/get` endpoint returns the real-time balance for each of an Item's accounts. While other endpoints may return a balance object, only `/processor/balance/get` forces the available and current balance fields to be refreshed rather than cached.
 
         See endpoint docs at <https://plaid.com/docs/api/processors/#processorbalanceget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "processor_token": processor_token,
             "options": None if options is None else options.dict(),
         }
@@ -1398,9 +1398,9 @@ class AsyncPlaidClient:
         The POST `/item/webhook/update` allows you to update the webhook URL associated with an Item. This request triggers a [`WEBHOOK_UPDATE_ACKNOWLEDGED`](https://plaid.com/docs/api/items/#webhook_update_acknowledged) webhook to the newly specified webhook URL.
 
         See endpoint docs at <https://plaid.com/docs/api/items/#itemwebhookupdate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
             "webhook": webhook,
         }
@@ -1421,9 +1421,9 @@ class AsyncPlaidClient:
 
 
         See endpoint docs at <https://plaid.com/docs/api/tokens/#itemaccess_tokeninvalidate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
         }
         res = await self.send(
@@ -1446,9 +1446,9 @@ class AsyncPlaidClient:
         The `/webhook_verification_key/get` endpoint provides a JSON Web Key (JWK) that can be used to verify a JWT.
 
         See endpoint docs at <https://plaid.com/docs/api/webhooks/webhook-verification/#webhook_verification_keyget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "key_id": key_id,
         }
         res = await self.send(
@@ -1475,9 +1475,9 @@ class AsyncPlaidClient:
         Note: This request may take some time to complete if `liabilities` was not specified as an initial product when creating the Item. This is because Plaid must communicate directly with the institution to retrieve the additional data.
 
         See endpoint docs at <https://plaid.com/docs/api/products/liabilities/#liabilitiesget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
             "options": None if options is None else options.dict(),
         }
@@ -1502,9 +1502,9 @@ class AsyncPlaidClient:
 
 
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationrecipientcreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "name": name,
             "iban": iban,
             "bacs": None if bacs is None else bacs.dict(),
@@ -1531,9 +1531,9 @@ class AsyncPlaidClient:
 
 
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationpaymentreverse>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "payment_id": payment_id,
             "idempotency_key": idempotency_key,
             "reference": reference,
@@ -1556,9 +1556,9 @@ class AsyncPlaidClient:
         Get details about a payment recipient you have previously created.
 
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationrecipientget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "recipient_id": recipient_id,
         }
         res = await self.send(
@@ -1579,9 +1579,9 @@ class AsyncPlaidClient:
         The `/payment_initiation/recipient/list` endpoint list the payment recipients that you have previously created.
 
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationrecipientlist>."""
-        headers = {}
-        params = {}
-        data = {}
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {}
         res = await self.send(
             "POST",
             self.base_url + "/payment_initiation/recipient/list",
@@ -1609,9 +1609,9 @@ class AsyncPlaidClient:
         In the Development environment, payments must be below 5 GBP / EUR. For details on any payment limits in Production, contact your Plaid Account Manager.
 
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationpaymentcreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "recipient_id": recipient_id,
             "reference": reference,
             "amount": None if amount is None else amount.dict(),
@@ -1638,9 +1638,9 @@ class AsyncPlaidClient:
         The `/payment_initiation/payment/token/create` is used to create a `payment_token`, which can then be used in Link initialization to enter a payment initiation flow. You can only use a `payment_token` once. If this attempt fails, the end user aborts the flow, or the token expires, you will need to create a new payment token. Creating a new payment token does not require end user input.
 
         See endpoint docs at <https://plaid.com/docs/link/maintain-legacy-integration/#creating-a-payment-token>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "payment_id": payment_id,
         }
         res = await self.send(
@@ -1668,9 +1668,9 @@ class AsyncPlaidClient:
         Consents can be limited in time and scope, and have constraints that describe limitations for payments.
 
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationconsentcreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "recipient_id": recipient_id,
             "reference": reference,
             "scopes": scopes,
@@ -1695,9 +1695,9 @@ class AsyncPlaidClient:
         The `/payment_initiation/consent/get` endpoint can be used to check the status of a payment consent, as well as to receive basic information such as recipient and constraints.
 
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationconsentget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "consent_id": consent_id,
         }
         res = await self.send(
@@ -1718,9 +1718,9 @@ class AsyncPlaidClient:
         The `/payment_initiation/consent/revoke` endpoint can be used to revoke the payment consent. Once the consent is revoked, it is not possible to initiate payments using it.
 
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationconsentrevoke>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "consent_id": consent_id,
         }
         res = await self.send(
@@ -1741,9 +1741,9 @@ class AsyncPlaidClient:
         The `/payment_initiation/consent/payment/execute` endpoint can be used to execute payments using payment consent.
 
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationconsentpaymentexecute>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "consent_id": consent_id,
             "amount": None if amount is None else amount.dict(),
             "idempotency_key": idempotency_key,
@@ -1769,9 +1769,9 @@ class AsyncPlaidClient:
         In the Sandbox, Items will transition to an `ITEM_LOGIN_REQUIRED` error state automatically after 30 days, even if this endpoint is not called.
 
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxitemreset_login>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
         }
         res = await self.send(
@@ -1792,9 +1792,9 @@ class AsyncPlaidClient:
         For more information on testing Automated Micro-deposits in Sandbox, see [Auth full coverage testing](https://plaid.com/docs/auth/coverage/testing#).
 
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxitemset_verification_status>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
             "account_id": account_id,
             "verification_status": verification_status,
@@ -1819,9 +1819,9 @@ class AsyncPlaidClient:
         The response also includes an `item_id` that should be stored with the `access_token`. The `item_id` is used to identify an Item in a webhook. The `item_id` can also be retrieved by making an `/item/get` request.
 
         See endpoint docs at <https://plaid.com/docs/api/tokens/#itempublic_tokenexchange>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "public_token": public_token,
         }
         res = await self.send(
@@ -1844,9 +1844,9 @@ class AsyncPlaidClient:
         The `/item/public_token/create` endpoint is **not** used to create your initial `public_token`. If you have not already received an `access_token` for a specific Item, use Link to obtain your `public_token` instead. See the [Quickstart](https://plaid.com/docs/quickstart) for more information.
 
         See endpoint docs at <https://plaid.com/docs/api/tokens/#itempublic_tokencreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
         }
         res = await self.send(
@@ -1863,9 +1863,9 @@ class AsyncPlaidClient:
         If you call the endpoint multiple times with the same `client_user_id`, the first creation call will succeed and the rest will fail with an error message indicating that the user has been created for the given `client_user_id`.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#usercreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "client_user_id": client_user_id,
         }
         res = await self.send(
@@ -1882,9 +1882,9 @@ class AsyncPlaidClient:
         The `/payment_initiation/payment/get` endpoint can be used to check the status of a payment, as well as to receive basic information such as recipient and payment amount. In the case of standing orders, the `/payment_initiation/payment/get` endpoint will provide information about the status of the overall standing order itself; the API cannot be used to retrieve payment status for individual payments within a standing order.
 
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationpaymentget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "payment_id": payment_id,
         }
         res = await self.send(
@@ -1908,9 +1908,9 @@ class AsyncPlaidClient:
         The `/payment_initiation/payment/list` endpoint can be used to retrieve all created payments. By default, the 10 most recent payments are returned. You can request more payments and paginate through the results using the optional `count` and `cursor` parameters.
 
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationpaymentlist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "count": count,
             "cursor": cursor,
             "consent_id": consent_id,
@@ -1940,9 +1940,9 @@ class AsyncPlaidClient:
         The `/asset_report/create` endpoint creates an Asset Report at a moment in time. Asset Reports are immutable. To get an updated Asset Report, use the `/asset_report/refresh` endpoint.
 
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportcreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_tokens": access_tokens,
             "days_requested": days_requested,
             "options": None if options is None else options.dict(),
@@ -1966,9 +1966,9 @@ class AsyncPlaidClient:
         The new Asset Report will contain the same Items as the original Report, as well as the same filters applied by any call to `/asset_report/filter`. By default, the new Asset Report will also use the same parameters you submitted with your original `/asset_report/create` request, but the original `days_requested` value and the values of any parameters in the `options` object can be overridden with new values. To change these arguments, simply supply new values for them in your request to `/asset_report/refresh`. Submit an empty string ("") for any previously-populated fields you would like set as empty.
 
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportrefresh>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "asset_report_token": asset_report_token,
             "days_requested": days_requested,
             "options": None if options is None else options.dict(),
@@ -1987,9 +1987,9 @@ class AsyncPlaidClient:
         The `/asset_report/relay/refresh` endpoint allows third parties to refresh an Asset Report that was relayed to them, using an `asset_relay_token` that was created by the report owner. A new Asset Report will be created based on the old one, but with the most recent data available.
 
         See endpoint docs at <https://plaid.com/docs/api/products/#asset_reportrelayrefresh>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "asset_relay_token": asset_relay_token,
             "webhook": webhook,
         }
@@ -2009,9 +2009,9 @@ class AsyncPlaidClient:
         The `/asset_report/remove` endpoint allows you to remove an Asset Report. Removing an Asset Report invalidates its `asset_report_token`, meaning you will no longer be able to use it to access Report data or create new Audit Copies. Removing an Asset Report does not affect the underlying Items, but does invalidate any `audit_copy_tokens` associated with the Asset Report.
 
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportremove>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "asset_report_token": asset_report_token,
         }
         res = await self.send(
@@ -2034,9 +2034,9 @@ class AsyncPlaidClient:
         Plaid will fire a [`PRODUCT_READY`](https://plaid.com/docs/api/products/assets/#product_ready) webhook once generation of the filtered Asset Report has completed.
 
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportfilter>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "asset_report_token": asset_report_token,
             "account_ids_to_exclude": account_ids_to_exclude,
         }
@@ -2061,9 +2061,9 @@ class AsyncPlaidClient:
         To retrieve an Asset Report with Insights, call the `/asset_report/get` endpoint with `include_insights` set to `true`.
 
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "asset_report_token": asset_report_token,
             "include_insights": include_insights,
             "fast_report": fast_report,
@@ -2084,9 +2084,9 @@ class AsyncPlaidClient:
         [View a sample PDF Asset Report](https://plaid.com/documents/sample-asset-report.pdf).
 
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportpdfget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "asset_report_token": asset_report_token,
         }
         res = await self.send(
@@ -2103,9 +2103,9 @@ class AsyncPlaidClient:
         To grant access to an Audit Copy, use the `/asset_report/audit_copy/create` endpoint to create an `audit_copy_token` and then pass that token to the third party who needs access. Each third party has its own `auditor_id`, for example `fannie_mae`. You’ll need to create a separate Audit Copy for each third party to whom you want to grant access to the Report.
 
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportaudit_copycreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "asset_report_token": asset_report_token,
             "auditor_id": auditor_id,
         }
@@ -2127,9 +2127,9 @@ class AsyncPlaidClient:
         The `/asset_report/audit_copy/remove` endpoint allows you to remove an Audit Copy. Removing an Audit Copy invalidates the `audit_copy_token` associated with it, meaning both you and any third parties holding the token will no longer be able to use it to access Report data. Items associated with the Asset Report, the Asset Report itself and other Audit Copies of it are not affected and will remain accessible after removing the given Audit Copy.
 
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportaudit_copyremove>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "audit_copy_token": audit_copy_token,
         }
         res = await self.send(
@@ -2155,9 +2155,9 @@ class AsyncPlaidClient:
         To grant access to an Asset Report to a third party, use the `/asset_report/relay/create` endpoint to create an `asset_relay_token` and then pass that token to the third party who needs access. Each third party has its own `secondary_client_id`, for example `ce5bd328dcd34123456`. You'll need to create a separate `asset_relay_token` for each third party to whom you want to grant access to the Report.
 
         See endpoint docs at <https://plaid.com/docs/none/>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "asset_report_token": asset_report_token,
             "secondary_client_id": secondary_client_id,
             "webhook": webhook,
@@ -2176,9 +2176,9 @@ class AsyncPlaidClient:
         `/asset_report/relay/get` allows third parties to get an Asset Report that was shared with them, using an `asset_relay_token` that was created by the report owner.
 
         See endpoint docs at <https://plaid.com/docs/none/>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "asset_relay_token": asset_relay_token,
         }
         res = await self.send(
@@ -2195,9 +2195,9 @@ class AsyncPlaidClient:
         The `/asset_report/relay/remove` endpoint allows you to invalidate an `asset_relay_token`, meaning the third party holding the token will no longer be able to use it to access the Asset Report to which the `asset_relay_token` gives access to. The Asset Report, Items associated with it, and other Asset Relay Tokens that provide access to the same Asset Report are not affected and will remain accessible after removing the given `asset_relay_token.
 
         See endpoint docs at <https://plaid.com/docs/none/>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "asset_relay_token": asset_relay_token,
         }
         res = await self.send(
@@ -2216,9 +2216,9 @@ class AsyncPlaidClient:
         The `/investments/holdings/get` endpoint allows developers to receive user-authorized stock position data for `investment`-type accounts.
 
         See endpoint docs at <https://plaid.com/docs/api/products/investments/#investmentsholdingsget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
             "options": None if options is None else options.dict(),
         }
@@ -2244,9 +2244,9 @@ class AsyncPlaidClient:
         Due to the potentially large number of investment transactions associated with an Item, results are paginated. Manipulate the count and offset parameters in conjunction with the `total_investment_transactions` response body field to fetch all available investment transactions.
 
         See endpoint docs at <https://plaid.com/docs/api/products/investments/#investmentstransactionsget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
             "start_date": start_date,
             "end_date": end_date,
@@ -2270,9 +2270,9 @@ class AsyncPlaidClient:
         Used to create a token suitable for sending to one of Plaid's partners to enable integrations. Note that Stripe partnerships use bank account tokens instead; see `/processor/stripe/bank_account_token/create` for creating tokens for use with Stripe integrations. Processor tokens can also be revoked, using `/item/remove`.
 
         See endpoint docs at <https://plaid.com/docs/api/processors/#processortokencreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
             "account_id": account_id,
             "processor": processor,
@@ -2291,9 +2291,9 @@ class AsyncPlaidClient:
         Used to create a token suitable for sending to Stripe to enable Plaid-Stripe integrations. For a detailed guide on integrating Stripe, see [Add Stripe to your app](https://plaid.com/docs/auth/partnerships/stripe/). Bank account tokens can also be revoked, using `/item/remove`.
 
         See endpoint docs at <https://plaid.com/docs/api/processors/#processorstripebank_account_tokencreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
             "account_id": account_id,
         }
@@ -2315,9 +2315,9 @@ class AsyncPlaidClient:
         Used to create a token suitable for sending to Apex to enable Plaid-Apex integrations.
 
         See endpoint docs at <https://plaid.com/docs/none/>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
             "account_id": account_id,
         }
@@ -2343,9 +2343,9 @@ class AsyncPlaidClient:
         This endpoint creates a deposit switch entity that will be persisted throughout the lifecycle of the switch.
 
         See endpoint docs at <https://plaid.com/docs/deposit-switch/reference#deposit_switchcreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "target_access_token": target_access_token,
             "target_account_id": target_account_id,
             "country_code": country_code,
@@ -2368,9 +2368,9 @@ class AsyncPlaidClient:
         `/item/import` creates an Item via your Plaid Exchange Integration and returns an `access_token`. As part of an `/item/import` request, you will include a User ID (`user_auth.user_id`) and Authentication Token (`user_auth.auth_token`) that enable data aggregation through your Plaid Exchange API endpoints. These authentication principals are to be chosen by you.
 
         Upon creating an Item via `/item/import`, Plaid will automatically begin an extraction of that Item through the Plaid Exchange infrastructure you have already integrated. This will automatically generate the Plaid native account ID for the account the user will switch their direct deposit to (`target_account_id`)."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "products": products,
             "user_auth": None if user_auth is None else user_auth.dict(),
             "options": None if options is None else options.dict(),
@@ -2390,9 +2390,9 @@ class AsyncPlaidClient:
 
 
         See endpoint docs at <https://plaid.com/docs/deposit-switch/reference#deposit_switchtokencreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "deposit_switch_id": deposit_switch_id,
         }
         res = await self.send(
@@ -2444,9 +2444,9 @@ class AsyncPlaidClient:
         A `link_token` generated by `/link/token/create` is also used to initialize other Link flows, such as the update mode flow for tokens with expired credentials, or the Payment Initiation (Europe) flow.
 
         See endpoint docs at <https://plaid.com/docs/api/tokens/#linktokencreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "client_name": client_name,
             "language": language,
             "country_codes": country_codes,
@@ -2494,9 +2494,9 @@ class AsyncPlaidClient:
         `/link/token/create` endpoint. It can be useful for debugging purposes.
 
         See endpoint docs at <https://plaid.com/docs/api/tokens/#linktokenget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "link_token": link_token,
         }
         res = await self.send(
@@ -2513,9 +2513,9 @@ class AsyncPlaidClient:
         `/asset_report/audit_copy/get` allows auditors to get a copy of an Asset Report that was previously shared via the `/asset_report/audit_copy/create` endpoint.  The caller of `/asset_report/audit_copy/create` must provide the `audit_copy_token` to the auditor.  This token can then be used to call `/asset_report/audit_copy/create`.
 
         See endpoint docs at <https://plaid.com/docs/none/>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "audit_copy_token": audit_copy_token,
         }
         res = await self.send(
@@ -2536,9 +2536,9 @@ class AsyncPlaidClient:
         This endpoint returns information related to how the user has configured their payroll allocation and the state of the switch. You can use this information to build logic related to the user's direct deposit allocation preferences.
 
         See endpoint docs at <https://plaid.com/docs/deposit-switch/reference#deposit_switchget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "deposit_switch_id": deposit_switch_id,
         }
         res = await self.send(
@@ -2553,9 +2553,9 @@ class AsyncPlaidClient:
         The `/transfer/get` fetches information about the transfer corresponding to the given `transfer_id`.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "transfer_id": transfer_id,
         }
         res = await self.send(
@@ -2572,9 +2572,9 @@ class AsyncPlaidClient:
         The `/bank_transfer/get` fetches information about the bank transfer corresponding to the given `bank_transfer_id`.
 
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transferget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "bank_transfer_id": bank_transfer_id,
         }
         res = await self.send(
@@ -2617,9 +2617,9 @@ class AsyncPlaidClient:
         For guaranteed ACH customers, the following fields are required : `user.phone_number` (optional if `email_address` provided), `user.email_address` (optional if `phone_number` provided), `device.ip_address`, `device.user_agent`, and `user_present`.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferauthorizationcreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
             "account_id": account_id,
             "type": type,
@@ -2665,9 +2665,9 @@ class AsyncPlaidClient:
         Use the `/transfer/create` endpoint to initiate a new transfer.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfercreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "idempotency_key": idempotency_key,
             "access_token": access_token,
             "account_id": account_id,
@@ -2710,9 +2710,9 @@ class AsyncPlaidClient:
         Use the `/bank_transfer/create` endpoint to initiate a new bank transfer.
 
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfercreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "idempotency_key": idempotency_key,
             "access_token": access_token,
             "account_id": account_id,
@@ -2747,9 +2747,9 @@ class AsyncPlaidClient:
 
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferlist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "start_date": start_date,
             "end_date": end_date,
             "count": count,
@@ -2777,9 +2777,9 @@ class AsyncPlaidClient:
 
 
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transferlist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "start_date": start_date,
             "end_date": end_date,
             "count": count,
@@ -2799,9 +2799,9 @@ class AsyncPlaidClient:
         Use the `/transfer/cancel` endpoint to cancel a transfer.  A transfer is eligible for cancelation if the `cancellable` property returned by `/transfer/get` is `true`.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfercancel>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "transfer_id": transfer_id,
         }
         res = await self.send(
@@ -2818,9 +2818,9 @@ class AsyncPlaidClient:
         Use the `/bank_transfer/cancel` endpoint to cancel a bank transfer.  A transfer is eligible for cancelation if the `cancellable` property returned by `/bank_transfer/get` is `true`.
 
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfercancel>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "bank_transfer_id": bank_transfer_id,
         }
         res = await self.send(
@@ -2847,9 +2847,9 @@ class AsyncPlaidClient:
         Use the `/transfer/event/list` endpoint to get a list of transfer events based on specified filter criteria.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfereventlist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "start_date": start_date,
             "end_date": end_date,
             "transfer_id": transfer_id,
@@ -2885,9 +2885,9 @@ class AsyncPlaidClient:
         Use the `/bank_transfer/event/list` endpoint to get a list of bank transfer events based on specified filter criteria.
 
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfereventlist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "start_date": start_date,
             "end_date": end_date,
             "bank_transfer_id": bank_transfer_id,
@@ -2913,9 +2913,9 @@ class AsyncPlaidClient:
         `/transfer/event/sync` allows you to request up to the next 25 transfer events that happened after a specific `event_id`. Use the `/transfer/event/sync` endpoint to guarantee you have seen all transfer events.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfereventsync>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "after_id": after_id,
             "count": count,
         }
@@ -2933,9 +2933,9 @@ class AsyncPlaidClient:
         `/bank_transfer/event/sync` allows you to request up to the next 25 bank transfer events that happened after a specific `event_id`. Use the `/bank_transfer/event/sync` endpoint to guarantee you have seen all bank transfer events.
 
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfereventsync>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "after_id": after_id,
             "count": count,
         }
@@ -2951,9 +2951,9 @@ class AsyncPlaidClient:
         The `/transfer/sweep/get` endpoint fetches a sweep corresponding to the given `sweep_id`.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfersweepget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "sweep_id": sweep_id,
         }
         res = await self.send(
@@ -2970,9 +2970,9 @@ class AsyncPlaidClient:
         The `/bank_transfer/sweep/get` endpoint fetches information about the sweep corresponding to the given `sweep_id`.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#bank_transfersweepget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "sweep_id": sweep_id,
         }
         res = await self.send(
@@ -2993,9 +2993,9 @@ class AsyncPlaidClient:
         The `/transfer/sweep/list` endpoint fetches sweeps matching the given filters.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfersweeplist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "start_date": start_date,
             "end_date": end_date,
             "count": count,
@@ -3019,9 +3019,9 @@ class AsyncPlaidClient:
         The `/bank_transfer/sweep/list` endpoint fetches information about the sweeps matching the given filters.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#bank_transfersweeplist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "origination_account_id": origination_account_id,
             "start_time": start_time,
             "end_time": end_time,
@@ -3045,9 +3045,9 @@ class AsyncPlaidClient:
         Note that this endpoint can only be used with FBO accounts, when using Bank Transfers in the Full Service configuration. It cannot be used on your own account when using Bank Transfers in the BTS Platform configuration.
 
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transferbalanceget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "origination_account_id": origination_account_id,
         }
         res = await self.send(
@@ -3068,9 +3068,9 @@ class AsyncPlaidClient:
         As an alternative to adding Items via Link, you can also use the `/bank_transfer/migrate_account` endpoint to migrate known account and routing numbers to Plaid Items.  Note that Items created in this way are not compatible with endpoints for other products, such as `/accounts/balance/get`, and can only be used with Bank Transfer endpoints.  If you require access to other endpoints, create the Item through Link instead.  Access to `/bank_transfer/migrate_account` is not enabled by default; to obtain access, contact your Plaid Account Manager.
 
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfermigrate_account>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "account_number": account_number,
             "routing_number": routing_number,
             "wire_routing_number": wire_routing_number,
@@ -3098,9 +3098,9 @@ class AsyncPlaidClient:
         As an alternative to adding Items via Link, you can also use the `/transfer/migrate_account` endpoint to migrate known account and routing numbers to Plaid Items.  Note that Items created in this way are not compatible with endpoints for other products, such as `/accounts/balance/get`, and can only be used with Transfer endpoints.  If you require access to other endpoints, create the Item through Link instead.  Access to `/transfer/migrate_account` is not enabled by default; to obtain access, contact your Plaid Account Manager.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfermigrate_account>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "account_number": account_number,
             "routing_number": routing_number,
             "wire_routing_number": wire_routing_number,
@@ -3130,9 +3130,9 @@ class AsyncPlaidClient:
         Use the `/transfer/intent/create` endpoint to generate a transfer intent object and invoke the Transfer UI.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferintentcreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "account_id": account_id,
             "mode": mode,
             "amount": amount,
@@ -3158,9 +3158,9 @@ class AsyncPlaidClient:
         Use the `/transfer/intent/get` endpoint to retrieve more information about a transfer intent.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferintentget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "transfer_intent_id": transfer_intent_id,
         }
         res = await self.send(
@@ -3181,9 +3181,9 @@ class AsyncPlaidClient:
         The `/transfer/repayment/list` endpoint fetches repayments matching the given filters. Repayments are returned in reverse-chronological order (most recent first) starting at the given `start_time`.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferrepaymentlist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "start_date": start_date,
             "end_date": end_date,
             "count": count,
@@ -3206,9 +3206,9 @@ class AsyncPlaidClient:
         The `/transfer/repayment/return/list` endpoint retrieves the set of returns that were batched together into the specified repayment. The sum of amounts of returns retrieved by this request equals the amount of the repayment.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferrepaymentreturnlist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "repayment_id": repayment_id,
             "count": count,
             "offset": offset,
@@ -3234,9 +3234,9 @@ class AsyncPlaidClient:
         Use the `/sandbox/bank_transfer/simulate` endpoint to simulate a bank transfer event in the Sandbox environment.  Note that while an event will be simulated and will appear when using endpoints such as `/bank_transfer/event/sync` or `/bank_transfer/event/list`, no transactions will actually take place and funds will not move between accounts, even within the Sandbox.
 
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference/#sandboxbank_transfersimulate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "bank_transfer_id": bank_transfer_id,
             "event_type": event_type,
             "failure_reason": None if failure_reason is None else failure_reason.dict(),
@@ -3259,9 +3259,9 @@ class AsyncPlaidClient:
         Use the `/sandbox/transfer/sweep/simulate` endpoint to create a sweep and associated events in the Sandbox environment. Upon calling this endpoint, all `posted` or `pending` transfers with a sweep status of `unswept` will become `swept`, and all `returned` transfers with a sweep status of `swept` will become `return_swept`.
 
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxtransfersweepsimulate>."""
-        headers = {}
-        params = {}
-        data = {}
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {}
         res = await self.send(
             "POST",
             self.base_url + "/sandbox/transfer/sweep/simulate",
@@ -3283,9 +3283,9 @@ class AsyncPlaidClient:
         Use the `/sandbox/transfer/simulate` endpoint to simulate a transfer event in the Sandbox environment.  Note that while an event will be simulated and will appear when using endpoints such as `/transfer/event/sync` or `/transfer/event/list`, no transactions will actually take place and funds will not move between accounts, even within the Sandbox.
 
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxtransfersimulate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "transfer_id": transfer_id,
             "event_type": event_type,
             "failure_reason": None if failure_reason is None else failure_reason.dict(),
@@ -3304,9 +3304,9 @@ class AsyncPlaidClient:
         Use the `/sandbox/transfer/repayment/simulate` endpoint to trigger the creation of a repayment. As a side effect of calling this route, a repayment is created that includes all unreimbursed returns of guaranteed transfers. If there are no such returns, an 400 error is returned.
 
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxtransferrepaymentsimulate>."""
-        headers = {}
-        params = {}
-        data = {}
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {}
         res = await self.send(
             "POST",
             self.base_url + "/sandbox/transfer/repayment/simulate",
@@ -3325,9 +3325,9 @@ class AsyncPlaidClient:
         Use the `/sandbox/transfer/fire_webhook` endpoint to manually trigger a Transfer webhook in the Sandbox environment.
 
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxtransferfire_webhook>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "webhook": webhook,
         }
         res = await self.send(
@@ -3350,9 +3350,9 @@ class AsyncPlaidClient:
         The data in the employer database is currently limited. As the Deposit Switch and Income products progress through their respective beta periods, more employers are being regularly added. Because the employer database is frequently updated, we recommend that you do not cache or store data from this endpoint for more than a day.
 
         See endpoint docs at <https://plaid.com/docs/api/employers/#employerssearch>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "query": query,
             "products": products,
         }
@@ -3373,9 +3373,9 @@ class AsyncPlaidClient:
         `/income/verification/create` begins the income verification process by returning an `income_verification_id`. You can then provide the `income_verification_id` to `/link/token/create` under the `income_verification` parameter in order to create a Link instance that will prompt the user to go through the income verification flow. Plaid will fire an `INCOME` webhook once the user completes the Payroll Income flow, or when the uploaded documents in the Document Income flow have finished processing.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationcreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "webhook": webhook,
             "precheck_id": precheck_id,
             "options": None if options is None else options.dict(),
@@ -3398,9 +3398,9 @@ class AsyncPlaidClient:
         This endpoint has been deprecated; new integrations should use `/credit/payroll_income/get` instead.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationpaystubsget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "income_verification_id": income_verification_id,
             "access_token": access_token,
         }
@@ -3433,9 +3433,9 @@ class AsyncPlaidClient:
         The `request_id` is returned in the `Plaid-Request-ID` header.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationdocumentsdownload>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "income_verification_id": income_verification_id,
             "access_token": access_token,
             "document_id": document_id,
@@ -3458,9 +3458,9 @@ class AsyncPlaidClient:
         `/income/verification/refresh` refreshes a given income verification.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationrefresh>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "income_verification_id": income_verification_id,
             "access_token": access_token,
         }
@@ -3486,9 +3486,9 @@ class AsyncPlaidClient:
         This endpoint has been deprecated; new integrations should use `/credit/payroll_income/get` instead.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationtaxformsget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "income_verification_id": income_verification_id,
             "access_token": access_token,
         }
@@ -3519,9 +3519,9 @@ class AsyncPlaidClient:
         This endpoint has been deprecated; new integrations should use `/credit/payroll_income/precheck` instead.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationprecheck>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "user": None if user is None else user.dict(),
             "employer": None if employer is None else employer.dict(),
             "transactions_access_token": transactions_access_token,
@@ -3550,9 +3550,9 @@ class AsyncPlaidClient:
         This endpoint has been deprecated; new integrations should use `/credit/employment/get` instead.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#employmentverificationget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
         }
         res = await self.send(
@@ -3577,9 +3577,9 @@ class AsyncPlaidClient:
         This endpoint provides an alternative to `/deposit_switch/create` for customers who have not yet fully integrated with Plaid Exchange. Like `/deposit_switch/create`, it creates a deposit switch entity that will be persisted throughout the lifecycle of the switch.
 
         See endpoint docs at <https://plaid.com/docs/deposit-switch/reference#deposit_switchaltcreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "target_account": None if target_account is None else target_account.dict(),
             "target_user": None if target_user is None else target_user.dict(),
             "options": None if options is None else options.dict(),
@@ -3601,10 +3601,12 @@ class AsyncPlaidClient:
         To grant access to an Audit Copy token, use the `/credit/audit_copy_token/create` endpoint to create an `audit_copy_token` and then pass that token to the third party who needs access. Each third party has its own `auditor_id`, for example `fannie_mae`. You’ll need to create a separate Audit Copy for each third party to whom you want to grant access to the Report.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditaudit_copy_tokencreate>."""
-        headers = {}
-        params = {}
-        data = {
-            "report_tokens": None if report_tokens is None else report_tokens.dict(),
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
+            "report_tokens": None
+            if report_tokens is None
+            else [d.dict() for d in report_tokens],
             "auditor_id": auditor_id,
         }
         res = await self.send(
@@ -3625,9 +3627,9 @@ class AsyncPlaidClient:
         The `/credit/audit_copy_token/remove` endpoint allows you to remove an Audit Copy. Removing an Audit Copy invalidates the `audit_copy_token` associated with it, meaning both you and any third parties holding the token will no longer be able to use it to access Report data. Items associated with the Report data and other Audit Copies of it are not affected and will remain accessible after removing the given Audit Copy.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditaudit_copy_tokenremove>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "audit_copy_token": audit_copy_token,
         }
         res = await self.send(
@@ -3650,9 +3652,9 @@ class AsyncPlaidClient:
         `/credit/bank_income/get` returns the bank income report(s) for a specified user.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditbank_incomeget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "user_token": user_token,
             "options": None if options is None else options.dict(),
         }
@@ -3668,9 +3670,9 @@ class AsyncPlaidClient:
         `/credit/bank_income/pdf/get` returns the most recent bank income report for a specified user in PDF format.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditbank_incomepdfget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "user_token": user_token,
         }
         res = await self.send(
@@ -3687,9 +3689,9 @@ class AsyncPlaidClient:
         `/credit/bank_income/refresh` refreshes the bank income report data for a specific user.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditbank_incomerefresh>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "user_token": user_token,
             "options": None if options is None else options.dict(),
         }
@@ -3707,9 +3709,9 @@ class AsyncPlaidClient:
         This endpoint gets payroll income information for a specific user, either as a result of the user connecting to their payroll provider or uploading a pay related document.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditpayroll_incomeget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "user_token": user_token,
         }
         res = await self.send(
@@ -3732,9 +3734,9 @@ class AsyncPlaidClient:
         While all request fields are optional, providing `employer` data will increase the chance of receiving a useful result.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditpayroll_incomeprecheck>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "user_token": user_token,
             "access_tokens": access_tokens,
             "employer": None if employer is None else employer.dict(),
@@ -3760,9 +3762,9 @@ class AsyncPlaidClient:
         `/credit/employment/get` returns a list of items with employment information from a user's payroll provider that was verified by an end user.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditemploymentget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "user_token": user_token,
         }
         res = await self.send(
@@ -3779,9 +3781,9 @@ class AsyncPlaidClient:
         `/credit/payroll_income/refresh` refreshes a given digital payroll income verification.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditpayroll_incomerefresh>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "user_token": user_token,
         }
         res = await self.send(
@@ -3807,10 +3809,12 @@ class AsyncPlaidClient:
         To grant access to an Asset Report to a third party, use the `/credit/relay/create` endpoint to create a `relay_token` and then pass that token to the third party who needs access. Each third party has its own `secondary_client_id`, for example `ce5bd328dcd34123456`. You'll need to create a separate `relay_token` for each third party to whom you want to grant access to the Report.
 
         See endpoint docs at <https://plaid.com/docs/none/>."""
-        headers = {}
-        params = {}
-        data = {
-            "report_tokens": None if report_tokens is None else report_tokens.dict(),
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
+            "report_tokens": None
+            if report_tokens is None
+            else [d.dict() for d in report_tokens],
             "secondary_client_id": secondary_client_id,
             "webhook": webhook,
         }
@@ -3828,9 +3832,9 @@ class AsyncPlaidClient:
         `/credit/relay/get` allows third parties to get a report that was shared with them, using an `relay_token` that was created by the report owner.
 
         See endpoint docs at <https://plaid.com/docs/none/>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "relay_token": relay_token,
             "report_type": report_type,
         }
@@ -3848,9 +3852,9 @@ class AsyncPlaidClient:
         The `/credit/relay/refresh` endpoint allows third parties to refresh an report that was relayed to them, using a `relay_token` that was created by the report owner. A new report will be created based on the old one, but with the most recent data available.
 
         See endpoint docs at <https://plaid.com/docs/api/products/#creditrelayrefresh>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "relay_token": relay_token,
             "report_type": report_type,
             "webhook": webhook,
@@ -3869,9 +3873,9 @@ class AsyncPlaidClient:
         The `/credit/relay/remove` endpoint allows you to invalidate a `relay_token`, meaning the third party holding the token will no longer be able to use it to access the reports to which the `relay_token` gives access to. The report, items associated with it, and other Relay tokens that provide access to the same report are not affected and will remain accessible after removing the given `relay_token.
 
         See endpoint docs at <https://plaid.com/docs/none/>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "relay_token": relay_token,
         }
         res = await self.send(
@@ -3888,9 +3892,9 @@ class AsyncPlaidClient:
         Use the `/sandbox/bank_transfer/fire_webhook` endpoint to manually trigger a Bank Transfers webhook in the Sandbox environment.
 
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference/#sandboxbank_transferfire_webhook>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "webhook": webhook,
         }
         res = await self.send(
@@ -3915,9 +3919,9 @@ class AsyncPlaidClient:
         Use the `/sandbox/income/fire_webhook` endpoint to manually trigger an Income webhook in the Sandbox environment.
 
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxincomefire_webhook>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "item_id": item_id,
             "user_id": user_id,
             "webhook": webhook,
@@ -3937,9 +3941,9 @@ class AsyncPlaidClient:
         self, oauth_state_id: str, accounts: List[str]
     ) -> model.SandboxOauthSelectAccountsResponse:
         """Save the selected accounts when connecting to the Platypus Oauth institution"""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "oauth_state_id": oauth_state_id,
             "accounts": accounts,
         }
@@ -3971,9 +3975,9 @@ class AsyncPlaidClient:
         In order to obtain a valid score for an ACH transaction, Plaid must have an access token for the account, and the Item must be healthy (receiving product updates) or have recently been in a healthy state. If the transaction does not meet eligibility requirements, an error will be returned corresponding to the underlying cause. If `/signal/evaluate` is called on the same transaction multiple times within a 24-hour period, cached results may be returned.
 
         See endpoint docs at <https://plaid.com/docs/signal/reference#signalevaluate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
             "account_id": account_id,
             "client_transaction_id": client_transaction_id,
@@ -4000,9 +4004,9 @@ class AsyncPlaidClient:
         After calling `/signal/evaluate`, call `/signal/decision/report` to report whether the transaction was initiated. This endpoint will return an `INVALID_REQUEST` error if called a second time with a different value for `initiated`.
 
         See endpoint docs at <https://plaid.com/docs/signal/reference#signaldecisionreport>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "client_transaction_id": client_transaction_id,
             "initiated": initiated,
             "days_funds_on_hold": days_funds_on_hold,
@@ -4021,9 +4025,9 @@ class AsyncPlaidClient:
         Call the `/signal/return/report` endpoint to report a returned transaction that was previously sent to the `/signal/evaluate` endpoint. Your feedback will be used by the model to incorporate the latest risk trend in your portfolio.
 
         See endpoint docs at <https://plaid.com/docs/signal/reference#signalreturnreport>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "client_transaction_id": client_transaction_id,
             "return_code": return_code,
         }
@@ -4039,9 +4043,9 @@ class AsyncPlaidClient:
         Call `/signal/prepare` with Plaid-linked bank account information at least 10 seconds before calling `/signal/evaluate` or as soon as an end-user enters the ACH deposit flow in your application.
 
         See endpoint docs at <https://plaid.com/docs/signal/reference#signalprepare>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
         }
         res = await self.send(
@@ -4056,9 +4060,9 @@ class AsyncPlaidClient:
         Create an e-wallet. The response is the newly created e-wallet object.
 
         See endpoint docs at <https://plaid.com/docs/api/products/#walletcreate>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "iso_currency_code": iso_currency_code,
         }
         res = await self.send(
@@ -4073,9 +4077,9 @@ class AsyncPlaidClient:
         Fetch an e-wallet. The response includes the current balance.
 
         See endpoint docs at <https://plaid.com/docs/api/products/#walletget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "wallet_id": wallet_id,
         }
         res = await self.send(
@@ -4095,9 +4099,9 @@ class AsyncPlaidClient:
         This endpoint lists all e-wallets in descending order of creation.
 
         See endpoint docs at <https://plaid.com/docs/api/products/#walletlist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "iso_currency_code": iso_currency_code,
             "cursor": cursor,
             "count": count,
@@ -4123,9 +4127,9 @@ class AsyncPlaidClient:
         The payouts are executed over the Faster Payment rails, where settlement usually only takes a few seconds.
 
         See endpoint docs at <https://plaid.com/docs/api/products/#wallettransactionexecute>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "idempotency_key": idempotency_key,
             "wallet_id": wallet_id,
             "counterparty": None if counterparty is None else counterparty.dict(),
@@ -4144,9 +4148,9 @@ class AsyncPlaidClient:
         """Fetch a specific e-wallet transaction
 
         See endpoint docs at <https://plaid.com/docs/api/products/#wallettransactionget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "transaction_id": transaction_id,
         }
         res = await self.send(
@@ -4163,9 +4167,9 @@ class AsyncPlaidClient:
         This endpoint lists the latest transactions of the specified e-wallet. Transactions are returned in descending order by the `created_at` time.
 
         See endpoint docs at <https://plaid.com/docs/api/products/#wallettransactionslist>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "wallet_id": wallet_id,
             "cursor": cursor,
             "count": count,
@@ -4184,11 +4188,13 @@ class AsyncPlaidClient:
         The '/beta/transactions/v1/enhance' endpoint enriches raw transaction data provided directly by clients.
 
         The product is currently in beta."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "account_type": account_type,
-            "transactions": None if transactions is None else transactions.dict(),
+            "transactions": None
+            if transactions is None
+            else [d.dict() for d in transactions],
         }
         res = await self.send(
             "POST",
@@ -4213,9 +4219,9 @@ class AsyncPlaidClient:
         Rules will be applied on the Item's transactions returned in `/transactions/get` response.
 
         The product is currently in beta. To request access, contact transactions-feedback@plaid.com."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
             "personal_finance_category": personal_finance_category,
             "rule_details": None if rule_details is None else rule_details.dict(),
@@ -4236,9 +4242,9 @@ class AsyncPlaidClient:
         """Return a list of rules created for the Item associated with the access token.
 
         The `/transactions/rules/v1/list` returns a list of transaction rules created for the Item associated with the access token."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
         }
         res = await self.send(
@@ -4257,9 +4263,9 @@ class AsyncPlaidClient:
         """Remove transaction rule
 
         The `/transactions/rules/v1/remove` endpoint is used to remove a transaction rule."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "access_token": access_token,
             "rule_id": rule_id,
         }
@@ -4279,9 +4285,9 @@ class AsyncPlaidClient:
         Use `/payment_profile/create` endpoint to create a new payment profile, the return value is a Payment Profile ID. Attach it to the link token create request and the link workflow will then "activate" this Payment Profile if the linkage is successful. It can then be used to create Transfers using `/transfer/authorization/create` and /transfer/create`.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#payment_profilecreate>."""
-        headers = {}
-        params = {}
-        data = {}
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {}
         res = await self.send(
             "POST", self.base_url + "/payment_profile/create", headers, params, data
         )
@@ -4296,9 +4302,9 @@ class AsyncPlaidClient:
         Use the `/payment_profile/get` endpoint to get the status of a given Payment Profile.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#payment_profileget>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "payment_profile_id": payment_profile_id,
         }
         res = await self.send(
@@ -4315,9 +4321,9 @@ class AsyncPlaidClient:
         Use the `/payment_profile/remove` endpoint to remove a given Payment Profile. Once it’s removed, it can no longer be used to create transfers.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#payment_profileremove>."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "payment_profile_id": payment_profile_id,
         }
         res = await self.send(
@@ -4336,9 +4342,9 @@ class AsyncPlaidClient:
         """Creates a new client for a reseller partner end customer.
 
         The `/partner/v1/customers/create` endpoint is used by reseller partners to create an end customer client."""
-        headers = {}
-        params = {}
-        data = {
+        headers: Dict[str, str] = {}
+        params: Dict[str, str] = {}
+        data: Dict[str, Any] = {
             "company_name": company_name,
             "is_diligence_attested": is_diligence_attested,
             "products": products,
@@ -4354,7 +4360,7 @@ class AsyncPlaidClient:
         data = await res.json()
         return model.PartnerCustomersCreateResponse.parse_obj(data)
 
-    def __del__(self):
+    def __del__(self) -> None:
         try:
             loop = asyncio.get_event_loop()
             if loop.is_running():

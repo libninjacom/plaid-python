@@ -15,7 +15,7 @@ publish:
    flit publish
 
 check:
-    mypy --allow-redefinition --strict plaid2/
+    pdm run mypy --allow-redefinition --strict plaid2/
 
 test:
     pdm run pytest

@@ -3,7 +3,7 @@ from typing import Dict, Any
 
 
 class PlaidAuthenticator:
-    def __init__(self, client_id: str, secret: str, plaid_version: str):
+    def __init__(self, client_id: str, secret: str, plaid_version: str) -> None:
         self.client_id = client_id
         self.secret = secret
         self.plaid_version = plaid_version
