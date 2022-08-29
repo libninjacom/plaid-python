@@ -13,7 +13,7 @@ jobs:
       - uses: extractions/setup-just@v1
       - name: Install tooling
         run: |
-          pip3 install flake8 mypy
+          pip3 install flake8 mypy pdm
       - name: Run lint
         run: |
           just lint
