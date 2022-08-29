@@ -1,9 +1,20 @@
 import os
 import json
+import logging
 import requests
 from typing import Optional, List, Any
 from .authenticator import PlaidAuthenticator
-import plaid2.model as model
+from .logger import logger
+from . import model
+
+
+def raise_for_status(res: requests.Response) -> None:
+    if res.status_code >= 400:
+        try:
+            content = res.json()
+        except requests.JSONDecodeError:
+            content = res.content
+        raise requests.HTTPError(content, response=res)
 
 
 class PlaidClient:
@@ -11,10 +22,41 @@ class PlaidClient:
         self.authenticator = authenticator
         self.base_url = base_url
         self.session = requests.Session()
+        self.session.headers["Content-Type"] = "application/json"
+        self.session.headers["User-Agent"] = "plaid2/python/0.1.0"
 
     def authenticate(self, req: requests.Request) -> None:
         if self.authenticator is not None:
             self.authenticator.authenticate(req)
+
+    def send(self, req: requests.Request) -> requests.Response:
+        self.authenticate(req)
+        prepped = req.prepare()
+        do_debug = logger.getEffectiveLevel() == logging.DEBUG
+        if do_debug:
+            data = dict(
+                method=prepped.method,
+                url=prepped.url,
+                headers=dict(prepped.headers),
+            )
+            if req.json is not None:
+                data["json"] = req.json
+            else:
+                data["body"] = prepped.body.decode("utf-8")
+            logger.debug(json.dumps(data))
+        res = self.session.send(prepped)
+        if do_debug:
+            data = dict(
+                status_code=res.status_code,
+                headers=dict(res.headers),
+            )
+            try:
+                data["json"] = res.json()
+            except requests.JSONDecodeError:
+                data["body"] = res.text
+            logger.debug(json.dumps(data))
+        raise_for_status(res)
+        return res
 
     def item_application_list(
         self, access_token: Optional[str] = None
@@ -34,10 +76,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.ItemApplicationListResponse.parse_obj(data)
 
@@ -59,7 +98,7 @@ class PlaidClient:
         data = {
             "access_token": access_token,
             "application_id": application_id,
-            "scopes": scopes,
+            "scopes": None if scopes is None else scopes.dict(),
             "state": state,
             "context": context,
         }
@@ -70,10 +109,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.ItemApplicationScopesUpdateResponse.parse_obj(data)
 
@@ -95,10 +131,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.ApplicationGetResponse.parse_obj(data)
 
@@ -122,10 +155,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.ItemGetResponse.parse_obj(data)
 
@@ -149,7 +179,7 @@ class PlaidClient:
         params = {}
         data = {
             "access_token": access_token,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -158,10 +188,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.AuthGetResponse.parse_obj(data)
 
@@ -190,7 +217,7 @@ class PlaidClient:
         }
         params = {}
         data = {
-            "options": options,
+            "options": None if options is None else options.dict(),
             "access_token": access_token,
             "start_date": start_date,
             "end_date": end_date,
@@ -202,10 +229,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.TransactionsGetResponse.parse_obj(data)
 
@@ -233,10 +257,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.TransactionsRefreshResponse.parse_obj(data)
 
@@ -263,7 +284,7 @@ class PlaidClient:
         params = {}
         data = {
             "access_token": access_token,
-            "options": options,
+            "options": None if options is None else options.dict(),
             "account_ids": account_ids,
         }
         req = requests.Request(
@@ -273,10 +294,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.TransactionsRecurringGetResponse.parse_obj(data)
 
@@ -316,7 +334,7 @@ class PlaidClient:
             "access_token": access_token,
             "cursor": cursor,
             "count": count,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -325,10 +343,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.TransactionsSyncResponse.parse_obj(data)
 
@@ -354,7 +369,7 @@ class PlaidClient:
             "count": count,
             "offset": offset,
             "country_codes": country_codes,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -363,10 +378,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.InstitutionsGetResponse.parse_obj(data)
 
@@ -393,7 +405,7 @@ class PlaidClient:
             "query": query,
             "products": products,
             "country_codes": country_codes,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -402,10 +414,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.InstitutionsSearchResponse.parse_obj(data)
 
@@ -430,7 +439,7 @@ class PlaidClient:
         data = {
             "institution_id": institution_id,
             "country_codes": country_codes,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -439,10 +448,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.InstitutionsGetByIdResponse.parse_obj(data)
 
@@ -472,10 +478,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.ItemRemoveResponse.parse_obj(data)
 
@@ -498,7 +501,7 @@ class PlaidClient:
         params = {}
         data = {
             "access_token": access_token,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -507,10 +510,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.AccountsGetResponse.parse_obj(data)
 
@@ -532,10 +532,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.CategoriesGetResponse.parse_obj(data)
 
@@ -555,7 +552,7 @@ class PlaidClient:
         params = {}
         data = {
             "institution_id": institution_id,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -564,10 +561,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.SandboxProcessorTokenCreateResponse.parse_obj(data)
 
@@ -590,7 +584,7 @@ class PlaidClient:
         data = {
             "institution_id": institution_id,
             "initial_products": initial_products,
-            "options": options,
+            "options": None if options is None else options.dict(),
             "user_token": user_token,
         }
         req = requests.Request(
@@ -600,10 +594,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.SandboxPublicTokenCreateResponse.parse_obj(data)
 
@@ -641,10 +632,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.SandboxItemFireWebhookResponse.parse_obj(data)
 
@@ -664,7 +652,7 @@ class PlaidClient:
         params = {}
         data = {
             "access_token": access_token,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -673,10 +661,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.AccountsGetResponse.parse_obj(data)
 
@@ -700,7 +685,7 @@ class PlaidClient:
         params = {}
         data = {
             "access_token": access_token,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -709,10 +694,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.IdentityGetResponse.parse_obj(data)
 
@@ -735,8 +717,8 @@ class PlaidClient:
         params = {}
         data = {
             "access_token": access_token,
-            "user": user,
-            "options": options,
+            "user": None if user is None else user.dict(),
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -745,10 +727,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.IdentityMatchResponse.parse_obj(data)
 
@@ -772,10 +751,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.DashboardUserResponse.parse_obj(data)
 
@@ -801,10 +777,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaginatedDashboardUserListResponse.parse_obj(data)
 
@@ -831,7 +804,7 @@ class PlaidClient:
             "is_shareable": is_shareable,
             "template_id": template_id,
             "gave_consent": gave_consent,
-            "user": user,
+            "user": None if user is None else user.dict(),
             "is_idempotent": is_idempotent,
         }
         req = requests.Request(
@@ -841,10 +814,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.IdentityVerificationResponse.parse_obj(data)
 
@@ -870,10 +840,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.IdentityVerificationResponse.parse_obj(data)
 
@@ -901,10 +868,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaginatedIdentityVerificationListResponse.parse_obj(data)
 
@@ -928,7 +892,7 @@ class PlaidClient:
             "client_user_id": client_user_id,
             "template_id": template_id,
             "strategy": strategy,
-            "steps": steps,
+            "steps": None if steps is None else steps.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -937,10 +901,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.IdentityVerificationResponse.parse_obj(data)
 
@@ -959,7 +920,7 @@ class PlaidClient:
         }
         params = {}
         data = {
-            "search_terms": search_terms,
+            "search_terms": None if search_terms is None else search_terms.dict(),
             "client_user_id": client_user_id,
         }
         req = requests.Request(
@@ -969,10 +930,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.EntityWatchlistScreeningResponse.parse_obj(data)
 
@@ -998,10 +956,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.EntityWatchlistScreeningResponse.parse_obj(data)
 
@@ -1028,10 +983,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaginatedEntityWatchlistScreeningListResponse.parse_obj(data)
 
@@ -1058,10 +1010,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaginatedEntityWatchlistScreeningHitListResponse.parse_obj(data)
 
@@ -1096,10 +1045,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaginatedEntityWatchlistScreeningListResponse.parse_obj(data)
 
@@ -1125,10 +1071,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.EntityWatchlistProgramResponse.parse_obj(data)
 
@@ -1154,10 +1097,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaginatedEntityWatchlistProgramListResponse.parse_obj(data)
 
@@ -1190,10 +1130,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.EntityWatchlistScreeningReviewResponse.parse_obj(data)
 
@@ -1220,10 +1157,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaginatedEntityWatchlistScreeningReviewListResponse.parse_obj(data)
 
@@ -1247,7 +1181,7 @@ class PlaidClient:
         params = {}
         data = {
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
-            "search_terms": search_terms,
+            "search_terms": None if search_terms is None else search_terms.dict(),
             "assignee": assignee,
             "status": status,
             "client_user_id": client_user_id,
@@ -1260,10 +1194,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.EntityWatchlistScreeningResponse.parse_obj(data)
 
@@ -1282,7 +1213,7 @@ class PlaidClient:
         }
         params = {}
         data = {
-            "search_terms": search_terms,
+            "search_terms": None if search_terms is None else search_terms.dict(),
             "client_user_id": client_user_id,
         }
         req = requests.Request(
@@ -1292,10 +1223,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.WatchlistScreeningIndividualResponse.parse_obj(data)
 
@@ -1321,10 +1249,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.WatchlistScreeningIndividualResponse.parse_obj(data)
 
@@ -1351,10 +1276,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaginatedIndividualWatchlistScreeningListResponse.parse_obj(data)
 
@@ -1381,10 +1303,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaginatedIndividualWatchlistScreeningHitListResponse.parse_obj(
             data
@@ -1421,10 +1340,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaginatedIndividualWatchlistScreeningListResponse.parse_obj(data)
 
@@ -1450,10 +1366,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.IndividualWatchlistProgramResponse.parse_obj(data)
 
@@ -1479,10 +1392,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaginatedIndividualWatchlistProgramListResponse.parse_obj(data)
 
@@ -1515,10 +1425,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.WatchlistScreeningReviewResponse.parse_obj(data)
 
@@ -1545,10 +1452,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaginatedIndividualWatchlistScreeningReviewListResponse.parse_obj(
             data
@@ -1576,7 +1480,7 @@ class PlaidClient:
         params = {}
         data = {
             "watchlist_screening_id": watchlist_screening_id,
-            "search_terms": search_terms,
+            "search_terms": None if search_terms is None else search_terms.dict(),
             "assignee": assignee,
             "status": status,
             "client_user_id": client_user_id,
@@ -1589,10 +1493,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.WatchlistScreeningIndividualResponse.parse_obj(data)
 
@@ -1621,10 +1522,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.ProcessorAuthGetResponse.parse_obj(data)
 
@@ -1661,9 +1559,9 @@ class PlaidClient:
             "iso_currency_code": iso_currency_code,
             "description": description,
             "ach_class": ach_class,
-            "user": user,
+            "user": None if user is None else user.dict(),
             "custom_tag": custom_tag,
-            "metadata": metadata,
+            "metadata": None if metadata is None else metadata.dict(),
             "origination_account_id": origination_account_id,
         }
         req = requests.Request(
@@ -1673,10 +1571,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.ProcessorBankTransferCreateResponse.parse_obj(data)
 
@@ -1702,10 +1597,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.ProcessorIdentityGetResponse.parse_obj(data)
 
@@ -1725,7 +1617,7 @@ class PlaidClient:
         params = {}
         data = {
             "processor_token": processor_token,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -1734,10 +1626,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.ProcessorBalanceGetResponse.parse_obj(data)
 
@@ -1764,10 +1653,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.ItemWebhookUpdateResponse.parse_obj(data)
 
@@ -1796,10 +1682,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.ItemAccessTokenInvalidateResponse.parse_obj(data)
 
@@ -1827,10 +1710,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.WebhookVerificationKeyGetResponse.parse_obj(data)
 
@@ -1854,7 +1734,7 @@ class PlaidClient:
         params = {}
         data = {
             "access_token": access_token,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -1863,10 +1743,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.LiabilitiesGetResponse.parse_obj(data)
 
@@ -1892,8 +1769,8 @@ class PlaidClient:
         data = {
             "name": name,
             "iban": iban,
-            "bacs": bacs,
-            "address": address,
+            "bacs": None if bacs is None else bacs.dict(),
+            "address": None if address is None else address.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -1902,10 +1779,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationRecipientCreateResponse.parse_obj(data)
 
@@ -1936,10 +1810,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationPaymentReverseResponse.parse_obj(data)
 
@@ -1965,10 +1836,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationRecipientGetResponse.parse_obj(data)
 
@@ -1992,10 +1860,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationRecipientListResponse.parse_obj(data)
 
@@ -2023,9 +1888,9 @@ class PlaidClient:
         data = {
             "recipient_id": recipient_id,
             "reference": reference,
-            "amount": amount,
-            "schedule": schedule,
-            "options": options,
+            "amount": None if amount is None else amount.dict(),
+            "schedule": None if schedule is None else schedule.dict(),
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -2034,10 +1899,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationPaymentCreateResponse.parse_obj(data)
 
@@ -2065,10 +1927,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationPaymentTokenCreateResponse.parse_obj(data)
 
@@ -2095,8 +1954,8 @@ class PlaidClient:
             "recipient_id": recipient_id,
             "reference": reference,
             "scopes": scopes,
-            "constraints": constraints,
-            "options": options,
+            "constraints": None if constraints is None else constraints.dict(),
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -2105,10 +1964,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationConsentCreateResponse.parse_obj(data)
 
@@ -2134,10 +1990,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationConsentGetResponse.parse_obj(data)
 
@@ -2163,10 +2016,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationConsentRevokeResponse.parse_obj(data)
 
@@ -2184,7 +2034,7 @@ class PlaidClient:
         params = {}
         data = {
             "consent_id": consent_id,
-            "amount": amount,
+            "amount": None if amount is None else amount.dict(),
             "idempotency_key": idempotency_key,
         }
         req = requests.Request(
@@ -2194,10 +2044,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationConsentPaymentExecuteResponse.parse_obj(data)
 
@@ -2226,10 +2073,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.SandboxItemResetLoginResponse.parse_obj(data)
 
@@ -2261,10 +2105,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.SandboxItemSetVerificationStatusResponse.parse_obj(data)
 
@@ -2292,10 +2133,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.ItemPublicTokenExchangeResponse.parse_obj(data)
 
@@ -2327,10 +2165,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.ItemPublicTokenCreateResponse.parse_obj(data)
 
@@ -2356,10 +2191,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.UserCreateResponse.parse_obj(data)
 
@@ -2385,10 +2217,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationPaymentGetResponse.parse_obj(data)
 
@@ -2419,10 +2248,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationPaymentListResponse.parse_obj(data)
 
@@ -2448,7 +2274,7 @@ class PlaidClient:
         data = {
             "access_tokens": access_tokens,
             "days_requested": days_requested,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -2457,10 +2283,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.AssetReportCreateResponse.parse_obj(data)
 
@@ -2484,7 +2307,7 @@ class PlaidClient:
         data = {
             "asset_report_token": asset_report_token,
             "days_requested": days_requested,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -2493,10 +2316,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.AssetReportRefreshResponse.parse_obj(data)
 
@@ -2523,10 +2343,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.AssetReportRelayRefreshResponse.parse_obj(data)
 
@@ -2554,10 +2371,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.AssetReportRemoveResponse.parse_obj(data)
 
@@ -2590,10 +2404,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.AssetReportFilterResponse.parse_obj(data)
 
@@ -2628,10 +2439,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.AssetReportGetResponse.parse_obj(data)
 
@@ -2659,10 +2467,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
 
     def asset_report_audit_copy_create(
         self, asset_report_token: str, auditor_id: str
@@ -2689,10 +2494,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.AssetReportAuditCopyCreateResponse.parse_obj(data)
 
@@ -2718,10 +2520,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.AssetReportAuditCopyRemoveResponse.parse_obj(data)
 
@@ -2754,10 +2553,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.AssetReportRelayCreateResponse.parse_obj(data)
 
@@ -2783,10 +2579,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.AssetReportGetResponse.parse_obj(data)
 
@@ -2812,10 +2605,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.AssetReportRelayRemoveResponse.parse_obj(data)
 
@@ -2835,7 +2625,7 @@ class PlaidClient:
         params = {}
         data = {
             "access_token": access_token,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -2844,10 +2634,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.InvestmentsHoldingsGetResponse.parse_obj(data)
 
@@ -2875,7 +2662,7 @@ class PlaidClient:
             "access_token": access_token,
             "start_date": start_date,
             "end_date": end_date,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -2884,10 +2671,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.InvestmentsTransactionsGetResponse.parse_obj(data)
 
@@ -2915,10 +2699,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.ProcessorTokenCreateResponse.parse_obj(data)
 
@@ -2945,10 +2726,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.ProcessorStripeBankAccountTokenCreateResponse.parse_obj(data)
 
@@ -2975,10 +2753,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.ProcessorTokenCreateResponse.parse_obj(data)
 
@@ -3002,7 +2777,7 @@ class PlaidClient:
             "target_access_token": target_access_token,
             "target_account_id": target_account_id,
             "country_code": country_code,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -3011,10 +2786,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.DepositSwitchCreateResponse.parse_obj(data)
 
@@ -3035,8 +2807,8 @@ class PlaidClient:
         params = {}
         data = {
             "products": products,
-            "user_auth": user_auth,
-            "options": options,
+            "user_auth": None if user_auth is None else user_auth.dict(),
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -3045,10 +2817,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.ItemImportResponse.parse_obj(data)
 
@@ -3075,10 +2844,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.DepositSwitchTokenCreateResponse.parse_obj(data)
 
@@ -3129,7 +2895,7 @@ class PlaidClient:
             "client_name": client_name,
             "language": language,
             "country_codes": country_codes,
-            "user": user,
+            "user": None if user is None else user.dict(),
             "products": products,
             "additional_consented_products": additional_consented_products,
             "webhook": webhook,
@@ -3137,17 +2903,27 @@ class PlaidClient:
             "link_customization_name": link_customization_name,
             "redirect_uri": redirect_uri,
             "android_package_name": android_package_name,
-            "institution_data": institution_data,
-            "account_filters": account_filters,
-            "eu_config": eu_config,
+            "institution_data": None
+            if institution_data is None
+            else institution_data.dict(),
+            "account_filters": None
+            if account_filters is None
+            else account_filters.dict(),
+            "eu_config": None if eu_config is None else eu_config.dict(),
             "institution_id": institution_id,
-            "payment_initiation": payment_initiation,
-            "deposit_switch": deposit_switch,
-            "income_verification": income_verification,
-            "auth": auth,
-            "transfer": transfer,
-            "update": update,
-            "identity_verification": identity_verification,
+            "payment_initiation": None
+            if payment_initiation is None
+            else payment_initiation.dict(),
+            "deposit_switch": None if deposit_switch is None else deposit_switch.dict(),
+            "income_verification": None
+            if income_verification is None
+            else income_verification.dict(),
+            "auth": None if auth is None else auth.dict(),
+            "transfer": None if transfer is None else transfer.dict(),
+            "update": None if update is None else update.dict(),
+            "identity_verification": None
+            if identity_verification is None
+            else identity_verification.dict(),
             "user_token": user_token,
         }
         req = requests.Request(
@@ -3157,10 +2933,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.LinkTokenCreateResponse.parse_obj(data)
 
@@ -3185,10 +2958,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.LinkTokenGetResponse.parse_obj(data)
 
@@ -3214,10 +2984,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.AssetReportGetResponse.parse_obj(data)
 
@@ -3243,10 +3010,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.DepositSwitchGetResponse.parse_obj(data)
 
@@ -3270,10 +3034,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.TransferGetResponse.parse_obj(data)
 
@@ -3297,10 +3058,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.BankTransferGetResponse.parse_obj(data)
 
@@ -3349,8 +3107,8 @@ class PlaidClient:
             "network": network,
             "amount": amount,
             "ach_class": ach_class,
-            "user": user,
-            "device": device,
+            "user": None if user is None else user.dict(),
+            "device": None if device is None else device.dict(),
             "origination_account_id": origination_account_id,
             "iso_currency_code": iso_currency_code,
             "user_present": user_present,
@@ -3363,10 +3121,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.TransferAuthorizationCreateResponse.parse_obj(data)
 
@@ -3406,8 +3161,8 @@ class PlaidClient:
             "amount": amount,
             "description": description,
             "ach_class": ach_class,
-            "user": user,
-            "metadata": metadata,
+            "user": None if user is None else user.dict(),
+            "metadata": None if metadata is None else metadata.dict(),
             "origination_account_id": origination_account_id,
             "iso_currency_code": iso_currency_code,
             "payment_profile_id": payment_profile_id,
@@ -3419,10 +3174,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.TransferCreateResponse.parse_obj(data)
 
@@ -3461,9 +3213,9 @@ class PlaidClient:
             "iso_currency_code": iso_currency_code,
             "description": description,
             "ach_class": ach_class,
-            "user": user,
+            "user": None if user is None else user.dict(),
             "custom_tag": custom_tag,
-            "metadata": metadata,
+            "metadata": None if metadata is None else metadata.dict(),
             "origination_account_id": origination_account_id,
         }
         req = requests.Request(
@@ -3473,10 +3225,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.BankTransferCreateResponse.parse_obj(data)
 
@@ -3512,10 +3261,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.TransferListResponse.parse_obj(data)
 
@@ -3553,10 +3299,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.BankTransferListResponse.parse_obj(data)
 
@@ -3580,10 +3323,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.TransferCancelResponse.parse_obj(data)
 
@@ -3609,10 +3349,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.BankTransferCancelResponse.parse_obj(data)
 
@@ -3657,10 +3394,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.TransferEventListResponse.parse_obj(data)
 
@@ -3705,10 +3439,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.BankTransferEventListResponse.parse_obj(data)
 
@@ -3735,10 +3466,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.TransferEventSyncResponse.parse_obj(data)
 
@@ -3765,10 +3493,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.BankTransferEventSyncResponse.parse_obj(data)
 
@@ -3792,10 +3517,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.TransferSweepGetResponse.parse_obj(data)
 
@@ -3821,10 +3543,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.BankTransferSweepGetResponse.parse_obj(data)
 
@@ -3857,10 +3576,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.TransferSweepListResponse.parse_obj(data)
 
@@ -3893,10 +3609,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.BankTransferSweepListResponse.parse_obj(data)
 
@@ -3926,10 +3639,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.BankTransferBalanceGetResponse.parse_obj(data)
 
@@ -3962,10 +3672,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.BankTransferMigrateAccountResponse.parse_obj(data)
 
@@ -3998,10 +3705,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.TransferMigrateAccountResponse.parse_obj(data)
 
@@ -4034,8 +3738,8 @@ class PlaidClient:
             "description": description,
             "ach_class": ach_class,
             "origination_account_id": origination_account_id,
-            "user": user,
-            "metadata": metadata,
+            "user": None if user is None else user.dict(),
+            "metadata": None if metadata is None else metadata.dict(),
             "iso_currency_code": iso_currency_code,
             "require_guarantee": require_guarantee,
         }
@@ -4046,10 +3750,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.TransferIntentCreateResponse.parse_obj(data)
 
@@ -4075,10 +3776,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.TransferIntentGetResponse.parse_obj(data)
 
@@ -4111,10 +3809,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.TransferRepaymentListResponse.parse_obj(data)
 
@@ -4145,10 +3840,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.TransferRepaymentReturnListResponse.parse_obj(data)
 
@@ -4170,7 +3862,7 @@ class PlaidClient:
         data = {
             "bank_transfer_id": bank_transfer_id,
             "event_type": event_type,
-            "failure_reason": failure_reason,
+            "failure_reason": None if failure_reason is None else failure_reason.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -4179,10 +3871,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.SandboxBankTransferSimulateResponse.parse_obj(data)
 
@@ -4206,10 +3895,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.SandboxTransferSweepSimulateResponse.parse_obj(data)
 
@@ -4231,7 +3917,7 @@ class PlaidClient:
         data = {
             "transfer_id": transfer_id,
             "event_type": event_type,
-            "failure_reason": failure_reason,
+            "failure_reason": None if failure_reason is None else failure_reason.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -4240,10 +3926,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.SandboxTransferSimulateResponse.parse_obj(data)
 
@@ -4267,10 +3950,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.SandboxTransferRepaymentSimulateResponse.parse_obj(data)
 
@@ -4296,10 +3976,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.SandboxTransferFireWebhookResponse.parse_obj(data)
 
@@ -4328,10 +4005,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.EmployersSearchResponse.parse_obj(data)
 
@@ -4353,7 +4027,7 @@ class PlaidClient:
         data = {
             "webhook": webhook,
             "precheck_id": precheck_id,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -4362,10 +4036,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.IncomeVerificationCreateResponse.parse_obj(data)
 
@@ -4396,10 +4067,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.IncomeVerificationPaystubsGetResponse.parse_obj(data)
 
@@ -4438,10 +4106,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
 
     def income_verification_refresh(
         self,
@@ -4468,10 +4133,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.IncomeVerificationRefreshResponse.parse_obj(data)
 
@@ -4502,10 +4164,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.IncomeVerificationTaxformsGetResponse.parse_obj(data)
 
@@ -4531,11 +4190,13 @@ class PlaidClient:
         }
         params = {}
         data = {
-            "user": user,
-            "employer": employer,
+            "user": None if user is None else user.dict(),
+            "employer": None if employer is None else employer.dict(),
             "transactions_access_token": transactions_access_token,
             "transactions_access_tokens": transactions_access_tokens,
-            "us_military_info": us_military_info,
+            "us_military_info": None
+            if us_military_info is None
+            else us_military_info.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -4544,10 +4205,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.IncomeVerificationPrecheckResponse.parse_obj(data)
 
@@ -4575,10 +4233,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.EmploymentVerificationGetResponse.parse_obj(data)
 
@@ -4599,9 +4254,9 @@ class PlaidClient:
         }
         params = {}
         data = {
-            "target_account": target_account,
-            "target_user": target_user,
-            "options": options,
+            "target_account": None if target_account is None else target_account.dict(),
+            "target_user": None if target_user is None else target_user.dict(),
+            "options": None if options is None else options.dict(),
             "country_code": country_code,
         }
         req = requests.Request(
@@ -4611,10 +4266,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.DepositSwitchAltCreateResponse.parse_obj(data)
 
@@ -4633,7 +4285,7 @@ class PlaidClient:
         }
         params = {}
         data = {
-            "report_tokens": report_tokens,
+            "report_tokens": None if report_tokens is None else report_tokens.dict(),
             "auditor_id": auditor_id,
         }
         req = requests.Request(
@@ -4643,10 +4295,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.CreditAuditCopyTokenCreateResponse.parse_obj(data)
 
@@ -4672,10 +4321,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.CreditAuditCopyTokenRemoveResponse.parse_obj(data)
 
@@ -4695,7 +4341,7 @@ class PlaidClient:
         params = {}
         data = {
             "user_token": user_token,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -4704,10 +4350,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.CreditBankIncomeGetResponse.parse_obj(data)
 
@@ -4731,10 +4374,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
 
     def credit_bank_income_refresh(
         self,
@@ -4752,7 +4392,7 @@ class PlaidClient:
         params = {}
         data = {
             "user_token": user_token,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -4761,10 +4401,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.CreditBankIncomeRefreshResponse.parse_obj(data)
 
@@ -4790,10 +4427,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.CreditPayrollIncomeGetResponse.parse_obj(data)
 
@@ -4818,8 +4452,10 @@ class PlaidClient:
         data = {
             "user_token": user_token,
             "access_tokens": access_tokens,
-            "employer": employer,
-            "us_military_info": us_military_info,
+            "employer": None if employer is None else employer.dict(),
+            "us_military_info": None
+            if us_military_info is None
+            else us_military_info.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -4828,10 +4464,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.CreditPayrollIncomePrecheckResponse.parse_obj(data)
 
@@ -4857,10 +4490,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.CreditEmploymentGetResponse.parse_obj(data)
 
@@ -4886,10 +4516,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.CreditPayrollIncomeRefreshResponse.parse_obj(data)
 
@@ -4911,7 +4538,7 @@ class PlaidClient:
         }
         params = {}
         data = {
-            "report_tokens": report_tokens,
+            "report_tokens": None if report_tokens is None else report_tokens.dict(),
             "secondary_client_id": secondary_client_id,
             "webhook": webhook,
         }
@@ -4922,10 +4549,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.CreditRelayCreateResponse.parse_obj(data)
 
@@ -4952,10 +4576,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.AssetReportGetResponse.parse_obj(data)
 
@@ -4983,10 +4604,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.CreditRelayRefreshResponse.parse_obj(data)
 
@@ -5010,10 +4628,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.CreditRelayRemoveResponse.parse_obj(data)
 
@@ -5039,10 +4654,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.SandboxBankTransferFireWebhookResponse.parse_obj(data)
 
@@ -5075,10 +4687,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.SandboxIncomeFireWebhookResponse.parse_obj(data)
 
@@ -5101,10 +4710,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.SandboxOauthSelectAccountsResponse.parse_obj(data)
 
@@ -5137,8 +4743,8 @@ class PlaidClient:
             "amount": amount,
             "user_present": user_present,
             "client_user_id": client_user_id,
-            "user": user,
-            "device": device,
+            "user": None if user is None else user.dict(),
+            "device": None if device is None else device.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -5147,10 +4753,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.SignalEvaluateResponse.parse_obj(data)
 
@@ -5181,10 +4784,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.SignalDecisionReportResponse.parse_obj(data)
 
@@ -5211,10 +4811,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.SignalReturnReportResponse.parse_obj(data)
 
@@ -5238,10 +4835,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.SignalPrepareResponse.parse_obj(data)
 
@@ -5265,10 +4859,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.WalletCreateResponse.parse_obj(data)
 
@@ -5292,10 +4883,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.WalletGetResponse.parse_obj(data)
 
@@ -5326,10 +4914,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.WalletListResponse.parse_obj(data)
 
@@ -5355,8 +4940,8 @@ class PlaidClient:
         data = {
             "idempotency_key": idempotency_key,
             "wallet_id": wallet_id,
-            "counterparty": counterparty,
-            "amount": amount,
+            "counterparty": None if counterparty is None else counterparty.dict(),
+            "amount": None if amount is None else amount.dict(),
             "reference": reference,
         }
         req = requests.Request(
@@ -5366,10 +4951,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.WalletTransactionExecuteResponse.parse_obj(data)
 
@@ -5393,10 +4975,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.WalletTransactionGetResponse.parse_obj(data)
 
@@ -5424,10 +5003,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.WalletTransactionsListResponse.parse_obj(data)
 
@@ -5445,7 +5021,7 @@ class PlaidClient:
         params = {}
         data = {
             "account_type": account_type,
-            "transactions": transactions,
+            "transactions": None if transactions is None else transactions.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -5454,10 +5030,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.TransactionsEnhanceGetResponse.parse_obj(data)
 
@@ -5481,7 +5054,7 @@ class PlaidClient:
         data = {
             "access_token": access_token,
             "personal_finance_category": personal_finance_category,
-            "rule_details": rule_details,
+            "rule_details": None if rule_details is None else rule_details.dict(),
         }
         req = requests.Request(
             method="POST",
@@ -5490,10 +5063,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.TransactionsRulesCreateResponse.parse_obj(data)
 
@@ -5517,10 +5087,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.TransactionsRulesListResponse.parse_obj(data)
 
@@ -5545,10 +5112,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.TransactionsRulesRemoveResponse.parse_obj(data)
 
@@ -5570,10 +5134,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaymentProfileCreateResponse.parse_obj(data)
 
@@ -5599,10 +5160,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaymentProfileGetResponse.parse_obj(data)
 
@@ -5628,10 +5186,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PaymentProfileRemoveResponse.parse_obj(data)
 
@@ -5662,10 +5217,7 @@ class PlaidClient:
             params=params,
             json=data,
         )
-        self.authenticate(req)
-        prepped = req.prepare()
-        res = self.session.send(prepped)
-        res.raise_for_status()
+        res = self.send(req)
         data = res.json()
         return model.PartnerCustomersCreateResponse.parse_obj(data)
 

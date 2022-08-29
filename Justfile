@@ -18,7 +18,7 @@ check:
     mypy --allow-redefinition --strict plaid2/
 
 test:
-    pytest --ignore=__pypackages__
+    pdm run pytest
 
 lint:
     flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude=__pypackages__

@@ -60,7 +60,7 @@ class AsyncPlaidClient:
         data = {
             "access_token": access_token,
             "application_id": application_id,
-            "scopes": scopes,
+            "scopes": None if scopes is None else scopes.dict(),
             "state": state,
             "context": context,
         }
@@ -146,7 +146,7 @@ class AsyncPlaidClient:
         params = {}
         data = {
             "access_token": access_token,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -183,7 +183,7 @@ class AsyncPlaidClient:
         }
         params = {}
         data = {
-            "options": options,
+            "options": None if options is None else options.dict(),
             "access_token": access_token,
             "start_date": start_date,
             "end_date": end_date,
@@ -254,7 +254,7 @@ class AsyncPlaidClient:
         params = {}
         data = {
             "access_token": access_token,
-            "options": options,
+            "options": None if options is None else options.dict(),
             "account_ids": account_ids,
         }
         async with aiohttp.ClientSession() as session:
@@ -306,7 +306,7 @@ class AsyncPlaidClient:
             "access_token": access_token,
             "cursor": cursor,
             "count": count,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -343,7 +343,7 @@ class AsyncPlaidClient:
             "count": count,
             "offset": offset,
             "country_codes": country_codes,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -381,7 +381,7 @@ class AsyncPlaidClient:
             "query": query,
             "products": products,
             "country_codes": country_codes,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -417,7 +417,7 @@ class AsyncPlaidClient:
         data = {
             "institution_id": institution_id,
             "country_codes": country_codes,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -483,7 +483,7 @@ class AsyncPlaidClient:
         params = {}
         data = {
             "access_token": access_token,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -538,7 +538,7 @@ class AsyncPlaidClient:
         params = {}
         data = {
             "institution_id": institution_id,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -572,7 +572,7 @@ class AsyncPlaidClient:
         data = {
             "institution_id": institution_id,
             "initial_products": initial_products,
-            "options": options,
+            "options": None if options is None else options.dict(),
             "user_token": user_token,
         }
         async with aiohttp.ClientSession() as session:
@@ -644,7 +644,7 @@ class AsyncPlaidClient:
         params = {}
         data = {
             "access_token": access_token,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -679,7 +679,7 @@ class AsyncPlaidClient:
         params = {}
         data = {
             "access_token": access_token,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -713,8 +713,8 @@ class AsyncPlaidClient:
         params = {}
         data = {
             "access_token": access_token,
-            "user": user,
-            "options": options,
+            "user": None if user is None else user.dict(),
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -808,7 +808,7 @@ class AsyncPlaidClient:
             "is_shareable": is_shareable,
             "template_id": template_id,
             "gave_consent": gave_consent,
-            "user": user,
+            "user": None if user is None else user.dict(),
             "is_idempotent": is_idempotent,
         }
         async with aiohttp.ClientSession() as session:
@@ -902,7 +902,7 @@ class AsyncPlaidClient:
             "client_user_id": client_user_id,
             "template_id": template_id,
             "strategy": strategy,
-            "steps": steps,
+            "steps": None if steps is None else steps.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -932,7 +932,7 @@ class AsyncPlaidClient:
         }
         params = {}
         data = {
-            "search_terms": search_terms,
+            "search_terms": None if search_terms is None else search_terms.dict(),
             "client_user_id": client_user_id,
         }
         async with aiohttp.ClientSession() as session:
@@ -1221,7 +1221,7 @@ class AsyncPlaidClient:
         params = {}
         data = {
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
-            "search_terms": search_terms,
+            "search_terms": None if search_terms is None else search_terms.dict(),
             "assignee": assignee,
             "status": status,
             "client_user_id": client_user_id,
@@ -1255,7 +1255,7 @@ class AsyncPlaidClient:
         }
         params = {}
         data = {
-            "search_terms": search_terms,
+            "search_terms": None if search_terms is None else search_terms.dict(),
             "client_user_id": client_user_id,
         }
         async with aiohttp.ClientSession() as session:
@@ -1550,7 +1550,7 @@ class AsyncPlaidClient:
         params = {}
         data = {
             "watchlist_screening_id": watchlist_screening_id,
-            "search_terms": search_terms,
+            "search_terms": None if search_terms is None else search_terms.dict(),
             "assignee": assignee,
             "status": status,
             "client_user_id": client_user_id,
@@ -1633,9 +1633,9 @@ class AsyncPlaidClient:
             "iso_currency_code": iso_currency_code,
             "description": description,
             "ach_class": ach_class,
-            "user": user,
+            "user": None if user is None else user.dict(),
             "custom_tag": custom_tag,
-            "metadata": metadata,
+            "metadata": None if metadata is None else metadata.dict(),
             "origination_account_id": origination_account_id,
         }
         async with aiohttp.ClientSession() as session:
@@ -1695,7 +1695,7 @@ class AsyncPlaidClient:
         params = {}
         data = {
             "processor_token": processor_token,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -1820,7 +1820,7 @@ class AsyncPlaidClient:
         params = {}
         data = {
             "access_token": access_token,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -1857,8 +1857,8 @@ class AsyncPlaidClient:
         data = {
             "name": name,
             "iban": iban,
-            "bacs": bacs,
-            "address": address,
+            "bacs": None if bacs is None else bacs.dict(),
+            "address": None if address is None else address.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -1984,9 +1984,9 @@ class AsyncPlaidClient:
         data = {
             "recipient_id": recipient_id,
             "reference": reference,
-            "amount": amount,
-            "schedule": schedule,
-            "options": options,
+            "amount": None if amount is None else amount.dict(),
+            "schedule": None if schedule is None else schedule.dict(),
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -2054,8 +2054,8 @@ class AsyncPlaidClient:
             "recipient_id": recipient_id,
             "reference": reference,
             "scopes": scopes,
-            "constraints": constraints,
-            "options": options,
+            "constraints": None if constraints is None else constraints.dict(),
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -2140,7 +2140,7 @@ class AsyncPlaidClient:
         params = {}
         data = {
             "consent_id": consent_id,
-            "amount": amount,
+            "amount": None if amount is None else amount.dict(),
             "idempotency_key": idempotency_key,
         }
         async with aiohttp.ClientSession() as session:
@@ -2398,7 +2398,7 @@ class AsyncPlaidClient:
         data = {
             "access_tokens": access_tokens,
             "days_requested": days_requested,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -2433,7 +2433,7 @@ class AsyncPlaidClient:
         data = {
             "asset_report_token": asset_report_token,
             "days_requested": days_requested,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -2773,7 +2773,7 @@ class AsyncPlaidClient:
         params = {}
         data = {
             "access_token": access_token,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -2812,7 +2812,7 @@ class AsyncPlaidClient:
             "access_token": access_token,
             "start_date": start_date,
             "end_date": end_date,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -2937,7 +2937,7 @@ class AsyncPlaidClient:
             "target_access_token": target_access_token,
             "target_account_id": target_account_id,
             "country_code": country_code,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -2969,8 +2969,8 @@ class AsyncPlaidClient:
         params = {}
         data = {
             "products": products,
-            "user_auth": user_auth,
-            "options": options,
+            "user_auth": None if user_auth is None else user_auth.dict(),
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -3061,7 +3061,7 @@ class AsyncPlaidClient:
             "client_name": client_name,
             "language": language,
             "country_codes": country_codes,
-            "user": user,
+            "user": None if user is None else user.dict(),
             "products": products,
             "additional_consented_products": additional_consented_products,
             "webhook": webhook,
@@ -3069,17 +3069,27 @@ class AsyncPlaidClient:
             "link_customization_name": link_customization_name,
             "redirect_uri": redirect_uri,
             "android_package_name": android_package_name,
-            "institution_data": institution_data,
-            "account_filters": account_filters,
-            "eu_config": eu_config,
+            "institution_data": None
+            if institution_data is None
+            else institution_data.dict(),
+            "account_filters": None
+            if account_filters is None
+            else account_filters.dict(),
+            "eu_config": None if eu_config is None else eu_config.dict(),
             "institution_id": institution_id,
-            "payment_initiation": payment_initiation,
-            "deposit_switch": deposit_switch,
-            "income_verification": income_verification,
-            "auth": auth,
-            "transfer": transfer,
-            "update": update,
-            "identity_verification": identity_verification,
+            "payment_initiation": None
+            if payment_initiation is None
+            else payment_initiation.dict(),
+            "deposit_switch": None if deposit_switch is None else deposit_switch.dict(),
+            "income_verification": None
+            if income_verification is None
+            else income_verification.dict(),
+            "auth": None if auth is None else auth.dict(),
+            "transfer": None if transfer is None else transfer.dict(),
+            "update": None if update is None else update.dict(),
+            "identity_verification": None
+            if identity_verification is None
+            else identity_verification.dict(),
             "user_token": user_token,
         }
         async with aiohttp.ClientSession() as session:
@@ -3277,8 +3287,8 @@ class AsyncPlaidClient:
             "network": network,
             "amount": amount,
             "ach_class": ach_class,
-            "user": user,
-            "device": device,
+            "user": None if user is None else user.dict(),
+            "device": None if device is None else device.dict(),
             "origination_account_id": origination_account_id,
             "iso_currency_code": iso_currency_code,
             "user_present": user_present,
@@ -3333,8 +3343,8 @@ class AsyncPlaidClient:
             "amount": amount,
             "description": description,
             "ach_class": ach_class,
-            "user": user,
-            "metadata": metadata,
+            "user": None if user is None else user.dict(),
+            "metadata": None if metadata is None else metadata.dict(),
             "origination_account_id": origination_account_id,
             "iso_currency_code": iso_currency_code,
             "payment_profile_id": payment_profile_id,
@@ -3387,9 +3397,9 @@ class AsyncPlaidClient:
             "iso_currency_code": iso_currency_code,
             "description": description,
             "ach_class": ach_class,
-            "user": user,
+            "user": None if user is None else user.dict(),
             "custom_tag": custom_tag,
-            "metadata": metadata,
+            "metadata": None if metadata is None else metadata.dict(),
             "origination_account_id": origination_account_id,
         }
         async with aiohttp.ClientSession() as session:
@@ -3944,8 +3954,8 @@ class AsyncPlaidClient:
             "description": description,
             "ach_class": ach_class,
             "origination_account_id": origination_account_id,
-            "user": user,
-            "metadata": metadata,
+            "user": None if user is None else user.dict(),
+            "metadata": None if metadata is None else metadata.dict(),
             "iso_currency_code": iso_currency_code,
             "require_guarantee": require_guarantee,
         }
@@ -4076,7 +4086,7 @@ class AsyncPlaidClient:
         data = {
             "bank_transfer_id": bank_transfer_id,
             "event_type": event_type,
-            "failure_reason": failure_reason,
+            "failure_reason": None if failure_reason is None else failure_reason.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -4135,7 +4145,7 @@ class AsyncPlaidClient:
         data = {
             "transfer_id": transfer_id,
             "event_type": event_type,
-            "failure_reason": failure_reason,
+            "failure_reason": None if failure_reason is None else failure_reason.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -4253,7 +4263,7 @@ class AsyncPlaidClient:
         data = {
             "webhook": webhook,
             "precheck_id": precheck_id,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -4426,11 +4436,13 @@ class AsyncPlaidClient:
         }
         params = {}
         data = {
-            "user": user,
-            "employer": employer,
+            "user": None if user is None else user.dict(),
+            "employer": None if employer is None else employer.dict(),
             "transactions_access_token": transactions_access_token,
             "transactions_access_tokens": transactions_access_tokens,
-            "us_military_info": us_military_info,
+            "us_military_info": None
+            if us_military_info is None
+            else us_military_info.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -4492,9 +4504,9 @@ class AsyncPlaidClient:
         }
         params = {}
         data = {
-            "target_account": target_account,
-            "target_user": target_user,
-            "options": options,
+            "target_account": None if target_account is None else target_account.dict(),
+            "target_user": None if target_user is None else target_user.dict(),
+            "options": None if options is None else options.dict(),
             "country_code": country_code,
         }
         async with aiohttp.ClientSession() as session:
@@ -4525,7 +4537,7 @@ class AsyncPlaidClient:
         }
         params = {}
         data = {
-            "report_tokens": report_tokens,
+            "report_tokens": None if report_tokens is None else report_tokens.dict(),
             "auditor_id": auditor_id,
         }
         async with aiohttp.ClientSession() as session:
@@ -4585,7 +4597,7 @@ class AsyncPlaidClient:
         params = {}
         data = {
             "user_token": user_token,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -4640,7 +4652,7 @@ class AsyncPlaidClient:
         params = {}
         data = {
             "user_token": user_token,
-            "options": options,
+            "options": None if options is None else options.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -4704,8 +4716,10 @@ class AsyncPlaidClient:
         data = {
             "user_token": user_token,
             "access_tokens": access_tokens,
-            "employer": employer,
-            "us_military_info": us_military_info,
+            "employer": None if employer is None else employer.dict(),
+            "us_military_info": None
+            if us_military_info is None
+            else us_military_info.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -4794,7 +4808,7 @@ class AsyncPlaidClient:
         }
         params = {}
         data = {
-            "report_tokens": report_tokens,
+            "report_tokens": None if report_tokens is None else report_tokens.dict(),
             "secondary_client_id": secondary_client_id,
             "webhook": webhook,
         }
@@ -5015,8 +5029,8 @@ class AsyncPlaidClient:
             "amount": amount,
             "user_present": user_present,
             "client_user_id": client_user_id,
-            "user": user,
-            "device": device,
+            "user": None if user is None else user.dict(),
+            "device": None if device is None else device.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -5223,8 +5237,8 @@ class AsyncPlaidClient:
         data = {
             "idempotency_key": idempotency_key,
             "wallet_id": wallet_id,
-            "counterparty": counterparty,
-            "amount": amount,
+            "counterparty": None if counterparty is None else counterparty.dict(),
+            "amount": None if amount is None else amount.dict(),
             "reference": reference,
         }
         async with aiohttp.ClientSession() as session:
@@ -5310,7 +5324,7 @@ class AsyncPlaidClient:
         params = {}
         data = {
             "account_type": account_type,
-            "transactions": transactions,
+            "transactions": None if transactions is None else transactions.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -5345,7 +5359,7 @@ class AsyncPlaidClient:
         data = {
             "access_token": access_token,
             "personal_finance_category": personal_finance_category,
-            "rule_details": rule_details,
+            "rule_details": None if rule_details is None else rule_details.dict(),
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
