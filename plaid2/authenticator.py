@@ -1,5 +1,5 @@
 import os
-import requests
+from typing import Dict, Any
 
 
 class PlaidAuthenticator:
@@ -8,10 +8,12 @@ class PlaidAuthenticator:
         self.secret = secret
         self.plaid_version = plaid_version
 
-    def authenticate(self, req: requests.Request) -> None:
-        req.headers["PLAID-CLIENT-ID"] = self.client_id
-        req.headers["PLAID-SECRET"] = self.secret
-        req.headers["Plaid-Version"] = self.plaid_version
+    def authenticate(
+        self, headers: Dict[str, str], params: Dict[str, str], data: Dict[str, Any]
+    ) -> None:
+        headers["PLAID-CLIENT-ID"] = self.client_id
+        headers["PLAID-SECRET"] = self.secret
+        headers["Plaid-Version"] = self.plaid_version
 
     @classmethod
     def from_env(cls) -> "PlaidAuthenticator":

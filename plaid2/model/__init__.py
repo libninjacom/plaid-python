@@ -1,431 +1,720 @@
-from .credit_employment_verification_status import CreditEmploymentVerificationStatus
-from .payment_initiation_consent_payment_execute_response import (
-    PaymentInitiationConsentPaymentExecuteResponse,
-)
-from .security_override import SecurityOverride
-from .investments_transactions_override import InvestmentsTransactionsOverride
-from .holdings_override import HoldingsOverride
+from .mortgage_property_address import MortgagePropertyAddress
+from .partner_customers_create_request import PartnerCustomersCreateRequest
+from .processor_token_create_response import ProcessorTokenCreateResponse
+from .url import Url
 from .mfa import Mfa
-from .credit_payroll_income_refresh_status import CreditPayrollIncomeRefreshStatus
-from .update_individual_screening_request_resettable_field import (
-    UpdateIndividualScreeningRequestResettableField,
+from .list_dashboard_user_request import ListDashboardUserRequest
+from .sandbox_processor_token_create_request_options import (
+    SandboxProcessorTokenCreateRequestOptions,
+)
+from .sandbox_processor_token_create_request import SandboxProcessorTokenCreateRequest
+from .report_type import ReportType
+from .individual_watchlist_code import IndividualWatchlistCode
+from .kyc_check_address_summary import KycCheckAddressSummary
+from .transfer_sweep_id import TransferSweepId
+from .credit_bank_income_error_type import CreditBankIncomeErrorType
+from .identity_verification_step_status import IdentityVerificationStepStatus
+from .credit_account_subtypes import CreditAccountSubtypes
+from .client_provided_raw_transaction import ClientProvidedRawTransaction
+from .transactions_enhance_get_request import TransactionsEnhanceGetRequest
+from .given_name_field import GivenNameField
+from .payment_initiation_recipient_get_request import (
+    PaymentInitiationRecipientGetRequest,
 )
 from .numbers_international_iban import NumbersInternationalIban
-from .transfer_id import TransferId
-from .identity_verification_status import IdentityVerificationStatus
-from .payment_initiation_payment_list_request import PaymentInitiationPaymentListRequest
-from .investment_account_subtypes import InvestmentAccountSubtypes
-from .credit_pay_stub_address import CreditPayStubAddress
-from .credit_1099_filer import Credit1099Filer
-from .credit_pay_stub_employer import CreditPayStubEmployer
-from .credit_1099_recipient import Credit1099Recipient
-from .credit_1099_payer import Credit1099Payer
-from .numbers_international import NumbersInternational
-from .account_filter import AccountFilter
-from .credit_bank_income_refresh_request_options import (
-    CreditBankIncomeRefreshRequestOptions,
-)
-from .credit_bank_income_refresh_request import CreditBankIncomeRefreshRequest
-from .physical_document_category import PhysicalDocumentCategory
-from .depository_account import DepositoryAccount
-from .document_image_back import DocumentImageBack
-from .transaction_stream_amount import TransactionStreamAmount
-from .link_token_create_request_user_stated_income_source import (
-    LinkTokenCreateRequestUserStatedIncomeSource,
-)
-from .url import Url
-from .link_token_create_request_transfer import LinkTokenCreateRequestTransfer
-from .standalone_currency_code_list import StandaloneCurrencyCodeList
-from .credit_relay_remove_response import CreditRelayRemoveResponse
-from .source_uid import SourceUid
-from .credit_document_metadata import CreditDocumentMetadata
-from .credit_1099 import Credit1099
-from .payment_initiation_payment_reverse_request import (
-    PaymentInitiationPaymentReverseRequest,
-)
-from .city import City
-from .weak_alias_determination import WeakAliasDetermination
-from .jwk_public_key import JwkPublicKey
-from .webhook_verification_key_get_response import WebhookVerificationKeyGetResponse
+from .income_verification_status_webhook import IncomeVerificationStatusWebhook
+from .user_stated_income_source_category import UserStatedIncomeSourceCategory
 from .update_entity_screening_request_resettable_field_list import (
     UpdateEntityScreeningRequestResettableFieldList,
 )
-from .processor_token_create_response import ProcessorTokenCreateResponse
-from .entity_screening_hit_urls import EntityScreeningHitUrls
-from .transfer_sweep_get_request import TransferSweepGetRequest
-from .doc_type import DocType
-from .pay_stub_earnings_total import PayStubEarningsTotal
-from .kyc_check_address_summary import KycCheckAddressSummary
-from .external_payment_schedule_base import ExternalPaymentScheduleBase
-from .sandbox_transfer_repayment_simulate_request import (
-    SandboxTransferRepaymentSimulateRequest,
-)
-from .phone_type import PhoneType
-from .payment_initiation_recipient_get_response import (
-    PaymentInitiationRecipientGetResponse,
-)
+from .transfer_intent_status import TransferIntentStatus
+from .generic_country_code import GenericCountryCode
+from .transfer_id import TransferId
+from .link_token_create_depository_filter import LinkTokenCreateDepositoryFilter
+from .watchlist_screening_search_terms import WatchlistScreeningSearchTerms
+from .asset_report_token import AssetReportToken
+from .investment_holdings_get_request_options import InvestmentHoldingsGetRequestOptions
+from .investments_holdings_get_request import InvestmentsHoldingsGetRequest
+from .payment_profile_create_response import PaymentProfileCreateResponse
 from .scopes_nullable import ScopesNullable
 from .connected_application import ConnectedApplication
 from .item_application_list_response import ItemApplicationListResponse
-from .api_secret import ApiSecret
-from .timestamp import Timestamp
-from .identity_verification_status_updated_webhook import (
-    IdentityVerificationStatusUpdatedWebhook,
-)
-from .sandbox_public_token_create_response import SandboxPublicTokenCreateResponse
-from .item_application_scopes_update_response import ItemApplicationScopesUpdateResponse
-from .asset_report_relay_remove_request import AssetReportRelayRemoveRequest
-from .payment_amount_currency import PaymentAmountCurrency
+from .identity_verification_status import IdentityVerificationStatus
+from .payroll_income_rate_of_pay import PayrollIncomeRateOfPay
+from .payroll_income_account_data import PayrollIncomeAccountData
+from .deposit_switch_create_response import DepositSwitchCreateResponse
+from .payment_profile_get_request import PaymentProfileGetRequest
+from .student_loan_status import StudentLoanStatus
+from .asset_report_refresh_response import AssetReportRefreshResponse
+from .api_client_id import ApiClientId
+from .credit_payroll_income_precheck_response import CreditPayrollIncomePrecheckResponse
+from .unofficial_currency_code_list import UnofficialCurrencyCodeList
+from .income_verification_webhook_status import IncomeVerificationWebhookStatus
+from .payment_initiation_consent_scope import PaymentInitiationConsentScope
+from .asset_report_relay_create_request import AssetReportRelayCreateRequest
+from .credit_iso_currency_code import CreditIsoCurrencyCode
+from .weak_alias_determination import WeakAliasDetermination
+from .bank_initiated_return_risk import BankInitiatedReturnRisk
+from .numbers_iban import NumbersIban
+from .transfer_failure import TransferFailure
+from .sandbox_transfer_simulate_request import SandboxTransferSimulateRequest
+from .transfer_event import TransferEvent
+from .transfer_event_list_response import TransferEventListResponse
+from .transfer_event_sync_response import TransferEventSyncResponse
+from .accounts_balance_get_request_options import AccountsBalanceGetRequestOptions
+from .accounts_balance_get_request import AccountsBalanceGetRequest
+from .identity_verification_step_summary import IdentityVerificationStepSummary
+from .investment_filter import InvestmentFilter
+from .sandbox_income_fire_webhook_request import SandboxIncomeFireWebhookRequest
+from .numbers_eft import NumbersEft
+from .employer_verification import EmployerVerification
+from .sandbox_item_fire_webhook_response import SandboxItemFireWebhookResponse
 from .update_entity_screening_request_search_terms import (
     UpdateEntityScreeningRequestSearchTerms,
 )
 from .update_entity_screening_request import UpdateEntityScreeningRequest
-from .risk_signal_document_reference import RiskSignalDocumentReference
-from .family_name_field import FamilyNameField
-from .incident_update import IncidentUpdate
-from .health_incident import HealthIncident
-from .match_summary import MatchSummary
-from .entity_screening_hit_urls_items import EntityScreeningHitUrlsItems
-from .credit_bank_income_pdf_get_response import CreditBankIncomePdfGetResponse
-from .entity_screening_hit_analysis import EntityScreeningHitAnalysis
+from .bank_transfer_failure import BankTransferFailure
+from .bank_transfer_event import BankTransferEvent
+from .bank_transfer_event_list_response import BankTransferEventListResponse
+from .bank_transfer_event_sync_response import BankTransferEventSyncResponse
+from .sandbox_bank_transfer_simulate_request import SandboxBankTransferSimulateRequest
+from .watchlist_screening_status import WatchlistScreeningStatus
+from .payment_initiation_recipient_get_response import (
+    PaymentInitiationRecipientGetResponse,
+)
 from .wallet_transaction_counterparty_bacs import WalletTransactionCounterpartyBacs
-from .wallet_transaction_execute_response import WalletTransactionExecuteResponse
-from .product_status_breakdown import ProductStatusBreakdown
-from .product_status import ProductStatus
-from .institution_status import InstitutionStatus
-from .payment_initiation_consent_revoke_response import (
-    PaymentInitiationConsentRevokeResponse,
-)
-from .credit_document_type import CreditDocumentType
-from .webhook_verification_key_get_request import WebhookVerificationKeyGetRequest
-from .deposit_switch_target_account import DepositSwitchTargetAccount
-from .asset_report_get_request import AssetReportGetRequest
-from .transfer_sweep_status import TransferSweepStatus
-from .internal_uid import InternalUid
-from .user_stated_income_source_pay_type import UserStatedIncomeSourcePayType
-from .income_summary_field_string import IncomeSummaryFieldString
-from .physical_document_id_number import PhysicalDocumentIdNumber
-from .entity_screening_hit_names import EntityScreeningHitNames
-from .entity_screening_hit_names_items import EntityScreeningHitNamesItems
-from .external_payment_schedule_request import ExternalPaymentScheduleRequest
-from .item_public_token_create_response import ItemPublicTokenCreateResponse
-from .item_status_transactions import ItemStatusTransactions
-from .payment_initiation_maximum_payment_amount import (
-    PaymentInitiationMaximumPaymentAmount,
-)
-from .verification_attribute import VerificationAttribute
-from .paystub_verification import PaystubVerification
-from .sandbox_item_set_verification_status_request import (
-    SandboxItemSetVerificationStatusRequest,
-)
-from .account_filter_subtypes import AccountFilterSubtypes
-from .account_ids_with_updated_identity import AccountIdsWithUpdatedIdentity
-from .processor_token import ProcessorToken
-from .item_status_investments import ItemStatusInvestments
-from .transfer_list_request import TransferListRequest
-from .transfer_event_list_transfer_type import TransferEventListTransferType
-from .wallet_get_response import WalletGetResponse
-from .transfer_events_update_webhook import TransferEventsUpdateWebhook
-from .meta import Meta
-from .entity_screening_status_updated_webhook import EntityScreeningStatusUpdatedWebhook
-from .dashboard_user_response import DashboardUserResponse
-from .transfer_migrate_account_response import TransferMigrateAccountResponse
-from .transfer_authorization_guarantee_decision_rationale import (
-    TransferAuthorizationGuaranteeDecisionRationale,
-)
-from .deductions_total import DeductionsTotal
-from .screening_status_updated_webhook import ScreeningStatusUpdatedWebhook
-from .payment_initiation_payment_create_response import (
-    PaymentInitiationPaymentCreateResponse,
-)
-from .investment_transaction_type import InvestmentTransactionType
-from .asset_report_filter_response import AssetReportFilterResponse
-from .transactions_refresh_response import TransactionsRefreshResponse
-from .transfer_repayment import TransferRepayment
-from .transfer_repayment_list_response import TransferRepaymentListResponse
-from .payment_meta import PaymentMeta
-from .transactions_get_request_options import TransactionsGetRequestOptions
-from .transactions_get_request import TransactionsGetRequest
-from .depository_account_subtypes import DepositoryAccountSubtypes
-from .bank_transfer_sweep_list_request import BankTransferSweepListRequest
-from .transactions_rules_remove_response import TransactionsRulesRemoveResponse
-from .bank_transfer_get_request import BankTransferGetRequest
-from .payment_schedule_interval import PaymentScheduleInterval
-from .wallet_transaction_status import WalletTransactionStatus
-from .timestamp_nullable import TimestampNullable
-from .recurring_transaction_frequency import RecurringTransactionFrequency
-from .cursor import Cursor
-from .wallet_transaction_idempotency_key import WalletTransactionIdempotencyKey
-from .assets_product_ready_webhook import AssetsProductReadyWebhook
-from .payment_initiation_consent_revoke_request import (
-    PaymentInitiationConsentRevokeRequest,
-)
-from .account_product_access_nullable import AccountProductAccessNullable
-from .account_access import AccountAccess
-from .payment_initiation_payment_token_create_response import (
-    PaymentInitiationPaymentTokenCreateResponse,
-)
-from .product_access import ProductAccess
-from .scopes import Scopes
-from .item_application_scopes_update_request import ItemApplicationScopesUpdateRequest
-from .item_access_token_invalidate_response import ItemAccessTokenInvalidateResponse
-from .student_loan_repayment_model import StudentLoanRepaymentModel
-from .credit_bank_income_account_type import CreditBankIncomeAccountType
-from .sandbox_override_username import SandboxOverrideUsername
-from .security import Security
-from .transfer_migrate_account_request import TransferMigrateAccountRequest
 from .list_watchlist_screening_individual_reviews_request import (
     ListWatchlistScreeningIndividualReviewsRequest,
 )
-from .transfer_event_type import TransferEventType
-from .earnings_breakdown import EarningsBreakdown
-from .bank_transfer_balance import BankTransferBalance
-from .bank_transfer_balance_get_response import BankTransferBalanceGetResponse
-from .deductions_breakdown import DeductionsBreakdown
-from .payment_profile_get_request import PaymentProfileGetRequest
-from .transaction import Transaction
-from .iso_8601_date import Iso8601Date
-from .verification_expired_webhook import VerificationExpiredWebhook
-from .sandbox_transfer_sweep_simulate_request import SandboxTransferSweepSimulateRequest
-from .bank_transfer_event_sync_request import BankTransferEventSyncRequest
-from .identity_verification_user_phone_number import IdentityVerificationUserPhoneNumber
-from .link_token_create_request_identity_verification import (
-    LinkTokenCreateRequestIdentityVerification,
-)
-from .location import Location
-from .transaction_base import TransactionBase
-from .item_status_nullable import ItemStatusNullable
-from .transfer_intent_authorization_decision import TransferIntentAuthorizationDecision
-from .transfer_access_token import TransferAccessToken
-from .application_id import ApplicationId
-from .pay_stub_distribution_breakdown import PayStubDistributionBreakdown
-from .pay_stub_pay_period_details import PayStubPayPeriodDetails
-from .bank_transfer_idempotency_key import BankTransferIdempotencyKey
-from .bank_transfers_events_update_webhook import BankTransfersEventsUpdateWebhook
-from .scopes_context import ScopesContext
-from .entity_watchlist_screening_hit_id import EntityWatchlistScreeningHitId
-from .get_identity_verification_request import GetIdentityVerificationRequest
-from .w_2_state_and_local_wages import W2StateAndLocalWages
-from .identity_verification_consent import IdentityVerificationConsent
 from .asset_report_pdf_get_response import AssetReportPdfGetResponse
-from .processor_stripe_bank_account_token_create_response import (
-    ProcessorStripeBankAccountTokenCreateResponse,
-)
-from .credit_payroll_income_risk_signals_get_request import (
-    CreditPayrollIncomeRiskSignalsGetRequest,
-)
-from .form_1099_type import Form1099Type
-from .bank_transfer_list_request import BankTransferListRequest
-from .credit_bank_income_error_type import CreditBankIncomeErrorType
-from .payment_amount import PaymentAmount
-from .payment_initiation_consent_payment_execute_request import (
-    PaymentInitiationConsentPaymentExecuteRequest,
-)
-from .income_verification_precheck_response import IncomeVerificationPrecheckResponse
-from .item_public_token_exchange_response import ItemPublicTokenExchangeResponse
-from .customer_initiated_return_risk import CustomerInitiatedReturnRisk
-from .physical_document_extracted_data import PhysicalDocumentExtractedData
-from .asset_report_relay_remove_response import AssetReportRelayRemoveResponse
-from .program_name_sensitivity import ProgramNameSensitivity
-from .bank_transfer_sweep import BankTransferSweep
-from .bank_transfer_sweep_list_response import BankTransferSweepListResponse
-from .bank_transfer_sweep_get_response import BankTransferSweepGetResponse
-from .pending_expiration_webhook import PendingExpirationWebhook
-from .investment_transaction import InvestmentTransaction
 from .item_webhook_update_request import ItemWebhookUpdateRequest
-from .item_remove_request import ItemRemoveRequest
-from .user_stated_income_source_frequency import UserStatedIncomeSourceFrequency
-from .asset_report_filter_request import AssetReportFilterRequest
-from .transfer_network import TransferNetwork
-from .numbers_iban_nullable import NumbersIbanNullable
-from .deposit_switch_token_create_request import DepositSwitchTokenCreateRequest
-from .apr import Apr
-from .credit_card_liability import CreditCardLiability
-from .income_verification_refresh_response import IncomeVerificationRefreshResponse
+from .bank_transfers_events_update_webhook import BankTransfersEventsUpdateWebhook
+from .application import Application
+from .application_get_response import ApplicationGetResponse
+from .sandbox_public_token_create_request_options_transactions import (
+    SandboxPublicTokenCreateRequestOptionsTransactions,
+)
+from .sandbox_public_token_create_request_options import (
+    SandboxPublicTokenCreateRequestOptions,
+)
+from .sandbox_public_token_create_request import SandboxPublicTokenCreateRequest
+from .country_code import CountryCode
+from .bank_transfer_list_request import BankTransferListRequest
+from .user_id_number import UserIdNumber
+from .link_token_create_response import LinkTokenCreateResponse
+from .investment_account_subtypes import InvestmentAccountSubtypes
+from .credit_relay_get_request import CreditRelayGetRequest
+from .physical_document_extracted_data_analysis import (
+    PhysicalDocumentExtractedDataAnalysis,
+)
+from .document_analysis import DocumentAnalysis
 from .credit_audit_copy_token_create_response import CreditAuditCopyTokenCreateResponse
-from .document_status import DocumentStatus
+from .identity_match_request_options import IdentityMatchRequestOptions
+from .paystub_override_employer import PaystubOverrideEmployer
+from .user_address import UserAddress
+from .link_token_create_request_user import LinkTokenCreateRequestUser
+from .user_id import UserId
+from .screening_status_updated_webhook import ScreeningStatusUpdatedWebhook
 from .income_verification_taxforms_get_request import (
     IncomeVerificationTaxformsGetRequest,
 )
-from .expiration_date import ExpirationDate
-from .individual_screening_hit_names import IndividualScreeningHitNames
-from .screening_hit_names_items import ScreeningHitNamesItems
-from .entity_screening_hit_emails import EntityScreeningHitEmails
-from .entity_screening_hit_emails_items import EntityScreeningHitEmailsItems
-from .identity_verification_step_summary import IdentityVerificationStepSummary
-from .relay_event import RelayEvent
-from .credit_employment_get_request import CreditEmploymentGetRequest
-from .payment_profile_remove_response import PaymentProfileRemoveResponse
-from .payment_initiation_payment_reverse_response import (
-    PaymentInitiationPaymentReverseResponse,
+from .transfer_authorization_device import TransferAuthorizationDevice
+from .student_loan_repayment_model import StudentLoanRepaymentModel
+from .transfer_list_request import TransferListRequest
+from .access_token_nullable import AccessTokenNullable
+from .sandbox_item_fire_webhook_request import SandboxItemFireWebhookRequest
+from .entity_watchlist_screening_search_terms import EntityWatchlistScreeningSearchTerms
+from .link_token_create_request_payment_initiation import (
+    LinkTokenCreateRequestPaymentInitiation,
 )
-from .employment_verification_get_request import EmploymentVerificationGetRequest
-from .application_get_request import ApplicationGetRequest
-from .bank_transfer_migrate_account_response import BankTransferMigrateAccountResponse
-from .numbers_ach import NumbersAch
-from .cause import Cause
-from .warning import Warning
-from .sandbox_income_fire_webhook_request import SandboxIncomeFireWebhookRequest
-from .credit_bank_income_warning_code import CreditBankIncomeWarningCode
-from .transfer_intent_get_request import TransferIntentGetRequest
-from .user_create_response import UserCreateResponse
-from .request_id import RequestId
-from .wallet_transaction_get_request import WalletTransactionGetRequest
-from .country_code import CountryCode
-from .report_type import ReportType
+from .credit_pay_stub_address import CreditPayStubAddress
+from .credit_1099_recipient import Credit1099Recipient
+from .credit_1099_payer import Credit1099Payer
+from .credit_pay_stub_employer import CreditPayStubEmployer
+from .credit_1099_filer import Credit1099Filer
+from .pay import Pay
+from .total import Total
+from .net_pay import NetPay
+from .earnings_total import EarningsTotal
+from .distribution_breakdown import DistributionBreakdown
+from .pay_period_details import PayPeriodDetails
+from .employment_details import EmploymentDetails
+from .transactions_rules_remove_response import TransactionsRulesRemoveResponse
+from .watchlist_screening_hit_locations import WatchlistScreeningHitLocations
+from .link_token_create_request_auth import LinkTokenCreateRequestAuth
+from .link_token_eu_config import LinkTokenEuConfig
+from .issuing_country import IssuingCountry
+from .watchlist_screening_document_type import WatchlistScreeningDocumentType
+from .income_verification_precheck_employer_address_data import (
+    IncomeVerificationPrecheckEmployerAddressData,
+)
+from .historical_balance import HistoricalBalance
+from .deposit_switch_token_create_request import DepositSwitchTokenCreateRequest
+from .transfer_events_update_webhook import TransferEventsUpdateWebhook
+from .sandbox_bank_transfer_simulate_response import SandboxBankTransferSimulateResponse
+from .item_public_token_create_request import ItemPublicTokenCreateRequest
+from .dashboard_user_status import DashboardUserStatus
+from .wallet_get_response import WalletGetResponse
+from .pending_expiration_webhook import PendingExpirationWebhook
+from .payment_initiation_payment_create_response import (
+    PaymentInitiationPaymentCreateResponse,
+)
 from .credit_bank_income_category import CreditBankIncomeCategory
-from .ytd_net_income_summary_field_number import YtdNetIncomeSummaryFieldNumber
-from .investment_transaction_subtype import InvestmentTransactionSubtype
+from .transfer_sweep import TransferSweep
+from .transfer_sweep_get_response import TransferSweepGetResponse
+from .transfer_sweep_list_response import TransferSweepListResponse
+from .standalone_investment_transaction_transfer_type import (
+    StandaloneInvestmentTransactionTransferType,
+)
+from .link_token_create_investment_filter import LinkTokenCreateInvestmentFilter
 from .dashboard_user import DashboardUser
 from .paginated_dashboard_user_list_response import PaginatedDashboardUserListResponse
+from .wallet_transaction_counterparty_international import (
+    WalletTransactionCounterpartyInternational,
+)
+from .wallet_transaction_counterparty_numbers import (
+    WalletTransactionCounterpartyNumbers,
+)
+from .wallet_transaction_counterparty import WalletTransactionCounterparty
+from .payment_initiation_recipient_create_response import (
+    PaymentInitiationRecipientCreateResponse,
+)
+from .bank_transfer_user import BankTransferUser
+from .image_quality import ImageQuality
+from .processor_apex_processor_token_create_request import (
+    ProcessorApexProcessorTokenCreateRequest,
+)
+from .identity_verification_template_id import IdentityVerificationTemplateId
+from .personal_finance_category import PersonalFinanceCategory
+from .standalone_investment_transaction_fee_type import (
+    StandaloneInvestmentTransactionFeeType,
+)
+from .asset_report_get_request import AssetReportGetRequest
+from .depository_account_subtype import DepositoryAccountSubtype
+from .pay_frequency_value import PayFrequencyValue
+from .watchlist_program_id import WatchlistProgramId
+from .sandbox_item_reset_login_request import SandboxItemResetLoginRequest
+from .pay_stub_earnings_breakdown_canonical_description import (
+    PayStubEarningsBreakdownCanonicalDescription,
+)
+from .transfer_user_address_in_request import TransferUserAddressInRequest
+from .transfer_authorization_user_in_request import TransferAuthorizationUserInRequest
+from .transfer_authorization_create_request import TransferAuthorizationCreateRequest
+from .transfer_user_in_request import TransferUserInRequest
+from .family_name_field import FamilyNameField
+from .address_data import AddressData
+from .address import Address
+from .transfer_sweep_list_request import TransferSweepListRequest
+from .payment_profile_status import PaymentProfileStatus
+from .date_range import DateRange
+from .processor_token import ProcessorToken
+from .update_individual_screening_request_resettable_field import (
+    UpdateIndividualScreeningRequestResettableField,
+)
+from .watchlist_screening_hit_id import WatchlistScreeningHitId
+from .paystub_details import PaystubDetails
+from .internal_uid import InternalUid
+from .document_metadata import DocumentMetadata
+from .update_entity_screening_request_resettable_field import (
+    UpdateEntityScreeningRequestResettableField,
+)
+from .income_verification_create_request_options import (
+    IncomeVerificationCreateRequestOptions,
+)
+from .income_verification_create_request import IncomeVerificationCreateRequest
+from .payment_initiation_payment_reverse_request import (
+    PaymentInitiationPaymentReverseRequest,
+)
+from .kyc_check_phone_summary import KycCheckPhoneSummary
+from .credit_filter import CreditFilter
+from .link_token_create_request_update import LinkTokenCreateRequestUpdate
+from .identity_verification_retry_request_steps_object import (
+    IdentityVerificationRetryRequestStepsObject,
+)
+from .identity_verification_retry_request import IdentityVerificationRetryRequest
+from .income_breakdown import IncomeBreakdown
+from .bank_transfer_sweep import BankTransferSweep
+from .bank_transfer_sweep_list_response import BankTransferSweepListResponse
+from .bank_transfer_sweep_get_response import BankTransferSweepGetResponse
+from .income_verification_precheck_response import IncomeVerificationPrecheckResponse
+from .transaction import Transaction
+from .income_verification_paystubs_get_request import (
+    IncomeVerificationPaystubsGetRequest,
+)
+from .liabilities_get_request_options import LiabilitiesGetRequestOptions
+from .liabilities_get_request import LiabilitiesGetRequest
+from .transfer_cancel_request import TransferCancelRequest
+from .account_product_access_nullable import AccountProductAccessNullable
+from .account_access import AccountAccess
+from .credit_payroll_income_get_request import CreditPayrollIncomeGetRequest
+from .payment_initiation_recipient_list_request import (
+    PaymentInitiationRecipientListRequest,
+)
+from .application_get_request import ApplicationGetRequest
+from .asset_report_filter_response import AssetReportFilterResponse
+from .payment_initiation_payment_list_request import PaymentInitiationPaymentListRequest
+from .pay_frequency import PayFrequency
+from .physical_document_extracted_data import PhysicalDocumentExtractedData
+from .get_watchlist_screening_entity_program_request import (
+    GetWatchlistScreeningEntityProgramRequest,
+)
+from .entity_watchlist_program_id import EntityWatchlistProgramId
+from .total_canonical_description import TotalCanonicalDescription
+from .jwk_public_key import JwkPublicKey
+from .webhook_verification_key_get_response import WebhookVerificationKeyGetResponse
+from .list_watchlist_screening_individual_programs_request import (
+    ListWatchlistScreeningIndividualProgramsRequest,
+)
+from .products import Products
+from .payment_initiation_consent_payment_execute_response import (
+    PaymentInitiationConsentPaymentExecuteResponse,
+)
+from .customer_initiated_risk_tier import CustomerInitiatedRiskTier
+from .signal_address_data import SignalAddressData
+from .income_verification_precheck_user import IncomeVerificationPrecheckUser
+from .credit_audit_copy_token_remove_response import CreditAuditCopyTokenRemoveResponse
+from .address_data_nullable import AddressDataNullable
+from .identity_match_user import IdentityMatchUser
+from .identity_match_request import IdentityMatchRequest
+from .employer import Employer
+from .employers_search_response import EmployersSearchResponse
+from .transactions_refresh_request import TransactionsRefreshRequest
+from .credit_bank_income_pay_frequency import CreditBankIncomePayFrequency
+from .list_watchlist_screening_individual_history_request import (
+    ListWatchlistScreeningIndividualHistoryRequest,
+)
+from .transactions_rule_details import TransactionsRuleDetails
+from .transactions_category_rule import TransactionsCategoryRule
+from .transactions_rules_create_response import TransactionsRulesCreateResponse
+from .transactions_rules_list_response import TransactionsRulesListResponse
+from .transactions_rules_create_request import TransactionsRulesCreateRequest
+from .payment_initiation_consent_revoke_response import (
+    PaymentInitiationConsentRevokeResponse,
+)
+from .application_id import ApplicationId
+from .account_product_access import AccountProductAccess
+from .item_import_response import ItemImportResponse
+from .credit_bank_income_refresh_response import CreditBankIncomeRefreshResponse
+from .entity_screening_hit_emails import EntityScreeningHitEmails
+from .link_token_create_institution_data import LinkTokenCreateInstitutionData
+from .w_2_box_12 import W2Box12
+from .sender_bacs_nullable import SenderBacsNullable
+from .wallet_transaction_status import WalletTransactionStatus
+from .strategy import Strategy
+from .transfer_authorization_guarantee_decision import (
+    TransferAuthorizationGuaranteeDecision,
+)
+from .match_summary import MatchSummary
+from .entity_screening_hit_emails_items import EntityScreeningHitEmailsItems
+from .screening_hit_date_of_birth_item import ScreeningHitDateOfBirthItem
+from .generic_screening_hit_location_items import GenericScreeningHitLocationItems
+from .liabilities_account_ids_with_updated_liabilities import (
+    LiabilitiesAccountIdsWithUpdatedLiabilities,
+)
+from .deposit_switch_create_request_options import DepositSwitchCreateRequestOptions
+from .deposit_switch_create_request import DepositSwitchCreateRequest
+from .bank_transfer_sweep_get_request import BankTransferSweepGetRequest
+from .pay_stub_verification_attribute import PayStubVerificationAttribute
+from .credit_pay_stub_verification import CreditPayStubVerification
+from .processor_stripe_bank_account_token_create_request import (
+    ProcessorStripeBankAccountTokenCreateRequest,
+)
+from .document_date_of_birth_match_code import DocumentDateOfBirthMatchCode
+from .security import Security
+from .transactions_get_request_options import TransactionsGetRequestOptions
+from .transactions_get_request import TransactionsGetRequest
+from .credit_employment_get_request import CreditEmploymentGetRequest
+from .deposit_switch_state_update_webhook import DepositSwitchStateUpdateWebhook
+from .payment_initiation_optional_restriction_bacs import (
+    PaymentInitiationOptionalRestrictionBacs,
+)
+from .external_payment_initiation_consent_options import (
+    ExternalPaymentInitiationConsentOptions,
+)
+from .external_payment_options import ExternalPaymentOptions
+from .watchlist_screening_individual_id import WatchlistScreeningIndividualId
+from .asset_report_relay_refresh_request import AssetReportRelayRefreshRequest
+from .watchlist_screening_review_id import WatchlistScreeningReviewId
+from .asset_report_relay_refresh_response import AssetReportRelayRefreshResponse
+from .security_override import SecurityOverride
+from .investments_transactions_override import InvestmentsTransactionsOverride
+from .holdings_override import HoldingsOverride
+from .payment_consent_max_payment_amount import PaymentConsentMaxPaymentAmount
+from .wallet_create_response import WalletCreateResponse
+from .review_comment import ReviewComment
+from .paystub_ytd_details import PaystubYtdDetails
+from .entity_watchlist_screening_id import EntityWatchlistScreeningId
+from .document_name_match_code import DocumentNameMatchCode
+from .external_payment_schedule_request import ExternalPaymentScheduleRequest
+from .address_purpose_label import AddressPurposeLabel
+from .identity_verification_user_address import IdentityVerificationUserAddress
+from .document_image_cropped_back import DocumentImageCroppedBack
+from .entity_watchlist_screening_name import EntityWatchlistScreeningName
+from .deductions_breakdown import DeductionsBreakdown
+from .timestamp_nullable import TimestampNullable
+from .entity_watchlist_screening_review_id import EntityWatchlistScreeningReviewId
+from .wallet_transaction_amount import WalletTransactionAmount
+from .wallet_transaction_execute_request import WalletTransactionExecuteRequest
+from .wallet_transaction import WalletTransaction
+from .wallet_transactions_list_response import WalletTransactionsListResponse
+from .pay_stub_deductions_total import PayStubDeductionsTotal
+from .employer_income_summary_field_string import EmployerIncomeSummaryFieldString
+from .income_verification_source_type import IncomeVerificationSourceType
+from .income_verification_create_response import IncomeVerificationCreateResponse
+from .bank_transfer_migrate_account_request import BankTransferMigrateAccountRequest
+from .asset_report_relay_get_request import AssetReportRelayGetRequest
+from .item_public_token_create_response import ItemPublicTokenCreateResponse
+from .sandbox_processor_token_create_response import SandboxProcessorTokenCreateResponse
+from .credit_employer_verification import CreditEmployerVerification
+from .external_payment_schedule_base import ExternalPaymentScheduleBase
+from .bank_transfer_event_list_direction import BankTransferEventListDirection
+from .transfer_migrate_account_response import TransferMigrateAccountResponse
+from .item_status_transactions import ItemStatusTransactions
+from .account_subtype import AccountSubtype
+from .sandbox_transfer_repayment_simulate_response import (
+    SandboxTransferRepaymentSimulateResponse,
+)
+from .sandbox_transfer_fire_webhook_response import SandboxTransferFireWebhookResponse
+from .ytd_gross_income_summary_field_number import YtdGrossIncomeSummaryFieldNumber
+from .credit_audit_copy_token_remove_request import CreditAuditCopyTokenRemoveRequest
+from .scopes_state import ScopesState
+from .consent_payment_idempotency_key import ConsentPaymentIdempotencyKey
+from .credit_bank_income_warning_type import CreditBankIncomeWarningType
+from .deposit_switch_target_account import DepositSwitchTargetAccount
+from .holding import Holding
+from .payment_amount_currency import PaymentAmountCurrency
+from .numbers import Numbers
+from .recurring_transactions_update_webhook import RecurringTransactionsUpdateWebhook
 from .program_archived import ProgramArchived
-from .item_public_token_create_request import ItemPublicTokenCreateRequest
-from .paystub_override_employer import PaystubOverrideEmployer
-from .processor_identity_get_request import ProcessorIdentityGetRequest
+from .deductions_total import DeductionsTotal
+from .deductions import Deductions
+from .payment_consent_periodic_amount_amount import PaymentConsentPeriodicAmountAmount
+from .payment_consent_periodic_amount import PaymentConsentPeriodicAmount
+from .bank_transfer_metadata import BankTransferMetadata
+from .bank_transfer import BankTransfer
+from .bank_transfer_get_response import BankTransferGetResponse
+from .bank_transfer_create_response import BankTransferCreateResponse
+from .bank_transfer_list_response import BankTransferListResponse
+from .processor_bank_transfer_create_response import ProcessorBankTransferCreateResponse
+from .bank_transfer_create_request import BankTransferCreateRequest
+from .processor_bank_transfer_create_request import ProcessorBankTransferCreateRequest
+from .credit_document_type import CreditDocumentType
+from .payment_scheme import PaymentScheme
+from .wallet_list_request import WalletListRequest
+from .asset_report_relay_remove_request import AssetReportRelayRemoveRequest
+from .paystub_override_employee_address import PaystubOverrideEmployeeAddress
+from .paystub_override_employee import PaystubOverrideEmployee
+from .paystub_override import PaystubOverride
+from .income_override import IncomeOverride
+from .standalone_investment_transaction_cash_type import (
+    StandaloneInvestmentTransactionCashType,
+)
+from .get_watchlist_screening_individual_program_request import (
+    GetWatchlistScreeningIndividualProgramRequest,
+)
+from .list_watchlist_screening_entity_history_request import (
+    ListWatchlistScreeningEntityHistoryRequest,
+)
+from .transactions_rule_field import TransactionsRuleField
+from .income_breakdown_type import IncomeBreakdownType
+from .identity_verification_id import IdentityVerificationId
+from .payment_consent_valid_date_time import PaymentConsentValidDateTime
+from .payment_initiation_consent_constraints import PaymentInitiationConsentConstraints
+from .payment_initiation_consent_create_request import (
+    PaymentInitiationConsentCreateRequest,
+)
+from .payment_initiation_consent import PaymentInitiationConsent
+from .loan_filter import LoanFilter
+from .verification_attribute import VerificationAttribute
+from .paystub_verification import PaystubVerification
+from .employment_verification_get_request import EmploymentVerificationGetRequest
+from .item_public_token_exchange_request import ItemPublicTokenExchangeRequest
+from .recurring_transaction_frequency import RecurringTransactionFrequency
+from .entity_watchlist_code import EntityWatchlistCode
+from .transaction_code import TransactionCode
+from .document_authenticity_match_code import DocumentAuthenticityMatchCode
+from .entity_document_type import EntityDocumentType
+from .physical_document_id_number import PhysicalDocumentIdNumber
+from .credit_payroll_income_refresh_response import CreditPayrollIncomeRefreshResponse
+from .wallet_transaction_get_request import WalletTransactionGetRequest
+from .error import Error
+from .document_image_front import DocumentImageFront
+from .initial_update_webhook import InitialUpdateWebhook
+from .transfer_authorization_decision import TransferAuthorizationDecision
+from .processor_stripe_bank_account_token_create_response import (
+    ProcessorStripeBankAccountTokenCreateResponse,
+)
+from .kyc_check_name_summary import KycCheckNameSummary
+from .transfer_sweep_status import TransferSweepStatus
+from .transaction_data import TransactionData
+from .payment_initiation_address import PaymentInitiationAddress
+from .iso_8601_date import Iso8601Date
+from .source import Source
+from .dashboard_user_response import DashboardUserResponse
 from .transactions_sync_request_options import TransactionsSyncRequestOptions
 from .transactions_sync_request import TransactionsSyncRequest
-from .error import Error
-from .screening_hit_analysis import ScreeningHitAnalysis
-from .pay_stub_deductions_breakdown import PayStubDeductionsBreakdown
-from .asset_report_remove_request import AssetReportRemoveRequest
-from .paystub_details import PaystubDetails
+from .asset_report_audit_copy_create_request import AssetReportAuditCopyCreateRequest
+from .automatically_verified_webhook import AutomaticallyVerifiedWebhook
+from .item_public_token_exchange_response import ItemPublicTokenExchangeResponse
+from .pay_stub_taxpayer_id import PayStubTaxpayerId
+from .credit_pay_stub_employee import CreditPayStubEmployee
+from .projected_income_summary_field_number import ProjectedIncomeSummaryFieldNumber
+from .employee_income_summary_field_string import EmployeeIncomeSummaryFieldString
+from .deposit_switch_address_data import DepositSwitchAddressData
+from .deposit_switch_target_user import DepositSwitchTargetUser
+from .deposit_switch_alt_create_request import DepositSwitchAltCreateRequest
+from .payment_initiation_payment_get_request import PaymentInitiationPaymentGetRequest
+from .shareable_url import ShareableUrl
+from .sandbox_item_reset_login_response import SandboxItemResetLoginResponse
+from .standalone_investment_transaction_sell_type import (
+    StandaloneInvestmentTransactionSellType,
+)
 from .transactions_recurring_get_request_options import (
     TransactionsRecurringGetRequestOptions,
 )
 from .transactions_recurring_get_request import TransactionsRecurringGetRequest
-from .customer_initiated_risk_tier import CustomerInitiatedRiskTier
-from .list_watchlist_screening_individual_history_request import (
-    ListWatchlistScreeningIndividualHistoryRequest,
+from .pay_stub_earnings_breakdown import PayStubEarningsBreakdown
+from .cursor import Cursor
+from .transfer_user_address_in_response import TransferUserAddressInResponse
+from .transfer_user_in_response import TransferUserInResponse
+from .transfer_authorization_proposed_transfer import (
+    TransferAuthorizationProposedTransfer,
 )
-from .postal_code import PostalCode
-from .access_token_nullable import AccessTokenNullable
-from .list_entity_watchlist_screening_request import ListEntityWatchlistScreeningRequest
-from .item_status_last_webhook import ItemStatusLastWebhook
-from .item_status import ItemStatus
-from .payment_initiation_payment_token_create_request import (
-    PaymentInitiationPaymentTokenCreateRequest,
+from .email_address import EmailAddress
+from .payment_initiation_consent_get_response import PaymentInitiationConsentGetResponse
+from .item_status_investments import ItemStatusInvestments
+from .loan_account import LoanAccount
+from .credit_relay_remove_request import CreditRelayRemoveRequest
+from .list_individual_watchlist_screening_request import (
+    ListIndividualWatchlistScreeningRequest,
 )
-from .entity_watchlist_screening_review_id import EntityWatchlistScreeningReviewId
-from .credit_platform_ids import CreditPlatformIds
-from .loan_account_subtypes import LoanAccountSubtypes
+from .wallet_transactions_list_request import WalletTransactionsListRequest
+from .employers_search_request import EmployersSearchRequest
+from .transfer_repayment import TransferRepayment
+from .transfer_repayment_list_response import TransferRepaymentListResponse
 from .kyc_check_date_of_birth_summary import KycCheckDateOfBirthSummary
-from .watchlist_screening_hit_id import WatchlistScreeningHitId
-from .pay_stub_verification_attribute import PayStubVerificationAttribute
-from .credit_pay_stub_verification import CreditPayStubVerification
-from .id_number_type import IdNumberType
-from .shareable_url import ShareableUrl
-from .bank_transfer_metadata import BankTransferMetadata
-from .wallet_create_request import WalletCreateRequest
-from .account_subtypes import AccountSubtypes
-from .client_user_id import ClientUserId
-from .numbers_eft_nullable import NumbersEftNullable
-from .user_id_number import UserIdNumber
-from .item_get_request import ItemGetRequest
-from .transactions_rule_type import TransactionsRuleType
+from .webhook_verification_key_get_request import WebhookVerificationKeyGetRequest
+from .servicer_address_data import ServicerAddressData
+from .entity_document import EntityDocument
+from .entity_screening_hit_documents_items import EntityScreeningHitDocumentsItems
+from .signal_prepare_request import SignalPrepareRequest
+from .numbers_bacs import NumbersBacs
+from .credit_payroll_income_risk_signals_get_request import (
+    CreditPayrollIncomeRiskSignalsGetRequest,
+)
+from .watchlist_screening_individual_name import WatchlistScreeningIndividualName
+from .bank_transfer_status import BankTransferStatus
+from .loan_account_subtypes import LoanAccountSubtypes
+from .update_individual_screening_request_search_terms import (
+    UpdateIndividualScreeningRequestSearchTerms,
+)
+from .update_individual_screening_request import UpdateIndividualScreeningRequest
+from .postal_code import PostalCode
+from .partner_end_customer_client import PartnerEndCustomerClient
+from .partner_customers_create_response import PartnerCustomersCreateResponse
 from .id_number_value import IdNumberValue
-from .get_watchlist_screening_individual_program_request import (
-    GetWatchlistScreeningIndividualProgramRequest,
-)
-from .create_entity_watchlist_screening_review_request import (
-    CreateEntityWatchlistScreeningReviewRequest,
-)
-from .link_token_create_request_payment_initiation import (
-    LinkTokenCreateRequestPaymentInitiation,
-)
-from .sandbox_bank_transfer_simulate_response import SandboxBankTransferSimulateResponse
-from .payment_initiation_consent_status import PaymentInitiationConsentStatus
-from .transfer_authorization_device import TransferAuthorizationDevice
-from .loan_account_subtype import LoanAccountSubtype
-from .recipient_bacs_nullable import RecipientBacsNullable
-from .external_payment_refund_details import ExternalPaymentRefundDetails
+from .transfer_event_sync_request import TransferEventSyncRequest
+from .item_application_scopes_update_response import ItemApplicationScopesUpdateResponse
+from .apr import Apr
+from .credit_card_liability import CreditCardLiability
+from .watchlist_screening_document import WatchlistScreeningDocument
+from .screening_hit_documents_items import ScreeningHitDocumentsItems
+from .item_application_list_user_auth import ItemApplicationListUserAuth
+from .street import Street
+from .category import Category
+from .categories_get_response import CategoriesGetResponse
+from .entity_screening_hit_analysis import EntityScreeningHitAnalysis
+from .bank_transfer_balance import BankTransferBalance
+from .bank_transfer_balance_get_response import BankTransferBalanceGetResponse
+from .form_1099_type import Form1099Type
+from .entity_watchlist_screening_hit_id import EntityWatchlistScreeningHitId
+from .institutions_search_account_filter import InstitutionsSearchAccountFilter
+from .bank_initiated_risk_tier import BankInitiatedRiskTier
+from .plaid_error import PlaidError
+from .new_accounts_available_webhook import NewAccountsAvailableWebhook
+from .default_update_webhook import DefaultUpdateWebhook
+from .user_permission_revoked_webhook import UserPermissionRevokedWebhook
+from .payment_status_update_webhook import PaymentStatusUpdateWebhook
+from .item_product_ready_webhook import ItemProductReadyWebhook
+from .item import Item
+from .item_webhook_update_response import ItemWebhookUpdateResponse
+from .investments_default_update_webhook import InvestmentsDefaultUpdateWebhook
+from .liabilities_default_update_webhook import LiabilitiesDefaultUpdateWebhook
+from .assets_error_webhook import AssetsErrorWebhook
+from .webhook_update_acknowledged_webhook import WebhookUpdateAcknowledgedWebhook
+from .transactions_removed_webhook import TransactionsRemovedWebhook
+from .historical_update_webhook import HistoricalUpdateWebhook
+from .holdings_default_update_webhook import HoldingsDefaultUpdateWebhook
+from .item_error_webhook import ItemErrorWebhook
+from .entity_screening_hit_urls import EntityScreeningHitUrls
+from .entity_screening_hit_urls_items import EntityScreeningHitUrlsItems
+from .pay_stub_distribution_breakdown import PayStubDistributionBreakdown
+from .pay_stub_pay_period_details import PayStubPayPeriodDetails
+from .signal_decision_report_request import SignalDecisionReportRequest
+from .processor_identity_get_request import ProcessorIdentityGetRequest
+from .bank_transfer_idempotency_key import BankTransferIdempotencyKey
+from .item_import_request_user_auth import ItemImportRequestUserAuth
+from .item_get_request import ItemGetRequest
+from .numbers_iban_nullable import NumbersIbanNullable
 from .account_type import AccountType
-from .transfer_authorization_decision_rationale_code import (
-    TransferAuthorizationDecisionRationaleCode,
-)
-from .transfer_intent_get_failure_reason import TransferIntentGetFailureReason
-from .credit_bank_income_refresh_response import CreditBankIncomeRefreshResponse
-from .document_metadata import DocumentMetadata
-from .employer_income_summary_field_string import EmployerIncomeSummaryFieldString
-from .bank_transfer_cancel_response import BankTransferCancelResponse
-from .income_verification_source_type import IncomeVerificationSourceType
-from .bank_transfer_event_list_bank_transfer_type import (
-    BankTransferEventListBankTransferType,
-)
-from .identity_verification_template_version import IdentityVerificationTemplateVersion
-from .depository_filter import DepositoryFilter
+from .webhook_type import WebhookType
+from .transfer_metadata import TransferMetadata
+from .transfer_intent_create import TransferIntentCreate
+from .transfer_intent_create_response import TransferIntentCreateResponse
+from .transfer_intent_create_request import TransferIntentCreateRequest
+from .transfer_create_request import TransferCreateRequest
+from .asset_report_id import AssetReportId
+from .credit_pay_stub_net_pay import CreditPayStubNetPay
+from .asset_report_audit_copy_remove_request import AssetReportAuditCopyRemoveRequest
+from .physical_document_category import PhysicalDocumentCategory
+from .credit_account_subtype import CreditAccountSubtype
+from .identity_update_types import IdentityUpdateTypes
+from .item_access_token_invalidate_response import ItemAccessTokenInvalidateResponse
 from .institutions_get_request_options import InstitutionsGetRequestOptions
 from .institutions_get_request import InstitutionsGetRequest
-from .transaction_override import TransactionOverride
-from .recipient_bacs import RecipientBacs
-from .wallet_numbers import WalletNumbers
-from .transfer_authorization_decision import TransferAuthorizationDecision
-from .transfer_repayment_return_list_request import TransferRepaymentReturnListRequest
-from .student_repayment_plan import StudentRepaymentPlan
-from .item_application_list_user_auth import ItemApplicationListUserAuth
-from .wallet_iso_currency_code import WalletIsoCurrencyCode
-from .email_address import EmailAddress
+from .program_name_sensitivity import ProgramNameSensitivity
+from .get_entity_watchlist_screening_request import GetEntityWatchlistScreeningRequest
+from .asset_report_remove_response import AssetReportRemoveResponse
+from .bank_transfer_direction import BankTransferDirection
+from .transfer_intent_get_request import TransferIntentGetRequest
+from .credit_relay_refresh_response import CreditRelayRefreshResponse
+from .signal_return_report_request import SignalReturnReportRequest
+from .payment_profile_remove_request import PaymentProfileRemoveRequest
+from .signal_evaluate_core_attributes import SignalEvaluateCoreAttributes
+from .transfer_authorization_decision_rationale import (
+    TransferAuthorizationDecisionRationale,
+)
+from .payment_consent_periodic_alignment import PaymentConsentPeriodicAlignment
+from .verification_expired_webhook import VerificationExpiredWebhook
+from .product_access import ProductAccess
+from .scopes import Scopes
+from .item_application_scopes_update_request import ItemApplicationScopesUpdateRequest
+from .asset_report_relay_remove_response import AssetReportRelayRemoveResponse
+from .depository_filter import DepositoryFilter
+from .link_token_account_filters import LinkTokenAccountFilters
+from .account_filters_response import AccountFiltersResponse
+from .link_token_get_metadata_response import LinkTokenGetMetadataResponse
+from .link_token_get_response import LinkTokenGetResponse
+from .identity_match_response import IdentityMatchResponse
+from .link_token_create_credit_filter import LinkTokenCreateCreditFilter
+from .income_verification_precheck_employer_address import (
+    IncomeVerificationPrecheckEmployerAddress,
+)
+from .income_verification_precheck_employer import IncomeVerificationPrecheckEmployer
+from .income_verification_refresh_request import IncomeVerificationRefreshRequest
+from .sandbox_override_username import SandboxOverrideUsername
+from .asset_report_filter_request import AssetReportFilterRequest
+from .override_account_type import OverrideAccountType
+from .list_watchlist_screening_entity_reviews_request import (
+    ListWatchlistScreeningEntityReviewsRequest,
+)
+from .transfer_status import TransferStatus
+from .physical_document_images import PhysicalDocumentImages
+from .documentary_verification_document import DocumentaryVerificationDocument
+from .documentary_verification import DocumentaryVerification
+from .po_box_status import PoBoxStatus
+from .watchlist_screening_hit_status import WatchlistScreeningHitStatus
+from .transfer_get_request import TransferGetRequest
 from .asset_report_user import AssetReportUser
 from .asset_report_create_request_options import AssetReportCreateRequestOptions
 from .asset_report_create_request import AssetReportCreateRequest
 from .asset_report_refresh_request_options import AssetReportRefreshRequestOptions
 from .asset_report_refresh_request import AssetReportRefreshRequest
-from .bank_transfer_type import BankTransferType
-from .payment_consent_valid_date_time import PaymentConsentValidDateTime
-from .income_verification_refresh_request import IncomeVerificationRefreshRequest
-from .asset_report_refresh_response import AssetReportRefreshResponse
-from .pay_stub_earnings_breakdown import PayStubEarningsBreakdown
-from .credit_pay_stub_earnings import CreditPayStubEarnings
-from .sandbox_processor_token_create_response import SandboxProcessorTokenCreateResponse
-from .document_image_front import DocumentImageFront
-from .transfer_repayment_list_request import TransferRepaymentListRequest
-from .projected_income_summary_field_number import ProjectedIncomeSummaryFieldNumber
-from .transfer_event_sync_request import TransferEventSyncRequest
+from .street_2 import Street2
+from .document_status import DocumentStatus
+from .link_token_create_request_user_stated_income_source import (
+    LinkTokenCreateRequestUserStatedIncomeSource,
+)
+from .wallet_balance import WalletBalance
+from .create_entity_watchlist_screening_review_request import (
+    CreateEntityWatchlistScreeningReviewRequest,
+)
+from .numbers_international import NumbersInternational
+from .sandbox_transfer_sweep_simulate_request import SandboxTransferSweepSimulateRequest
+from .paystub_pay_frequency import PaystubPayFrequency
+from .user_create_request import UserCreateRequest
 from .transaction_stream_status import TransactionStreamStatus
-from .asset_report_id import AssetReportId
-from .ytd_gross_income_summary_field_number import YtdGrossIncomeSummaryFieldNumber
-from .get_entity_watchlist_screening_request import GetEntityWatchlistScreeningRequest
-from .auth_supported_methods import AuthSupportedMethods
-from .auth_metadata import AuthMetadata
-from .automatically_verified_webhook import AutomaticallyVerifiedWebhook
-from .deposit_switch_alt_create_response import DepositSwitchAltCreateResponse
-from .wallet_get_request import WalletGetRequest
-from .credit_pay_stub_net_pay import CreditPayStubNetPay
+from .sandbox_item_set_verification_status_response import (
+    SandboxItemSetVerificationStatusResponse,
+)
+from .bank_transfer_balance_get_request import BankTransferBalanceGetRequest
+from .verification_status import VerificationStatus
+from .transfer_intent_get_failure_reason import TransferIntentGetFailureReason
+from .standalone_currency_code_list import StandaloneCurrencyCodeList
+from .api_secret import ApiSecret
+from .user_stated_income_source_frequency import UserStatedIncomeSourceFrequency
+from .signal_decision_report_response import SignalDecisionReportResponse
+from .income_summary_field_string import IncomeSummaryFieldString
+from .account_assets import AccountAssets
+from .asset_report_item import AssetReportItem
+from .asset_report import AssetReport
+from .bank_transfer_type import BankTransferType
+from .paystub_address import PaystubAddress
+from .paystub_employer import PaystubEmployer
+from .list_watchlist_screening_individual_hit_request import (
+    ListWatchlistScreeningIndividualHitRequest,
+)
+from .individual_screening_hit_names import IndividualScreeningHitNames
+from .screening_hit_names_items import ScreeningHitNamesItems
+from .screening_hit_data import ScreeningHitData
+from .standalone_investment_transaction_buy_type import (
+    StandaloneInvestmentTransactionBuyType,
+)
+from .payment_initiation_consent_status import PaymentInitiationConsentStatus
+from .asset_report_audit_copy_create_response import AssetReportAuditCopyCreateResponse
+from .region import Region
+from .individual_watchlist_screening_program_name import (
+    IndividualWatchlistScreeningProgramName,
+)
+from .credit_bank_income_pdf_get_response import CreditBankIncomePdfGetResponse
+from .transactions_rules_list_request import TransactionsRulesListRequest
+from .bank_transfer_amount import BankTransferAmount
+from .recaptcha_required_error import RecaptchaRequiredError
+from .location import Location
+from .enhancements import Enhancements
+from .client_provided_enhanced_transaction import ClientProvidedEnhancedTransaction
+from .transactions_enhance_get_response import TransactionsEnhanceGetResponse
+from .identity_verification_template_reference import (
+    IdentityVerificationTemplateReference,
+)
+from .pay_stub_deductions_breakdown import PayStubDeductionsBreakdown
+from .credit_pay_stub_deductions import CreditPayStubDeductions
+from .payment_profile_remove_response import PaymentProfileRemoveResponse
+from .sandbox_bank_transfer_fire_webhook_response import (
+    SandboxBankTransferFireWebhookResponse,
+)
+from .credit_bank_income_get_request_options import CreditBankIncomeGetRequestOptions
+from .credit_bank_income_get_request import CreditBankIncomeGetRequest
+from .incident_update import IncidentUpdate
+from .health_incident import HealthIncident
+from .account_filter import AccountFilter
+from .match_summary_code import MatchSummaryCode
+from .entity_screening_hit_names import EntityScreeningHitNames
+from .entity_screening_hit_names_items import EntityScreeningHitNamesItems
+from .pslf_status import PslfStatus
+from .liability_override import LiabilityOverride
+from .account_ids_with_updated_identity import AccountIdsWithUpdatedIdentity
+from .identity_default_update_webhook import IdentityDefaultUpdateWebhook
+from .payment_initiation_payment_reverse_response import (
+    PaymentInitiationPaymentReverseResponse,
+)
+from .credit_employment_verification_status import CreditEmploymentVerificationStatus
+from .sandbox_income_fire_webhook_response import SandboxIncomeFireWebhookResponse
+from .inflow_model import InflowModel
+from .payment_initiation_consent_revoke_request import (
+    PaymentInitiationConsentRevokeRequest,
+)
+from .asset_report_relay_create_response import AssetReportRelayCreateResponse
+from .document_risk_signal_institution_metadata import (
+    DocumentRiskSignalInstitutionMetadata,
+)
+from .document_risk_signal import DocumentRiskSignal
 from .sandbox_bank_transfer_fire_webhook_request import (
     SandboxBankTransferFireWebhookRequest,
 )
-from .simulated_transfer_sweep import SimulatedTransferSweep
-from .sandbox_transfer_sweep_simulate_response import (
-    SandboxTransferSweepSimulateResponse,
-)
-from .paystub_override_employee_address import PaystubOverrideEmployeeAddress
-from .paystub_override_employee import PaystubOverrideEmployee
-from .recaptcha_required_error import RecaptchaRequiredError
-from .entity_document import EntityDocument
-from .entity_screening_hit_documents_items import EntityScreeningHitDocumentsItems
-from .institutions_search_payment_initiation_options import (
-    InstitutionsSearchPaymentInitiationOptions,
-)
-from .institutions_search_request_options import InstitutionsSearchRequestOptions
-from .institutions_search_request import InstitutionsSearchRequest
-from .asset_report_relay_refresh_request import AssetReportRelayRefreshRequest
-from .credit_account import CreditAccount
-from .asset_report_audit_copy_get_request import AssetReportAuditCopyGetRequest
-from .paystub_deduction import PaystubDeduction
-from .payment_profile_create_request import PaymentProfileCreateRequest
-from .bank_transfer_user import BankTransferUser
-from .bank_transfer_create_request import BankTransferCreateRequest
-from .processor_bank_transfer_create_request import ProcessorBankTransferCreateRequest
-from .transactions_rules_remove_request import TransactionsRulesRemoveRequest
-from .asset_report_token import AssetReportToken
-from .transactions_refresh_request import TransactionsRefreshRequest
-from .transfer_metadata import TransferMetadata
-from .date import Date
-from .kyc_check_name_summary import KycCheckNameSummary
-from .student_loan_status import StudentLoanStatus
-from .standalone_investment_transaction_transfer_type import (
-    StandaloneInvestmentTransactionTransferType,
-)
-from .payment_initiation_address import PaymentInitiationAddress
+from .signal_device import SignalDevice
+from .recipient_bacs_nullable import RecipientBacsNullable
+from .external_payment_refund_details import ExternalPaymentRefundDetails
 from .payment_initiation_recipient import PaymentInitiationRecipient
 from .payment_initiation_recipient_list_response import (
     PaymentInitiationRecipientListResponse,
@@ -433,182 +722,314 @@ from .payment_initiation_recipient_list_response import (
 from .payment_initiation_recipient_create_request import (
     PaymentInitiationRecipientCreateRequest,
 )
-from .identity_verification_retried_webhook import IdentityVerificationRetriedWebhook
-from .bank_transfer_cancel_request import BankTransferCancelRequest
-from .sandbox_item_set_verification_status_response import (
-    SandboxItemSetVerificationStatusResponse,
+from .credit_bank_income_cause import CreditBankIncomeCause
+from .credit_bank_income_warning import CreditBankIncomeWarning
+from .verification_refresh_status import VerificationRefreshStatus
+from .transfer_sweep_amount import TransferSweepAmount
+from .identity_verification_step_updated_webhook import (
+    IdentityVerificationStepUpdatedWebhook,
 )
-from .signal_evaluate_core_attributes import SignalEvaluateCoreAttributes
-from .item_import_response import ItemImportResponse
-from .numbers_bacs_nullable import NumbersBacsNullable
-from .document_risk_signal_institution_metadata import (
-    DocumentRiskSignalInstitutionMetadata,
+from .bank_transfer_sweep_list_request import BankTransferSweepListRequest
+from .wallet_iso_currency_code import WalletIsoCurrencyCode
+from .credit_bank_income_transaction import CreditBankIncomeTransaction
+from .credit_bank_income_historical_summary import CreditBankIncomeHistoricalSummary
+from .credit_bank_income_summary import CreditBankIncomeSummary
+from .credit_bank_income_source import CreditBankIncomeSource
+from .signal_return_report_response import SignalReturnReportResponse
+from .income_verification_documents_download_request import (
+    IncomeVerificationDocumentsDownloadRequest,
 )
-from .document_risk_signal import DocumentRiskSignal
-from .single_document_risk_signal import SingleDocumentRiskSignal
-from .multi_document_risk_signal import MultiDocumentRiskSignal
-from .document_risk_signals_object import DocumentRiskSignalsObject
-from .payroll_risk_signals_item import PayrollRiskSignalsItem
-from .strategy import Strategy
-from .transactions_rule_field import TransactionsRuleField
-from .sandbox_bank_transfer_fire_webhook_response import (
-    SandboxBankTransferFireWebhookResponse,
+from .transfer_event_list_transfer_type import TransferEventListTransferType
+from .payment_initiation_consent_create_response import (
+    PaymentInitiationConsentCreateResponse,
 )
-from .investment_filter import InvestmentFilter
+from .previous_identity_verification_attempt_id import (
+    PreviousIdentityVerificationAttemptId,
+)
+from .credit_unofficial_currency_code import CreditUnofficialCurrencyCode
 from .investments_transactions_get_request_options import (
     InvestmentsTransactionsGetRequestOptions,
 )
 from .investments_transactions_get_request import InvestmentsTransactionsGetRequest
-from .asset_report_audit_copy_remove_response import AssetReportAuditCopyRemoveResponse
-from .phone_number import PhoneNumber
-from .list_watchlist_screening_entity_hit_request import (
-    ListWatchlistScreeningEntityHitRequest,
-)
-from .transfer_amount import TransferAmount
-from .account_assets import AccountAssets
-from .asset_report_item import AssetReportItem
-from .asset_report import AssetReport
-from .asset_report_get_response import AssetReportGetResponse
-from .credit_bank_income_pay_frequency import CreditBankIncomePayFrequency
-from .payment_initiation_consent_get_response import PaymentInitiationConsentGetResponse
-from .accounts_get_request_options import AccountsGetRequestOptions
-from .accounts_get_request import AccountsGetRequest
-from .identity_verification_template_id import IdentityVerificationTemplateId
-from .payment_profile_status import PaymentProfileStatus
-from .bank_initiated_return_risk import BankInitiatedReturnRisk
-from .signal_scores import SignalScores
-from .signal_evaluate_response import SignalEvaluateResponse
-from .standalone_investment_transaction_sell_type import (
-    StandaloneInvestmentTransactionSellType,
-)
-from .account_identity import AccountIdentity
-from .processor_identity_get_response import ProcessorIdentityGetResponse
-from .sandbox_income_fire_webhook_response import SandboxIncomeFireWebhookResponse
-from .identity_match_request_options import IdentityMatchRequestOptions
-from .payment_initiation_consent_scope import PaymentInitiationConsentScope
-from .income_verification_webhook_status import IncomeVerificationWebhookStatus
-from .address_nullable import AddressNullable
-from .user_id import UserId
-from .transfer_authorization_decision_rationale import (
-    TransferAuthorizationDecisionRationale,
-)
-from .processor_auth_get_request import ProcessorAuthGetRequest
-from .processor_apex_processor_token_create_request import (
-    ProcessorApexProcessorTokenCreateRequest,
-)
-from .report_token import ReportToken
-from .credit_relay_create_request import CreditRelayCreateRequest
-from .credit_audit_copy_token_create_request import CreditAuditCopyTokenCreateRequest
-from .standalone_investment_transaction_buy_type import (
-    StandaloneInvestmentTransactionBuyType,
-)
-from .source import Source
-from .income_verification_status_webhook import IncomeVerificationStatusWebhook
-from .signal_prepare_response import SignalPrepareResponse
-from .link_token_create_request_update import LinkTokenCreateRequestUpdate
-from .pay_frequency import PayFrequency
-from .identity_update_types import IdentityUpdateTypes
-from .watchlist_screening_individual_id import WatchlistScreeningIndividualId
-from .deposit_switch_state_update_webhook import DepositSwitchStateUpdateWebhook
-from .credit_relay_refresh_response import CreditRelayRefreshResponse
-from .user_create_request import UserCreateRequest
-from .watchlist_screening_hit_locations import WatchlistScreeningHitLocations
-from .generic_screening_hit_location_items import GenericScreeningHitLocationItems
-from .transfer_get_request import TransferGetRequest
-from .transfer_repayment_return import TransferRepaymentReturn
-from .transfer_repayment_return_list_response import TransferRepaymentReturnListResponse
-from .sandbox_transfer_repayment_simulate_response import (
-    SandboxTransferRepaymentSimulateResponse,
-)
-from .item_application_list_request import ItemApplicationListRequest
-from .transactions_rule_details import TransactionsRuleDetails
-from .transactions_category_rule import TransactionsCategoryRule
-from .transactions_rules_list_response import TransactionsRulesListResponse
-from .transactions_rules_create_response import TransactionsRulesCreateResponse
-from .transactions_rules_create_request import TransactionsRulesCreateRequest
-from .sandbox_transfer_simulate_response import SandboxTransferSimulateResponse
-from .income_breakdown import IncomeBreakdown
-from .document_name_match_code import DocumentNameMatchCode
-from .wallet_transaction_amount import WalletTransactionAmount
-from .item_id import ItemId
-from .identity_verification_id import IdentityVerificationId
-from .accounts_balance_get_request_options import AccountsBalanceGetRequestOptions
-from .accounts_balance_get_request import AccountsBalanceGetRequest
-from .employee_income_summary_field_string import EmployeeIncomeSummaryFieldString
-from .income_verification_precheck_military_info import (
-    IncomeVerificationPrecheckMilitaryInfo,
-)
-from .street import Street
-from .payment_consent_periodic_amount_amount import PaymentConsentPeriodicAmountAmount
-from .payment_consent_periodic_amount import PaymentConsentPeriodicAmount
-from .signal_device import SignalDevice
-from .asset_report_relay_refresh_response import AssetReportRelayRefreshResponse
-from .transaction_data import TransactionData
+from .depository_account_subtypes import DepositoryAccountSubtypes
+from .numbers_bacs_nullable import NumbersBacsNullable
+from .identity_verification_consent import IdentityVerificationConsent
+from .ytd_net_income_summary_field_number import YtdNetIncomeSummaryFieldNumber
 from .income_summary import IncomeSummary
+from .transfer_sweep_get_request import TransferSweepGetRequest
+from .sandbox_item_set_verification_status_request import (
+    SandboxItemSetVerificationStatusRequest,
+)
+from .employment_verification_status import EmploymentVerificationStatus
+from .date import Date
+from .get_identity_verification_request import GetIdentityVerificationRequest
+from .payment_consent_periodic_interval import PaymentConsentPeriodicInterval
+from .wallet_create_request import WalletCreateRequest
+from .transfer_migrate_account_request import TransferMigrateAccountRequest
+from .account_subtypes import AccountSubtypes
+from .transaction_override import TransactionOverride
+from .auth_supported_methods import AuthSupportedMethods
+from .auth_metadata import AuthMetadata
+from .item_access_token_invalidate_request import ItemAccessTokenInvalidateRequest
+from .investment_transaction_subtype import InvestmentTransactionSubtype
+from .link_token_create_loan_filter import LinkTokenCreateLoanFilter
+from .link_token_create_request_account_subtypes import (
+    LinkTokenCreateRequestAccountSubtypes,
+)
+from .credit_payroll_income_refresh_request import CreditPayrollIncomeRefreshRequest
+from .asset_report_audit_copy_remove_response import AssetReportAuditCopyRemoveResponse
+from .bank_transfer_event_list_bank_transfer_type import (
+    BankTransferEventListBankTransferType,
+)
+from .credit_payroll_income_refresh_status import CreditPayrollIncomeRefreshStatus
+from .account_selection_cardinality import AccountSelectionCardinality
+from .credit_platform_ids import CreditPlatformIds
+from .credit_employment_verification import CreditEmploymentVerification
+from .credit_employment_item import CreditEmploymentItem
+from .credit_employment_get_response import CreditEmploymentGetResponse
+from .dashboard_user_id import DashboardUserId
+from .user_stated_income_source_pay_type import UserStatedIncomeSourcePayType
+from .sandbox_oauth_select_accounts_request import SandboxOauthSelectAccountsRequest
+from .credit_relay_refresh_request import CreditRelayRefreshRequest
+from .entity_watchlist_screening_program_name import EntityWatchlistScreeningProgramName
+from .user_create_response import UserCreateResponse
+from .payment_initiation_consent_get_request import PaymentInitiationConsentGetRequest
+from .credit_relay_create_response import CreditRelayCreateResponse
+from .payment_initiation_payment_token_create_response import (
+    PaymentInitiationPaymentTokenCreateResponse,
+)
+from .credit_bank_income_warning_code import CreditBankIncomeWarningCode
+from .identity_get_request_options import IdentityGetRequestOptions
+from .identity_get_request import IdentityGetRequest
 from .link_token_create_request_income_verification_bank_income import (
     LinkTokenCreateRequestIncomeVerificationBankIncome,
 )
-from .payment_initiation_payment_get_response import PaymentInitiationPaymentGetResponse
-from .pay import Pay
-from .employment_details import EmploymentDetails
-from .total import Total
-from .net_pay import NetPay
-from .deductions import Deductions
-from .earnings_total import EarningsTotal
-from .earnings import Earnings
-from .distribution_breakdown import DistributionBreakdown
-from .pay_period_details import PayPeriodDetails
-from .paystub_override import PaystubOverride
-from .income_override import IncomeOverride
-from .kyc_check_id_number_summary import KycCheckIdNumberSummary
-from .investment_account_subtype import InvestmentAccountSubtype
-from .credit_filter import CreditFilter
-from .payment_initiation_payment_status import PaymentInitiationPaymentStatus
-from .asset_report_relay_create_request import AssetReportRelayCreateRequest
-from .processor_token_create_request import ProcessorTokenCreateRequest
-from .historical_balance import HistoricalBalance
-from .institutions_get_by_id_request_options import InstitutionsGetByIdRequestOptions
-from .institutions_get_by_id_request import InstitutionsGetByIdRequest
-from .signal_address_data import SignalAddressData
-from .income_verification_precheck_user import IncomeVerificationPrecheckUser
-from .paystub_verification_status import PaystubVerificationStatus
-from .list_watchlist_screening_entity_history_request import (
-    ListWatchlistScreeningEntityHistoryRequest,
+from .earnings_breakdown_canonical_description import (
+    EarningsBreakdownCanonicalDescription,
 )
-from .sandbox_transfer_fire_webhook_response import SandboxTransferFireWebhookResponse
-from .credit_bank_income_cause import CreditBankIncomeCause
-from .credit_bank_income_warning import CreditBankIncomeWarning
-from .plaid_error import PlaidError
-from .credit_payroll_income_risk_signals_get_response import (
-    CreditPayrollIncomeRiskSignalsGetResponse,
+from .deposit_switch_token_create_response import DepositSwitchTokenCreateResponse
+from .transfer_amount import TransferAmount
+from .credit_bank_income_refresh_request_options import (
+    CreditBankIncomeRefreshRequestOptions,
 )
-from .item_product_ready_webhook import ItemProductReadyWebhook
-from .assets_error_webhook import AssetsErrorWebhook
-from .identity_default_update_webhook import IdentityDefaultUpdateWebhook
-from .investments_default_update_webhook import InvestmentsDefaultUpdateWebhook
-from .user_permission_revoked_webhook import UserPermissionRevokedWebhook
-from .historical_update_webhook import HistoricalUpdateWebhook
-from .holdings_default_update_webhook import HoldingsDefaultUpdateWebhook
-from .item import Item
+from .credit_bank_income_refresh_request import CreditBankIncomeRefreshRequest
+from .item_status_nullable import ItemStatusNullable
 from .item_get_response import ItemGetResponse
-from .item_webhook_update_response import ItemWebhookUpdateResponse
+from .taxpayer_id import TaxpayerId
+from .employee import Employee
+from .bank_transfer_migrate_account_response import BankTransferMigrateAccountResponse
+from .update_individual_screening_request_resettable_field_list import (
+    UpdateIndividualScreeningRequestResettableFieldList,
+)
+from .sandbox_public_token_create_response import SandboxPublicTokenCreateResponse
+from .assets_relay_webhook import AssetsRelayWebhook
+from .entity_screening_status_updated_webhook import EntityScreeningStatusUpdatedWebhook
+from .phone_type import PhoneType
+from .payment_initiation_standing_order_metadata import (
+    PaymentInitiationStandingOrderMetadata,
+)
+from .transfer_repayment_return import TransferRepaymentReturn
+from .transfer_repayment_return_list_response import TransferRepaymentReturnListResponse
+from .standalone_account_type import StandaloneAccountType
+from .payment_amount import PaymentAmount
+from .payment_initiation_consent_payment_execute_request import (
+    PaymentInitiationConsentPaymentExecuteRequest,
+)
+from .payment_initiation_payment_create_request import (
+    PaymentInitiationPaymentCreateRequest,
+)
+from .bank_transfer_event_type import BankTransferEventType
+from .ach_class import AchClass
+from .link_token_get_request import LinkTokenGetRequest
+from .transfer_access_token import TransferAccessToken
+from .investment_account_subtype import InvestmentAccountSubtype
+from .signal_person_name import SignalPersonName
+from .signal_user import SignalUser
+from .signal_evaluate_request import SignalEvaluateRequest
+from .account_identity import AccountIdentity
+from .processor_identity_get_response import ProcessorIdentityGetResponse
 from .identity_get_response import IdentityGetResponse
-from .new_accounts_available_webhook import NewAccountsAvailableWebhook
-from .transactions_removed_webhook import TransactionsRemovedWebhook
-from .item_error_webhook import ItemErrorWebhook
-from .default_update_webhook import DefaultUpdateWebhook
-from .webhook_update_acknowledged_webhook import WebhookUpdateAcknowledgedWebhook
-from .payment_status_update_webhook import PaymentStatusUpdateWebhook
-from .w_2_box_12 import W2Box12
-from .credit_audit_copy_token_remove_request import CreditAuditCopyTokenRemoveRequest
-from .deposit_switch_create_request_options import DepositSwitchCreateRequestOptions
-from .deposit_switch_create_request import DepositSwitchCreateRequest
-from .credit_bank_income_get_request_options import CreditBankIncomeGetRequestOptions
-from .credit_bank_income_get_request import CreditBankIncomeGetRequest
-from .asset_report_audit_copy_create_request import AssetReportAuditCopyCreateRequest
+from .phone_number import PhoneNumber
+from .relay_event import RelayEvent
+from .bank_transfer_cancel_request import BankTransferCancelRequest
+from .investment_transaction import InvestmentTransaction
+from .wallet_get_request import WalletGetRequest
+from .watchlist_screening_document_value import WatchlistScreeningDocumentValue
+from .transfer_event_type import TransferEventType
+from .earnings_breakdown import EarningsBreakdown
+from .earnings import Earnings
+from .paystub import Paystub
+from .income_verification_paystubs_get_response import (
+    IncomeVerificationPaystubsGetResponse,
+)
+from .deposit_switch_get_response import DepositSwitchGetResponse
+from .asset_report_refresh_asset_report_token import AssetReportRefreshAssetReportToken
+from .asset_report_remove_request import AssetReportRemoveRequest
+from .student_repayment_plan import StudentRepaymentPlan
+from .student_loan import StudentLoan
 from .create_individual_watchlist_screening_review_request import (
     CreateIndividualWatchlistScreeningReviewRequest,
 )
+from .payment_initiation_payment_status import PaymentInitiationPaymentStatus
+from .asset_report_audit_copy_get_request import AssetReportAuditCopyGetRequest
+from .bank_transfer_event_list_request import BankTransferEventListRequest
+from .item_application_list_request import ItemApplicationListRequest
+from .payment_profile_create_request import PaymentProfileCreateRequest
+from .credit_pull_id import CreditPullId
+from .document_image_face import DocumentImageFace
+from .address_nullable import AddressNullable
+from .credit_relay_remove_response import CreditRelayRemoveResponse
+from .list_watchlist_screening_entity_programs_request import (
+    ListWatchlistScreeningEntityProgramsRequest,
+)
+from .platform_ids import PlatformIds
+from .employment_verification import EmploymentVerification
+from .employment_verification_get_response import EmploymentVerificationGetResponse
+from .item_remove_request import ItemRemoveRequest
+from .payment_initiation_refund_status import PaymentInitiationRefundStatus
+from .external_payment_schedule_get import ExternalPaymentScheduleGet
+from .payment_initiation_payment import PaymentInitiationPayment
+from .payment_initiation_payment_list_response import (
+    PaymentInitiationPaymentListResponse,
+)
+from .bank_transfer_event_sync_request import BankTransferEventSyncRequest
+from .link_token_create_request_income_verification_payroll_income import (
+    LinkTokenCreateRequestIncomeVerificationPayrollIncome,
+)
+from .link_token_create_request_income_verification import (
+    LinkTokenCreateRequestIncomeVerification,
+)
+from .payment_profile_get_response import PaymentProfileGetResponse
+from .item_status_last_webhook import ItemStatusLastWebhook
+from .item_status import ItemStatus
+from .ip_address import IpAddress
+from .bank_transfer_id import BankTransferId
+from .idempotency_flag import IdempotencyFlag
+from .source_uid import SourceUid
+from .transactions_refresh_response import TransactionsRefreshResponse
+from .min_last_updated_datetime import MinLastUpdatedDatetime
+from .bank_transfer_access_token import BankTransferAccessToken
+from .signal_prepare_response import SignalPrepareResponse
+from .numbers_ach_nullable import NumbersAchNullable
+from .transactions_rules_remove_request import TransactionsRulesRemoveRequest
+from .asset_report_pdf_get_request import AssetReportPdfGetRequest
+from .sandbox_override_password import SandboxOverridePassword
+from .signal_score import SignalScore
+from .scopes_context import ScopesContext
+from .wallet_transaction_idempotency_key import WalletTransactionIdempotencyKey
+from .credit_bank_income_account_type import CreditBankIncomeAccountType
+from .watchlist_screening_request_search_terms import (
+    WatchlistScreeningRequestSearchTerms,
+)
+from .watchlist_screening_create_request import WatchlistScreeningCreateRequest
+from .transfer_repayment_return_list_request import TransferRepaymentReturnListRequest
+from .payment_initiation_payment_token_create_request import (
+    PaymentInitiationPaymentTokenCreateRequest,
+)
+from .standalone_investment_transaction_type import StandaloneInvestmentTransactionType
+from .user_name import UserName
+from .identity_verification_user_data import IdentityVerificationUserData
+from .identity_verification_request_user import IdentityVerificationRequestUser
+from .identity_verification_create_request import IdentityVerificationCreateRequest
+from .payment_initiation_payment_get_response import PaymentInitiationPaymentGetResponse
+from .payment_initiation_payment_create_status import (
+    PaymentInitiationPaymentCreateStatus,
+)
+from .transfer_intent_authorization_decision import TransferIntentAuthorizationDecision
+from .simulated_transfer_sweep import SimulatedTransferSweep
+from .sandbox_transfer_sweep_simulate_response import (
+    SandboxTransferSweepSimulateResponse,
+)
+from .doc_type import DocType
+from .deposit_switch_alt_create_response import DepositSwitchAltCreateResponse
+from .link_token_create_request_identity_verification import (
+    LinkTokenCreateRequestIdentityVerification,
+)
+from .pay_stub_earnings_total import PayStubEarningsTotal
+from .credit_pay_stub_earnings import CreditPayStubEarnings
+from .payment_profile_id import PaymentProfileId
+from .transfer_repayment_list_request import TransferRepaymentListRequest
+from .bank_transfer_network import BankTransferNetwork
+from .item_remove_response import ItemRemoveResponse
+from .account_balance import AccountBalance
+from .account_base import AccountBase
+from .processor_balance_get_response import ProcessorBalanceGetResponse
+from .investments_holdings_get_response import InvestmentsHoldingsGetResponse
+from .accounts_get_response import AccountsGetResponse
+from .transactions_get_response import TransactionsGetResponse
+from .investments_transactions_get_response import InvestmentsTransactionsGetResponse
+from .asset_report_create_response import AssetReportCreateResponse
+from .watchlist_screening_audit_trail import WatchlistScreeningAuditTrail
+from .watchlist_screening_review_response import WatchlistScreeningReviewResponse
+from .watchlist_screening_review import WatchlistScreeningReview
+from .paginated_individual_watchlist_screening_review_list_response import (
+    PaginatedIndividualWatchlistScreeningReviewListResponse,
+)
+from .entity_watchlist_screening_review_response import (
+    EntityWatchlistScreeningReviewResponse,
+)
+from .entity_watchlist_program_response import EntityWatchlistProgramResponse
+from .entity_watchlist_screening import EntityWatchlistScreening
+from .paginated_entity_watchlist_screening_list_response import (
+    PaginatedEntityWatchlistScreeningListResponse,
+)
+from .watchlist_screening_individual_response import (
+    WatchlistScreeningIndividualResponse,
+)
+from .individual_watchlist_program_response import IndividualWatchlistProgramResponse
+from .entity_watchlist_screening_response import EntityWatchlistScreeningResponse
+from .watchlist_screening_individual import WatchlistScreeningIndividual
+from .paginated_individual_watchlist_screening_list_response import (
+    PaginatedIndividualWatchlistScreeningListResponse,
+)
+from .entity_watchlist_screening_review import EntityWatchlistScreeningReview
+from .paginated_entity_watchlist_screening_review_list_response import (
+    PaginatedEntityWatchlistScreeningReviewListResponse,
+)
+from .individual_watchlist_program import IndividualWatchlistProgram
+from .paginated_individual_watchlist_program_list_response import (
+    PaginatedIndividualWatchlistProgramListResponse,
+)
+from .entity_watchlist_program import EntityWatchlistProgram
+from .paginated_entity_watchlist_program_list_response import (
+    PaginatedEntityWatchlistProgramListResponse,
+)
+from .numbers_ach import NumbersAch
+from .auth_get_numbers import AuthGetNumbers
+from .auth_get_response import AuthGetResponse
+from .payment_channel import PaymentChannel
+from .credit_bank_income_pdf_get_request import CreditBankIncomePdfGetRequest
+from .expiration_date import ExpirationDate
+from .access_token import AccessToken
+from .transfer_cancel_response import TransferCancelResponse
+from .kyc_check_id_number_summary import KycCheckIdNumberSummary
+from .kyc_check_details import KycCheckDetails
+from .identity_verification_response import IdentityVerificationResponse
+from .identity_verification import IdentityVerification
+from .paginated_identity_verification_list_response import (
+    PaginatedIdentityVerificationListResponse,
+)
+from .list_entity_watchlist_screening_request import ListEntityWatchlistScreeningRequest
+from .assets_product_ready_webhook import AssetsProductReadyWebhook
+from .accounts_get_request_options import AccountsGetRequestOptions
+from .accounts_get_request import AccountsGetRequest
+from .payment_schedule_interval import PaymentScheduleInterval
+from .transfer_authorization_id import TransferAuthorizationId
+from .item_import_request_options import ItemImportRequestOptions
+from .item_import_request import ItemImportRequest
+from .entity_watchlist_search_terms import EntityWatchlistSearchTerms
+from .create_entity_screening_request import CreateEntityScreeningRequest
+from .credit_employment_employee_type import CreditEmploymentEmployeeType
+from .investment_account_subtype_standalone import InvestmentAccountSubtypeStandalone
+from .sandbox_oauth_select_accounts_response import SandboxOauthSelectAccountsResponse
+from .asset_report_transaction import AssetReportTransaction
+from .payment_meta import PaymentMeta
+from .transaction_base import TransactionBase
+from .sandbox_transfer_simulate_response import SandboxTransferSimulateResponse
+from .credit_document_metadata import CreditDocumentMetadata
+from .credit_1099 import Credit1099
+from .credit_pay_stub import CreditPayStub
+from .loan_account_subtype import LoanAccountSubtype
 from .entity_screening_hit_phone_numbers import EntityScreeningHitPhoneNumbers
 from .entity_screening_hits_phone_number_items import (
     EntityScreeningHitsPhoneNumberItems,
@@ -618,516 +1039,106 @@ from .entity_watchlist_screening_hit import EntityWatchlistScreeningHit
 from .paginated_entity_watchlist_screening_hit_list_response import (
     PaginatedEntityWatchlistScreeningHitListResponse,
 )
-from .payment_initiation_optional_restriction_bacs import (
-    PaymentInitiationOptionalRestrictionBacs,
+from .risk_signal_document_reference import RiskSignalDocumentReference
+from .single_document_risk_signal import SingleDocumentRiskSignal
+from .multi_document_risk_signal import MultiDocumentRiskSignal
+from .document_risk_signals_object import DocumentRiskSignalsObject
+from .payroll_risk_signals_item import PayrollRiskSignalsItem
+from .credit_payroll_income_risk_signals_get_response import (
+    CreditPayrollIncomeRiskSignalsGetResponse,
 )
-from .external_payment_initiation_consent_options import (
-    ExternalPaymentInitiationConsentOptions,
+from .identity_verification_status_updated_webhook import (
+    IdentityVerificationStatusUpdatedWebhook,
 )
-from .external_payment_options import ExternalPaymentOptions
-from .payment_initiation_payment_create_request import (
-    PaymentInitiationPaymentCreateRequest,
-)
-from .loan_account import LoanAccount
-from .processor_balance_get_request_options import ProcessorBalanceGetRequestOptions
-from .processor_balance_get_request import ProcessorBalanceGetRequest
-from .earnings_breakdown_canonical_description import (
-    EarningsBreakdownCanonicalDescription,
-)
-from .min_last_updated_datetime import MinLastUpdatedDatetime
-from .user_name import UserName
-from .credit_relay_remove_request import CreditRelayRemoveRequest
-from .watchlist_screening_document_type import WatchlistScreeningDocumentType
-from .bank_transfer_direction import BankTransferDirection
-from .account_subtype import AccountSubtype
-from .credit_account_subtypes import CreditAccountSubtypes
-from .sandbox_oauth_select_accounts_request import SandboxOauthSelectAccountsRequest
-from .deposit_switch_create_response import DepositSwitchCreateResponse
-from .sandbox_processor_token_create_request_options import (
-    SandboxProcessorTokenCreateRequestOptions,
-)
-from .sandbox_processor_token_create_request import SandboxProcessorTokenCreateRequest
-from .bank_transfer_amount import BankTransferAmount
-from .generic_country_code import GenericCountryCode
-from .numbers_iban import NumbersIban
-from .numbers_bacs import NumbersBacs
-from .credit_payroll_income_precheck_response import CreditPayrollIncomePrecheckResponse
-from .employer_verification import EmployerVerification
-from .user_stated_income_source_category import UserStatedIncomeSourceCategory
-from .watchlist_screening_hit_status import WatchlistScreeningHitStatus
-from .liabilities_account_ids_with_updated_liabilities import (
-    LiabilitiesAccountIdsWithUpdatedLiabilities,
-)
-from .liabilities_default_update_webhook import LiabilitiesDefaultUpdateWebhook
-from .region import Region
-from .document_date_of_birth_match_code import DocumentDateOfBirthMatchCode
-from .link_token_create_credit_filter import LinkTokenCreateCreditFilter
-from .paystub_ytd_details import PaystubYtdDetails
-from .bank_transfer_network import BankTransferNetwork
-from .sandbox_item_fire_webhook_response import SandboxItemFireWebhookResponse
-from .transfer_authorization_id import TransferAuthorizationId
-from .deposit_switch_token_create_response import DepositSwitchTokenCreateResponse
-from .list_individual_watchlist_screening_request import (
-    ListIndividualWatchlistScreeningRequest,
-)
-from .payment_profile_get_response import PaymentProfileGetResponse
-from .servicer_address_data import ServicerAddressData
-from .payment_channel import PaymentChannel
-from .numbers_ach_nullable import NumbersAchNullable
-from .processor_stripe_bank_account_token_create_request import (
-    ProcessorStripeBankAccountTokenCreateRequest,
-)
-from .watchlist_screening_phone_number import WatchlistScreeningPhoneNumber
-from .sender_bacs_nullable import SenderBacsNullable
-from .signal_prepare_request import SignalPrepareRequest
-from .employment_verification_status import EmploymentVerificationStatus
-from .transfer_type import TransferType
-from .list_watchlist_screening_entity_programs_request import (
-    ListWatchlistScreeningEntityProgramsRequest,
-)
-from .standalone_investment_transaction_type import StandaloneInvestmentTransactionType
-from .document_image_face import DocumentImageFace
-from .bank_transfer_balance_get_request import BankTransferBalanceGetRequest
-from .categories_get_request import CategoriesGetRequest
-from .income_verification_precheck_confidence import (
-    IncomeVerificationPrecheckConfidence,
-)
-from .verification_refresh_status import VerificationRefreshStatus
-from .identity_verification_step_status import IdentityVerificationStepStatus
-from .item_import_request_user_auth import ItemImportRequestUserAuth
-from .entity_watchlist_screening_search_terms import EntityWatchlistScreeningSearchTerms
-from .credit_payroll_income_get_request import CreditPayrollIncomeGetRequest
-from .sandbox_item_fire_webhook_request import SandboxItemFireWebhookRequest
-from .payment_profile_id import PaymentProfileId
-from .given_name_field import GivenNameField
-from .transfer_authorization_guarantee_decision import (
-    TransferAuthorizationGuaranteeDecision,
-)
-from .webhook_type import WebhookType
-from .transfer_sweep_id import TransferSweepId
-from .watchlist_program_id import WatchlistProgramId
-from .depository_account_subtype import DepositoryAccountSubtype
-from .sandbox_transfer_fire_webhook_request import SandboxTransferFireWebhookRequest
-from .liabilities_get_request_options import LiabilitiesGetRequestOptions
-from .liabilities_get_request import LiabilitiesGetRequest
-from .asset_report_audit_copy_create_response import AssetReportAuditCopyCreateResponse
-from .review_comment import ReviewComment
-from .verification_status import VerificationStatus
-from .payment_initiation_recipient_get_request import (
-    PaymentInitiationRecipientGetRequest,
-)
-from .credit_relay_refresh_request import CreditRelayRefreshRequest
-from .entity_watchlist_screening_program_name import EntityWatchlistScreeningProgramName
-from .credit_unofficial_currency_code import CreditUnofficialCurrencyCode
-from .payment_profile_create_response import PaymentProfileCreateResponse
-from .payment_consent_periodic_interval import PaymentConsentPeriodicInterval
-from .asset_report_remove_response import AssetReportRemoveResponse
-from .recurring_transactions_update_webhook import RecurringTransactionsUpdateWebhook
-from .link_token_create_request_deposit_switch import (
-    LinkTokenCreateRequestDepositSwitch,
-)
-from .jwt_header import JwtHeader
-from .credit_relay_create_response import CreditRelayCreateResponse
-from .initial_update_webhook import InitialUpdateWebhook
-from .credit_pay_stub_verification_status import CreditPayStubVerificationStatus
-from .removed_transaction import RemovedTransaction
-from .transactions_sync_response import TransactionsSyncResponse
-from .deposit_switch_get_request import DepositSwitchGetRequest
-from .mortgage_property_address import MortgagePropertyAddress
-from .watchlist_screening_document import WatchlistScreeningDocument
-from .screening_hit_documents_items import ScreeningHitDocumentsItems
-from .credit_payroll_income_refresh_response import CreditPayrollIncomeRefreshResponse
-from .institutions_search_account_filter import InstitutionsSearchAccountFilter
-from .item_remove_response import ItemRemoveResponse
-from .sandbox_item_reset_login_response import SandboxItemResetLoginResponse
-from .wallet_transaction_get_response import WalletTransactionGetResponse
-from .bank_transfer_migrate_account_request import BankTransferMigrateAccountRequest
-from .asset_report_audit_copy_remove_request import AssetReportAuditCopyRemoveRequest
-from .link_token_create_request_income_verification_payroll_income import (
-    LinkTokenCreateRequestIncomeVerificationPayrollIncome,
-)
-from .link_token_create_request_income_verification import (
-    LinkTokenCreateRequestIncomeVerification,
-)
-from .wallet_list_request import WalletListRequest
-from .standalone_investment_transaction_cash_type import (
-    StandaloneInvestmentTransactionCashType,
-)
-from .external_payment_schedule_get import ExternalPaymentScheduleGet
-from .payment_initiation_payment import PaymentInitiationPayment
-from .payment_initiation_payment_list_response import (
-    PaymentInitiationPaymentListResponse,
-)
-from .personal_finance_category import PersonalFinanceCategory
-from .enhancements import Enhancements
-from .client_provided_enhanced_transaction import ClientProvidedEnhancedTransaction
-from .transactions_enhance_get_response import TransactionsEnhanceGetResponse
-from .transaction_stream import TransactionStream
-from .transactions_recurring_get_response import TransactionsRecurringGetResponse
-from .wallet_transactions_list_request import WalletTransactionsListRequest
-from .credit_bank_income_transaction import CreditBankIncomeTransaction
-from .credit_bank_income_historical_summary import CreditBankIncomeHistoricalSummary
-from .credit_bank_income_summary import CreditBankIncomeSummary
-from .credit_bank_income_source import CreditBankIncomeSource
-from .credit_employer_verification import CreditEmployerVerification
-from .credit_employment_verification import CreditEmploymentVerification
-from .credit_employment_item import CreditEmploymentItem
-from .credit_employment_get_response import CreditEmploymentGetResponse
-from .document_authenticity_match_code import DocumentAuthenticityMatchCode
-from .products import Products
-from .pay_frequency_value import PayFrequencyValue
-from .transfer_status import TransferStatus
-from .asset_report_create_response import AssetReportCreateResponse
-from .item_public_token_exchange_request import ItemPublicTokenExchangeRequest
-from .update_individual_screening_request_resettable_field_list import (
-    UpdateIndividualScreeningRequestResettableFieldList,
-)
-from .credit_audit_copy_token_remove_response import CreditAuditCopyTokenRemoveResponse
-from .get_watchlist_screening_entity_program_request import (
-    GetWatchlistScreeningEntityProgramRequest,
-)
-from .asset_report_refresh_asset_report_token import AssetReportRefreshAssetReportToken
-from .watchlist_screening_audit_trail import WatchlistScreeningAuditTrail
-from .watchlist_screening_review import WatchlistScreeningReview
-from .paginated_individual_watchlist_screening_review_list_response import (
-    PaginatedIndividualWatchlistScreeningReviewListResponse,
-)
-from .individual_watchlist_program import IndividualWatchlistProgram
-from .paginated_individual_watchlist_program_list_response import (
-    PaginatedIndividualWatchlistProgramListResponse,
-)
-from .entity_watchlist_screening_review_response import (
-    EntityWatchlistScreeningReviewResponse,
-)
-from .entity_watchlist_program_response import EntityWatchlistProgramResponse
-from .entity_watchlist_screening_review import EntityWatchlistScreeningReview
-from .paginated_entity_watchlist_screening_review_list_response import (
-    PaginatedEntityWatchlistScreeningReviewListResponse,
-)
-from .entity_watchlist_program import EntityWatchlistProgram
-from .paginated_entity_watchlist_program_list_response import (
-    PaginatedEntityWatchlistProgramListResponse,
-)
-from .watchlist_screening_review_response import WatchlistScreeningReviewResponse
-from .entity_watchlist_screening_response import EntityWatchlistScreeningResponse
-from .individual_watchlist_program_response import IndividualWatchlistProgramResponse
-from .entity_watchlist_screening import EntityWatchlistScreening
-from .paginated_entity_watchlist_screening_list_response import (
-    PaginatedEntityWatchlistScreeningListResponse,
-)
-from .deposit_switch_get_response import DepositSwitchGetResponse
-from .transactions_rules_list_request import TransactionsRulesListRequest
-from .watchlist_screening_individual_name import WatchlistScreeningIndividualName
-from .unofficial_currency_code_list import UnofficialCurrencyCodeList
-from .payment_initiation_consent_create_response import (
-    PaymentInitiationConsentCreateResponse,
-)
-from .entity_watchlist_screening_name import EntityWatchlistScreeningName
-from .credit_bank_income_pdf_get_request import CreditBankIncomePdfGetRequest
-from .signal_return_report_response import SignalReturnReportResponse
-from .application import Application
-from .application_get_response import ApplicationGetResponse
-from .numbers_eft import NumbersEft
-from .auth_get_numbers import AuthGetNumbers
-from .entity_watchlist_code import EntityWatchlistCode
-from .transfer_cancel_request import TransferCancelRequest
-from .identity_verification_user_address import IdentityVerificationUserAddress
-from .identity_verification_user_data import IdentityVerificationUserData
-from .transfer_intent_create_mode import TransferIntentCreateMode
-from .consent_payment_idempotency_key import ConsentPaymentIdempotencyKey
-from .income_verification_payroll_flow_type import IncomeVerificationPayrollFlowType
-from .link_token_create_institution_data import LinkTokenCreateInstitutionData
-from .transfer_user_address_in_request import TransferUserAddressInRequest
-from .transfer_user_in_request import TransferUserInRequest
-from .transfer_create_request import TransferCreateRequest
-from .transfer_intent_create_request import TransferIntentCreateRequest
-from .transfer_authorization_user_in_request import TransferAuthorizationUserInRequest
-from .transfer_authorization_create_request import TransferAuthorizationCreateRequest
-from .entity_watchlist_screening_id import EntityWatchlistScreeningId
-from .partner_end_customer_client import PartnerEndCustomerClient
-from .partner_customers_create_response import PartnerCustomersCreateResponse
-from .pay_stub_taxpayer_id import PayStubTaxpayerId
-from .credit_pay_stub_employee import CreditPayStubEmployee
-from .credit_w_2 import CreditW2
-from .image_quality import ImageQuality
-from .link_token_get_request import LinkTokenGetRequest
-from .investment_account_subtype_standalone import InvestmentAccountSubtypeStandalone
-from .bank_transfer_sweep_get_request import BankTransferSweepGetRequest
-from .list_watchlist_screening_entity_reviews_request import (
-    ListWatchlistScreeningEntityReviewsRequest,
-)
-from .date_range import DateRange
-from .screening_hit_date_of_birth_item import ScreeningHitDateOfBirthItem
-from .screening_hit_data import ScreeningHitData
-from .watchlist_screening_hit import WatchlistScreeningHit
-from .paginated_individual_watchlist_screening_hit_list_response import (
-    PaginatedIndividualWatchlistScreeningHitListResponse,
-)
-from .bank_transfer_status import BankTransferStatus
-from .paystub_pay_frequency import PaystubPayFrequency
-from .signal_person_name import SignalPersonName
-from .signal_user import SignalUser
-from .signal_evaluate_request import SignalEvaluateRequest
-from .credit_payroll_income_refresh_request import CreditPayrollIncomeRefreshRequest
-from .client_provided_raw_transaction import ClientProvidedRawTransaction
-from .transactions_enhance_get_request import TransactionsEnhanceGetRequest
-from .document_image_cropped_front import DocumentImageCroppedFront
-from .income_summary_field_number import IncomeSummaryFieldNumber
-from .wallet_balance import WalletBalance
-from .wallet import Wallet
-from .wallet_list_response import WalletListResponse
-from .income_verification_create_request_options import (
-    IncomeVerificationCreateRequestOptions,
-)
-from .income_verification_create_request import IncomeVerificationCreateRequest
-from .scopes_state import ScopesState
-from .payment_profile_remove_request import PaymentProfileRemoveRequest
-from .income_verification_create_response import IncomeVerificationCreateResponse
-from .email import Email
-from .bank_transfer_event_list_direction import BankTransferEventListDirection
-from .entity_watchlist_search_terms import EntityWatchlistSearchTerms
-from .create_entity_screening_request import CreateEntityScreeningRequest
-from .category import Category
-from .categories_get_response import CategoriesGetResponse
-from .income_verification_precheck_employer_address import (
-    IncomeVerificationPrecheckEmployerAddress,
-)
-from .income_verification_precheck_employer import IncomeVerificationPrecheckEmployer
-from .credit_payroll_income_precheck_request import CreditPayrollIncomePrecheckRequest
-from .income_verification_precheck_request import IncomeVerificationPrecheckRequest
-from .holding import Holding
-from .match_summary_code import MatchSummaryCode
-from .payroll_item_status import PayrollItemStatus
-from .income_verification_documents_download_request import (
-    IncomeVerificationDocumentsDownloadRequest,
-)
-from .transfer_authorization_guarantee_decision_rationale_code import (
-    TransferAuthorizationGuaranteeDecisionRationaleCode,
-)
-from .account_product_access import AccountProductAccess
-from .sandbox_public_token_create_request_options_transactions import (
-    SandboxPublicTokenCreateRequestOptionsTransactions,
-)
-from .sandbox_public_token_create_request_options import (
-    SandboxPublicTokenCreateRequestOptions,
-)
-from .sandbox_public_token_create_request import SandboxPublicTokenCreateRequest
-from .payment_initiation_recipient_list_request import (
-    PaymentInitiationRecipientListRequest,
-)
-from .street_2 import Street2
-from .sync_updates_available_webhook import SyncUpdatesAvailableWebhook
-from .item_access_token_invalidate_request import ItemAccessTokenInvalidateRequest
-from .signal_decision_report_response import SignalDecisionReportResponse
-from .api_client_id import ApiClientId
-from .transaction_code import TransactionCode
-from .kyc_check_phone_summary import KycCheckPhoneSummary
-from .kyc_check_details import KycCheckDetails
-from .sandbox_oauth_select_accounts_response import SandboxOauthSelectAccountsResponse
-from .signal_score import SignalScore
-from .asset_report_pdf_get_request import AssetReportPdfGetRequest
-from .income_verification_paystubs_get_request import (
-    IncomeVerificationPaystubsGetRequest,
-)
-from .credit_bank_income_warning_type import CreditBankIncomeWarningType
-from .mortgage_interest_rate import MortgageInterestRate
-from .mortgage_liability import MortgageLiability
-from .wallet_transaction_counterparty_international import (
-    WalletTransactionCounterpartyInternational,
-)
-from .wallet_transaction_counterparty_numbers import (
-    WalletTransactionCounterpartyNumbers,
-)
-from .wallet_transaction_counterparty import WalletTransactionCounterparty
-from .wallet_transaction import WalletTransaction
-from .wallet_transactions_list_response import WalletTransactionsListResponse
-from .wallet_transaction_execute_request import WalletTransactionExecuteRequest
-from .bank_initiated_risk_tier import BankInitiatedRiskTier
-from .bank_transfer_access_token import BankTransferAccessToken
-from .override_account_type import OverrideAccountType
-from .dashboard_user_id import DashboardUserId
-from .link_token_create_depository_filter import LinkTokenCreateDepositoryFilter
-from .bank_transfer_event_type import BankTransferEventType
-from .watchlist_screening_document_value import WatchlistScreeningDocumentValue
-from .ip_address import IpAddress
-from .identity_match_response import IdentityMatchResponse
-from .income_breakdown_type import IncomeBreakdownType
-from .ach_class import AchClass
-from .user_token import UserToken
-from .transfer_sweep_list_request import TransferSweepListRequest
-from .payment_initiation_refund_status import PaymentInitiationRefundStatus
-from .credit_account_subtype import CreditAccountSubtype
-from .get_individual_watchlist_screening_request import (
-    GetIndividualWatchlistScreeningRequest,
-)
-from .credit_relay_get_request import CreditRelayGetRequest
-from .entity_watchlist_program_id import EntityWatchlistProgramId
-from .payment_scheme import PaymentScheme
-from .link_token_eu_config import LinkTokenEuConfig
-from .platform_ids import PlatformIds
-from .employment_verification import EmploymentVerification
-from .employment_verification_get_response import EmploymentVerificationGetResponse
-from .update_entity_screening_request_resettable_field import (
-    UpdateEntityScreeningRequestResettableField,
-)
-from .watchlist_screening_search_terms import WatchlistScreeningSearchTerms
-from .watchlist_screening_individual_response import (
-    WatchlistScreeningIndividualResponse,
-)
-from .watchlist_screening_individual import WatchlistScreeningIndividual
-from .paginated_individual_watchlist_screening_list_response import (
-    PaginatedIndividualWatchlistScreeningListResponse,
-)
-from .credit_employment_employee_type import CreditEmploymentEmployeeType
-from .watchlist_screening_review_id import WatchlistScreeningReviewId
-from .transfer_user_address_in_response import TransferUserAddressInResponse
-from .transfer_user_in_response import TransferUserInResponse
-from .transfer_authorization_proposed_transfer import (
-    TransferAuthorizationProposedTransfer,
+from .paystub_verification_status import PaystubVerificationStatus
+from .paystub_deduction import PaystubDeduction
+from .document_image_back import DocumentImageBack
+from .auth_get_request_options import AuthGetRequestOptions
+from .auth_get_request import AuthGetRequest
+from .transfer_authorization_guarantee_decision_rationale import (
+    TransferAuthorizationGuaranteeDecisionRationale,
 )
 from .transfer_authorization import TransferAuthorization
 from .transfer_authorization_create_response import TransferAuthorizationCreateResponse
+from .transfer import Transfer
+from .transfer_list_response import TransferListResponse
+from .transfer_get_response import TransferGetResponse
+from .transfer_create_response import TransferCreateResponse
 from .transfer_intent_get import TransferIntentGet
 from .transfer_intent_get_response import TransferIntentGetResponse
-from .transfer_intent_create import TransferIntentCreate
-from .transfer_intent_create_response import TransferIntentCreateResponse
-from .account_balance import AccountBalance
-from .account_base import AccountBase
-from .processor_balance_get_response import ProcessorBalanceGetResponse
-from .investments_holdings_get_response import InvestmentsHoldingsGetResponse
-from .investments_transactions_get_response import InvestmentsTransactionsGetResponse
-from .transactions_get_response import TransactionsGetResponse
-from .auth_get_response import AuthGetResponse
-from .accounts_get_response import AccountsGetResponse
-from .document_image_cropped_back import DocumentImageCroppedBack
-from .issuing_country import IssuingCountry
-from .loan_filter import LoanFilter
-from .link_token_account_filters import LinkTokenAccountFilters
-from .account_filters_response import AccountFiltersResponse
-from .link_token_get_metadata_response import LinkTokenGetMetadataResponse
-from .link_token_get_response import LinkTokenGetResponse
-from .link_token_create_request_auth import LinkTokenCreateRequestAuth
-from .payment_initiation_payment_create_status import (
-    PaymentInitiationPaymentCreateStatus,
-)
-from .payroll_income_rate_of_pay import PayrollIncomeRateOfPay
-from .payroll_income_account_data import PayrollIncomeAccountData
-from .payment_initiation_recipient_create_response import (
-    PaymentInitiationRecipientCreateResponse,
-)
-from .credit_iso_currency_code import CreditIsoCurrencyCode
-from .physical_document_images import PhysicalDocumentImages
-from .link_token_create_response import LinkTokenCreateResponse
-from .wallet_create_response import WalletCreateResponse
-from .physical_document_extracted_data_analysis import (
-    PhysicalDocumentExtractedDataAnalysis,
-)
-from .document_analysis import DocumentAnalysis
-from .documentary_verification_document import DocumentaryVerificationDocument
-from .documentary_verification import DocumentaryVerification
-from .investment_holdings_get_request_options import InvestmentHoldingsGetRequestOptions
-from .investments_holdings_get_request import InvestmentsHoldingsGetRequest
-from .item_import_request_options import ItemImportRequestOptions
-from .item_import_request import ItemImportRequest
-from .signal_return_report_request import SignalReturnReportRequest
-from .list_watchlist_screening_individual_programs_request import (
-    ListWatchlistScreeningIndividualProgramsRequest,
-)
-from .entity_document_type import EntityDocumentType
-from .asset_report_transaction import AssetReportTransaction
-from .watchlist_screening_status import WatchlistScreeningStatus
-from .address_purpose_label import AddressPurposeLabel
-from .payment_initiation_consent_get_request import PaymentInitiationConsentGetRequest
-from .assets_relay_webhook import AssetsRelayWebhook
-from .transfer_cancel_response import TransferCancelResponse
-from .list_dashboard_user_request import ListDashboardUserRequest
-from .deposit_switch_address_data import DepositSwitchAddressData
-from .deposit_switch_target_user import DepositSwitchTargetUser
-from .deposit_switch_alt_create_request import DepositSwitchAltCreateRequest
-from .watchlist_screening_request_search_terms import (
-    WatchlistScreeningRequestSearchTerms,
-)
-from .watchlist_screening_create_request import WatchlistScreeningCreateRequest
-from .total_canonical_description import TotalCanonicalDescription
-from .list_identity_verification_request import ListIdentityVerificationRequest
-from .signal_decision_report_request import SignalDecisionReportRequest
-from .pay_stub_earnings_breakdown_canonical_description import (
-    PayStubEarningsBreakdownCanonicalDescription,
-)
-from .get_dashboard_user_request import GetDashboardUserRequest
-from .transfer_sweep_amount import TransferSweepAmount
-from .numbers_international_nullable import NumbersInternationalNullable
-from .processor_number import ProcessorNumber
-from .processor_auth_get_response import ProcessorAuthGetResponse
-from .numbers import Numbers
-from .bank_transfer_event_list_request import BankTransferEventListRequest
-from .transfer_event_list_request import TransferEventListRequest
-from .list_watchlist_screening_individual_hit_request import (
-    ListWatchlistScreeningIndividualHitRequest,
-)
-from .link_token_create_investment_filter import LinkTokenCreateInvestmentFilter
-from .previous_identity_verification_attempt_id import (
-    PreviousIdentityVerificationAttemptId,
-)
-from .address_data_nullable import AddressDataNullable
-from .employer import Employer
-from .employers_search_response import EmployersSearchResponse
-from .identity_match_user import IdentityMatchUser
-from .identity_match_request import IdentityMatchRequest
-from .income_verification_precheck_employer_address_data import (
-    IncomeVerificationPrecheckEmployerAddressData,
-)
-from .asset_report_relay_create_response import AssetReportRelayCreateResponse
-from .inflow_model import InflowModel
-from .transfer_intent_status import TransferIntentStatus
-from .dashboard_user_status import DashboardUserStatus
-from .individual_watchlist_screening_program_name import (
-    IndividualWatchlistScreeningProgramName,
-)
-from .access_token import AccessToken
-from .taxpayer_id import TaxpayerId
-from .employers_search_request import EmployersSearchRequest
-from .identity_verification_step_updated_webhook import (
-    IdentityVerificationStepUpdatedWebhook,
-)
-from .update_individual_screening_request_search_terms import (
-    UpdateIndividualScreeningRequestSearchTerms,
-)
-from .update_individual_screening_request import UpdateIndividualScreeningRequest
-from .po_box_status import PoBoxStatus
-from .pslf_status import PslfStatus
-from .student_loan import StudentLoan
-from .liabilities_object import LiabilitiesObject
-from .liabilities_get_response import LiabilitiesGetResponse
-from .pay_stub_deductions_total import PayStubDeductionsTotal
-from .credit_pay_stub_deductions import CreditPayStubDeductions
-from .credit_pay_stub import CreditPayStub
-from .payroll_income_object import PayrollIncomeObject
-from .payroll_item import PayrollItem
-from .credit_payroll_income_get_response import CreditPayrollIncomeGetResponse
-from .payment_consent_periodic_alignment import PaymentConsentPeriodicAlignment
-from .bank_transfer_failure import BankTransferFailure
-from .sandbox_bank_transfer_simulate_request import SandboxBankTransferSimulateRequest
-from .bank_transfer_event import BankTransferEvent
-from .bank_transfer_event_list_response import BankTransferEventListResponse
-from .bank_transfer_event_sync_response import BankTransferEventSyncResponse
-from .bank_transfer import BankTransfer
-from .bank_transfer_create_response import BankTransferCreateResponse
-from .bank_transfer_get_response import BankTransferGetResponse
-from .processor_bank_transfer_create_response import ProcessorBankTransferCreateResponse
-from .bank_transfer_list_response import BankTransferListResponse
-from .individual_watchlist_code import IndividualWatchlistCode
-from .payment_initiation_standing_order_metadata import (
-    PaymentInitiationStandingOrderMetadata,
+from .customer_initiated_return_risk import CustomerInitiatedReturnRisk
+from .signal_scores import SignalScores
+from .signal_evaluate_response import SignalEvaluateResponse
+from .deposit_switch_get_request import DepositSwitchGetRequest
+from .processor_auth_get_request import ProcessorAuthGetRequest
+from .processor_token_create_request import ProcessorTokenCreateRequest
+from .product_status_breakdown import ProductStatusBreakdown
+from .product_status import ProductStatus
+from .institution_status import InstitutionStatus
+from .link_token_create_request_transfer import LinkTokenCreateRequestTransfer
+from .payment_initiation_maximum_payment_amount import (
+    PaymentInitiationMaximumPaymentAmount,
 )
 from .payment_initiation_metadata import PaymentInitiationMetadata
 from .institution import Institution
 from .institutions_search_response import InstitutionsSearchResponse
 from .institutions_get_by_id_response import InstitutionsGetByIdResponse
 from .institutions_get_response import InstitutionsGetResponse
-from .address_data import AddressData
-from .address import Address
-from .liability_override import LiabilityOverride
+from .screening_hit_analysis import ScreeningHitAnalysis
+from .watchlist_screening_hit import WatchlistScreeningHit
+from .paginated_individual_watchlist_screening_hit_list_response import (
+    PaginatedIndividualWatchlistScreeningHitListResponse,
+)
+from .numbers_international_nullable import NumbersInternationalNullable
+from .transfer_authorization_decision_rationale_code import (
+    TransferAuthorizationDecisionRationaleCode,
+)
+from .wallet_transaction_get_response import WalletTransactionGetResponse
+from .bank_transfer_get_request import BankTransferGetRequest
+from .transfer_network import TransferNetwork
+from .bank_transfer_cancel_response import BankTransferCancelResponse
+from .w_2_state_and_local_wages import W2StateAndLocalWages
+from .credit_w_2 import CreditW2
+from .payroll_income_object import PayrollIncomeObject
+from .w_2 import W2
+from .taxform import Taxform
+from .income_verification_taxforms_get_response import (
+    IncomeVerificationTaxformsGetResponse,
+)
+from .institutions_search_payment_initiation_options import (
+    InstitutionsSearchPaymentInitiationOptions,
+)
+from .institutions_search_request_options import InstitutionsSearchRequestOptions
+from .institutions_search_request import InstitutionsSearchRequest
+from .income_verification_precheck_military_info import (
+    IncomeVerificationPrecheckMilitaryInfo,
+)
+from .credit_payroll_income_precheck_request import CreditPayrollIncomePrecheckRequest
+from .income_verification_precheck_request import IncomeVerificationPrecheckRequest
+from .cause import Cause
+from .warning import Warning
+from .asset_report_get_response import AssetReportGetResponse
+from .transfer_authorization_guarantee_decision_rationale_code import (
+    TransferAuthorizationGuaranteeDecisionRationaleCode,
+)
+from .payroll_item_status import PayrollItemStatus
+from .payroll_item import PayrollItem
+from .credit_payroll_income_get_response import CreditPayrollIncomeGetResponse
+from .depository_account import DepositoryAccount
+from .transfer_intent_create_mode import TransferIntentCreateMode
+from .income_summary_field_number import IncomeSummaryFieldNumber
+from .credit_pay_stub_verification_status import CreditPayStubVerificationStatus
+from .report_token import ReportToken
+from .credit_audit_copy_token_create_request import CreditAuditCopyTokenCreateRequest
+from .credit_relay_create_request import CreditRelayCreateRequest
+from .categories_get_request import CategoriesGetRequest
+from .meta import Meta
+from .get_individual_watchlist_screening_request import (
+    GetIndividualWatchlistScreeningRequest,
+)
+from .sync_updates_available_webhook import SyncUpdatesAvailableWebhook
+from .wallet_transaction_execute_response import WalletTransactionExecuteResponse
+from .email import Email
 from .owner import Owner
 from .credit_bank_income_account import CreditBankIncomeAccount
 from .credit_bank_income_item import CreditBankIncomeItem
@@ -1136,985 +1147,977 @@ from .credit_bank_income_get_response import CreditBankIncomeGetResponse
 from .owner_override import OwnerOverride
 from .override_accounts import OverrideAccounts
 from .user_custom_password import UserCustomPassword
-from .bank_transfer_id import BankTransferId
-from .identity_verification_retry_request_steps_object import (
-    IdentityVerificationRetryRequestStepsObject,
-)
-from .identity_verification_retry_request import IdentityVerificationRetryRequest
+from .transfer_event_list_request import TransferEventListRequest
+from .processor_balance_get_request_options import ProcessorBalanceGetRequestOptions
+from .processor_balance_get_request import ProcessorBalanceGetRequest
+from .numbers_eft_nullable import NumbersEftNullable
+from .processor_number import ProcessorNumber
+from .processor_auth_get_response import ProcessorAuthGetResponse
+from .city import City
+from .transfer_type import TransferType
+from .income_verification_payroll_flow_type import IncomeVerificationPayrollFlowType
+from .transactions_rule_type import TransactionsRuleType
+from .transaction_stream_amount import TransactionStreamAmount
+from .transaction_stream import TransactionStream
+from .transactions_recurring_get_response import TransactionsRecurringGetResponse
+from .request_id import RequestId
+from .account_filter_subtypes import AccountFilterSubtypes
+from .income_verification_refresh_response import IncomeVerificationRefreshResponse
+from .document_image_cropped_front import DocumentImageCroppedFront
+from .get_dashboard_user_request import GetDashboardUserRequest
+from .institutions_get_by_id_request_options import InstitutionsGetByIdRequestOptions
+from .institutions_get_by_id_request import InstitutionsGetByIdRequest
+from .identity_verification_user_phone_number import IdentityVerificationUserPhoneNumber
+from .identity_verification_template_version import IdentityVerificationTemplateVersion
+from .timestamp import Timestamp
 from .transfer_create_idempotency_key import TransferCreateIdempotencyKey
-from .auth_get_request_options import AuthGetRequestOptions
-from .auth_get_request import AuthGetRequest
-from .payment_consent_max_payment_amount import PaymentConsentMaxPaymentAmount
-from .payment_initiation_consent_constraints import PaymentInitiationConsentConstraints
-from .payment_initiation_consent_create_request import (
-    PaymentInitiationConsentCreateRequest,
+from .jwt_header import JwtHeader
+from .id_number_type import IdNumberType
+from .recipient_bacs import RecipientBacs
+from .wallet_numbers import WalletNumbers
+from .wallet import Wallet
+from .wallet_list_response import WalletListResponse
+from .list_watchlist_screening_entity_hit_request import (
+    ListWatchlistScreeningEntityHitRequest,
 )
-from .payment_initiation_consent import PaymentInitiationConsent
-from .sandbox_override_password import SandboxOverridePassword
-from .asset_report_relay_get_request import AssetReportRelayGetRequest
-from .transfer_sweep import TransferSweep
-from .transfer_sweep_get_response import TransferSweepGetResponse
-from .transfer_sweep_list_response import TransferSweepListResponse
-from .user_address import UserAddress
-from .identity_verification_request_user import IdentityVerificationRequestUser
-from .identity_verification_create_request import IdentityVerificationCreateRequest
-from .link_token_create_request_user import LinkTokenCreateRequestUser
+from .watchlist_screening_phone_number import WatchlistScreeningPhoneNumber
+from .removed_transaction import RemovedTransaction
+from .transactions_sync_response import TransactionsSyncResponse
+from .link_token_create_request_deposit_switch import (
+    LinkTokenCreateRequestDepositSwitch,
+)
 from .link_token_create_request import LinkTokenCreateRequest
-from .identity_get_request_options import IdentityGetRequestOptions
-from .identity_get_request import IdentityGetRequest
-from .sandbox_item_reset_login_request import SandboxItemResetLoginRequest
-from .paystub_address import PaystubAddress
-from .employee import Employee
-from .paystub_employer import PaystubEmployer
-from .paystub import Paystub
-from .income_verification_paystubs_get_response import (
-    IncomeVerificationPaystubsGetResponse,
+from .mortgage_interest_rate import MortgageInterestRate
+from .mortgage_liability import MortgageLiability
+from .liabilities_object import LiabilitiesObject
+from .liabilities_get_response import LiabilitiesGetResponse
+from .sandbox_transfer_repayment_simulate_request import (
+    SandboxTransferRepaymentSimulateRequest,
 )
-from .w_2 import W2
-from .taxform import Taxform
-from .income_verification_taxforms_get_response import (
-    IncomeVerificationTaxformsGetResponse,
+from .item_id import ItemId
+from .credit_account import CreditAccount
+from .client_user_id import ClientUserId
+from .income_verification_precheck_confidence import (
+    IncomeVerificationPrecheckConfidence,
 )
-from .link_token_create_loan_filter import LinkTokenCreateLoanFilter
-from .link_token_create_request_account_subtypes import (
-    LinkTokenCreateRequestAccountSubtypes,
-)
-from .standalone_account_type import StandaloneAccountType
-from .credit_pull_id import CreditPullId
-from .standalone_investment_transaction_fee_type import (
-    StandaloneInvestmentTransactionFeeType,
-)
-from .idempotency_flag import IdempotencyFlag
-from .account_selection_cardinality import AccountSelectionCardinality
-from .identity_verification_template_reference import (
-    IdentityVerificationTemplateReference,
-)
-from .identity_verification import IdentityVerification
-from .paginated_identity_verification_list_response import (
-    PaginatedIdentityVerificationListResponse,
-)
-from .identity_verification_response import IdentityVerificationResponse
-from .payment_initiation_payment_get_request import PaymentInitiationPaymentGetRequest
-from .partner_customers_create_request import PartnerCustomersCreateRequest
-from .transfer_failure import TransferFailure
-from .transfer import Transfer
-from .transfer_get_response import TransferGetResponse
-from .transfer_list_response import TransferListResponse
-from .transfer_create_response import TransferCreateResponse
-from .transfer_event import TransferEvent
-from .transfer_event_sync_response import TransferEventSyncResponse
-from .transfer_event_list_response import TransferEventListResponse
-from .sandbox_transfer_simulate_request import SandboxTransferSimulateRequest
+from .identity_verification_retried_webhook import IdentityVerificationRetriedWebhook
+from .list_identity_verification_request import ListIdentityVerificationRequest
+from .investment_transaction_type import InvestmentTransactionType
+from .sandbox_transfer_fire_webhook_request import SandboxTransferFireWebhookRequest
+from .user_token import UserToken
 
 __all__ = [
-    "CreditEmploymentVerificationStatus",
-    "PaymentInitiationConsentPaymentExecuteResponse",
-    "SecurityOverride",
-    "InvestmentsTransactionsOverride",
-    "HoldingsOverride",
-    "Mfa",
-    "CreditPayrollIncomeRefreshStatus",
-    "UpdateIndividualScreeningRequestResettableField",
-    "NumbersInternationalIban",
-    "TransferId",
-    "IdentityVerificationStatus",
-    "PaymentInitiationPaymentListRequest",
-    "InvestmentAccountSubtypes",
-    "CreditPayStubAddress",
-    "Credit1099Filer",
-    "CreditPayStubEmployer",
-    "Credit1099Recipient",
-    "Credit1099Payer",
-    "NumbersInternational",
-    "AccountFilter",
-    "CreditBankIncomeRefreshRequestOptions",
-    "CreditBankIncomeRefreshRequest",
-    "PhysicalDocumentCategory",
-    "DepositoryAccount",
-    "DocumentImageBack",
-    "TransactionStreamAmount",
-    "LinkTokenCreateRequestUserStatedIncomeSource",
-    "Url",
-    "LinkTokenCreateRequestTransfer",
-    "StandaloneCurrencyCodeList",
-    "CreditRelayRemoveResponse",
-    "SourceUid",
-    "CreditDocumentMetadata",
-    "Credit1099",
-    "PaymentInitiationPaymentReverseRequest",
-    "City",
-    "WeakAliasDetermination",
-    "JwkPublicKey",
-    "WebhookVerificationKeyGetResponse",
-    "UpdateEntityScreeningRequestResettableFieldList",
+    "MortgagePropertyAddress",
+    "PartnerCustomersCreateRequest",
     "ProcessorTokenCreateResponse",
-    "EntityScreeningHitUrls",
-    "TransferSweepGetRequest",
-    "DocType",
-    "PayStubEarningsTotal",
+    "Url",
+    "Mfa",
+    "ListDashboardUserRequest",
+    "SandboxProcessorTokenCreateRequestOptions",
+    "SandboxProcessorTokenCreateRequest",
+    "ReportType",
+    "IndividualWatchlistCode",
     "KycCheckAddressSummary",
-    "ExternalPaymentScheduleBase",
-    "SandboxTransferRepaymentSimulateRequest",
-    "PhoneType",
-    "PaymentInitiationRecipientGetResponse",
+    "TransferSweepId",
+    "CreditBankIncomeErrorType",
+    "IdentityVerificationStepStatus",
+    "CreditAccountSubtypes",
+    "ClientProvidedRawTransaction",
+    "TransactionsEnhanceGetRequest",
+    "GivenNameField",
+    "PaymentInitiationRecipientGetRequest",
+    "NumbersInternationalIban",
+    "IncomeVerificationStatusWebhook",
+    "UserStatedIncomeSourceCategory",
+    "UpdateEntityScreeningRequestResettableFieldList",
+    "TransferIntentStatus",
+    "GenericCountryCode",
+    "TransferId",
+    "LinkTokenCreateDepositoryFilter",
+    "WatchlistScreeningSearchTerms",
+    "AssetReportToken",
+    "InvestmentHoldingsGetRequestOptions",
+    "InvestmentsHoldingsGetRequest",
+    "PaymentProfileCreateResponse",
     "ScopesNullable",
     "ConnectedApplication",
     "ItemApplicationListResponse",
-    "ApiSecret",
-    "Timestamp",
-    "IdentityVerificationStatusUpdatedWebhook",
-    "SandboxPublicTokenCreateResponse",
-    "ItemApplicationScopesUpdateResponse",
-    "AssetReportRelayRemoveRequest",
-    "PaymentAmountCurrency",
+    "IdentityVerificationStatus",
+    "PayrollIncomeRateOfPay",
+    "PayrollIncomeAccountData",
+    "DepositSwitchCreateResponse",
+    "PaymentProfileGetRequest",
+    "StudentLoanStatus",
+    "AssetReportRefreshResponse",
+    "ApiClientId",
+    "CreditPayrollIncomePrecheckResponse",
+    "UnofficialCurrencyCodeList",
+    "IncomeVerificationWebhookStatus",
+    "PaymentInitiationConsentScope",
+    "AssetReportRelayCreateRequest",
+    "CreditIsoCurrencyCode",
+    "WeakAliasDetermination",
+    "BankInitiatedReturnRisk",
+    "NumbersIban",
+    "TransferFailure",
+    "SandboxTransferSimulateRequest",
+    "TransferEvent",
+    "TransferEventListResponse",
+    "TransferEventSyncResponse",
+    "AccountsBalanceGetRequestOptions",
+    "AccountsBalanceGetRequest",
+    "IdentityVerificationStepSummary",
+    "InvestmentFilter",
+    "SandboxIncomeFireWebhookRequest",
+    "NumbersEft",
+    "EmployerVerification",
+    "SandboxItemFireWebhookResponse",
     "UpdateEntityScreeningRequestSearchTerms",
     "UpdateEntityScreeningRequest",
-    "RiskSignalDocumentReference",
-    "FamilyNameField",
-    "IncidentUpdate",
-    "HealthIncident",
-    "MatchSummary",
-    "EntityScreeningHitUrlsItems",
-    "CreditBankIncomePdfGetResponse",
-    "EntityScreeningHitAnalysis",
+    "BankTransferFailure",
+    "BankTransferEvent",
+    "BankTransferEventListResponse",
+    "BankTransferEventSyncResponse",
+    "SandboxBankTransferSimulateRequest",
+    "WatchlistScreeningStatus",
+    "PaymentInitiationRecipientGetResponse",
     "WalletTransactionCounterpartyBacs",
-    "WalletTransactionExecuteResponse",
-    "ProductStatusBreakdown",
-    "ProductStatus",
-    "InstitutionStatus",
-    "PaymentInitiationConsentRevokeResponse",
-    "CreditDocumentType",
-    "WebhookVerificationKeyGetRequest",
-    "DepositSwitchTargetAccount",
-    "AssetReportGetRequest",
-    "TransferSweepStatus",
-    "InternalUid",
-    "UserStatedIncomeSourcePayType",
-    "IncomeSummaryFieldString",
-    "PhysicalDocumentIdNumber",
-    "EntityScreeningHitNames",
-    "EntityScreeningHitNamesItems",
-    "ExternalPaymentScheduleRequest",
-    "ItemPublicTokenCreateResponse",
-    "ItemStatusTransactions",
-    "PaymentInitiationMaximumPaymentAmount",
-    "VerificationAttribute",
-    "PaystubVerification",
-    "SandboxItemSetVerificationStatusRequest",
-    "AccountFilterSubtypes",
-    "AccountIdsWithUpdatedIdentity",
-    "ProcessorToken",
-    "ItemStatusInvestments",
-    "TransferListRequest",
-    "TransferEventListTransferType",
-    "WalletGetResponse",
-    "TransferEventsUpdateWebhook",
-    "Meta",
-    "EntityScreeningStatusUpdatedWebhook",
-    "DashboardUserResponse",
-    "TransferMigrateAccountResponse",
-    "TransferAuthorizationGuaranteeDecisionRationale",
-    "DeductionsTotal",
-    "ScreeningStatusUpdatedWebhook",
-    "PaymentInitiationPaymentCreateResponse",
-    "InvestmentTransactionType",
-    "AssetReportFilterResponse",
-    "TransactionsRefreshResponse",
-    "TransferRepayment",
-    "TransferRepaymentListResponse",
-    "PaymentMeta",
-    "TransactionsGetRequestOptions",
-    "TransactionsGetRequest",
-    "DepositoryAccountSubtypes",
-    "BankTransferSweepListRequest",
-    "TransactionsRulesRemoveResponse",
-    "BankTransferGetRequest",
-    "PaymentScheduleInterval",
-    "WalletTransactionStatus",
-    "TimestampNullable",
-    "RecurringTransactionFrequency",
-    "Cursor",
-    "WalletTransactionIdempotencyKey",
-    "AssetsProductReadyWebhook",
-    "PaymentInitiationConsentRevokeRequest",
-    "AccountProductAccessNullable",
-    "AccountAccess",
-    "PaymentInitiationPaymentTokenCreateResponse",
-    "ProductAccess",
-    "Scopes",
-    "ItemApplicationScopesUpdateRequest",
-    "ItemAccessTokenInvalidateResponse",
-    "StudentLoanRepaymentModel",
-    "CreditBankIncomeAccountType",
-    "SandboxOverrideUsername",
-    "Security",
-    "TransferMigrateAccountRequest",
     "ListWatchlistScreeningIndividualReviewsRequest",
-    "TransferEventType",
-    "EarningsBreakdown",
-    "BankTransferBalance",
-    "BankTransferBalanceGetResponse",
-    "DeductionsBreakdown",
-    "PaymentProfileGetRequest",
-    "Transaction",
-    "Iso8601Date",
-    "VerificationExpiredWebhook",
-    "SandboxTransferSweepSimulateRequest",
-    "BankTransferEventSyncRequest",
-    "IdentityVerificationUserPhoneNumber",
-    "LinkTokenCreateRequestIdentityVerification",
-    "Location",
-    "TransactionBase",
-    "ItemStatusNullable",
-    "TransferIntentAuthorizationDecision",
-    "TransferAccessToken",
-    "ApplicationId",
-    "PayStubDistributionBreakdown",
-    "PayStubPayPeriodDetails",
-    "BankTransferIdempotencyKey",
-    "BankTransfersEventsUpdateWebhook",
-    "ScopesContext",
-    "EntityWatchlistScreeningHitId",
-    "GetIdentityVerificationRequest",
-    "W2StateAndLocalWages",
-    "IdentityVerificationConsent",
     "AssetReportPdfGetResponse",
-    "ProcessorStripeBankAccountTokenCreateResponse",
-    "CreditPayrollIncomeRiskSignalsGetRequest",
-    "Form1099Type",
+    "ItemWebhookUpdateRequest",
+    "BankTransfersEventsUpdateWebhook",
+    "Application",
+    "ApplicationGetResponse",
+    "SandboxPublicTokenCreateRequestOptionsTransactions",
+    "SandboxPublicTokenCreateRequestOptions",
+    "SandboxPublicTokenCreateRequest",
+    "CountryCode",
     "BankTransferListRequest",
-    "CreditBankIncomeErrorType",
-    "PaymentAmount",
-    "PaymentInitiationConsentPaymentExecuteRequest",
-    "IncomeVerificationPrecheckResponse",
-    "ItemPublicTokenExchangeResponse",
-    "CustomerInitiatedReturnRisk",
-    "PhysicalDocumentExtractedData",
-    "AssetReportRelayRemoveResponse",
-    "ProgramNameSensitivity",
+    "UserIdNumber",
+    "LinkTokenCreateResponse",
+    "InvestmentAccountSubtypes",
+    "CreditRelayGetRequest",
+    "PhysicalDocumentExtractedDataAnalysis",
+    "DocumentAnalysis",
+    "CreditAuditCopyTokenCreateResponse",
+    "IdentityMatchRequestOptions",
+    "PaystubOverrideEmployer",
+    "UserAddress",
+    "LinkTokenCreateRequestUser",
+    "UserId",
+    "ScreeningStatusUpdatedWebhook",
+    "IncomeVerificationTaxformsGetRequest",
+    "TransferAuthorizationDevice",
+    "StudentLoanRepaymentModel",
+    "TransferListRequest",
+    "AccessTokenNullable",
+    "SandboxItemFireWebhookRequest",
+    "EntityWatchlistScreeningSearchTerms",
+    "LinkTokenCreateRequestPaymentInitiation",
+    "CreditPayStubAddress",
+    "Credit1099Recipient",
+    "Credit1099Payer",
+    "CreditPayStubEmployer",
+    "Credit1099Filer",
+    "Pay",
+    "Total",
+    "NetPay",
+    "EarningsTotal",
+    "DistributionBreakdown",
+    "PayPeriodDetails",
+    "EmploymentDetails",
+    "TransactionsRulesRemoveResponse",
+    "WatchlistScreeningHitLocations",
+    "LinkTokenCreateRequestAuth",
+    "LinkTokenEuConfig",
+    "IssuingCountry",
+    "WatchlistScreeningDocumentType",
+    "IncomeVerificationPrecheckEmployerAddressData",
+    "HistoricalBalance",
+    "DepositSwitchTokenCreateRequest",
+    "TransferEventsUpdateWebhook",
+    "SandboxBankTransferSimulateResponse",
+    "ItemPublicTokenCreateRequest",
+    "DashboardUserStatus",
+    "WalletGetResponse",
+    "PendingExpirationWebhook",
+    "PaymentInitiationPaymentCreateResponse",
+    "CreditBankIncomeCategory",
+    "TransferSweep",
+    "TransferSweepGetResponse",
+    "TransferSweepListResponse",
+    "StandaloneInvestmentTransactionTransferType",
+    "LinkTokenCreateInvestmentFilter",
+    "DashboardUser",
+    "PaginatedDashboardUserListResponse",
+    "WalletTransactionCounterpartyInternational",
+    "WalletTransactionCounterpartyNumbers",
+    "WalletTransactionCounterparty",
+    "PaymentInitiationRecipientCreateResponse",
+    "BankTransferUser",
+    "ImageQuality",
+    "ProcessorApexProcessorTokenCreateRequest",
+    "IdentityVerificationTemplateId",
+    "PersonalFinanceCategory",
+    "StandaloneInvestmentTransactionFeeType",
+    "AssetReportGetRequest",
+    "DepositoryAccountSubtype",
+    "PayFrequencyValue",
+    "WatchlistProgramId",
+    "SandboxItemResetLoginRequest",
+    "PayStubEarningsBreakdownCanonicalDescription",
+    "TransferUserAddressInRequest",
+    "TransferAuthorizationUserInRequest",
+    "TransferAuthorizationCreateRequest",
+    "TransferUserInRequest",
+    "FamilyNameField",
+    "AddressData",
+    "Address",
+    "TransferSweepListRequest",
+    "PaymentProfileStatus",
+    "DateRange",
+    "ProcessorToken",
+    "UpdateIndividualScreeningRequestResettableField",
+    "WatchlistScreeningHitId",
+    "PaystubDetails",
+    "InternalUid",
+    "DocumentMetadata",
+    "UpdateEntityScreeningRequestResettableField",
+    "IncomeVerificationCreateRequestOptions",
+    "IncomeVerificationCreateRequest",
+    "PaymentInitiationPaymentReverseRequest",
+    "KycCheckPhoneSummary",
+    "CreditFilter",
+    "LinkTokenCreateRequestUpdate",
+    "IdentityVerificationRetryRequestStepsObject",
+    "IdentityVerificationRetryRequest",
+    "IncomeBreakdown",
     "BankTransferSweep",
     "BankTransferSweepListResponse",
     "BankTransferSweepGetResponse",
-    "PendingExpirationWebhook",
-    "InvestmentTransaction",
-    "ItemWebhookUpdateRequest",
-    "ItemRemoveRequest",
-    "UserStatedIncomeSourceFrequency",
-    "AssetReportFilterRequest",
-    "TransferNetwork",
-    "NumbersIbanNullable",
-    "DepositSwitchTokenCreateRequest",
-    "Apr",
-    "CreditCardLiability",
-    "IncomeVerificationRefreshResponse",
-    "CreditAuditCopyTokenCreateResponse",
-    "DocumentStatus",
-    "IncomeVerificationTaxformsGetRequest",
-    "ExpirationDate",
-    "IndividualScreeningHitNames",
-    "ScreeningHitNamesItems",
-    "EntityScreeningHitEmails",
-    "EntityScreeningHitEmailsItems",
-    "IdentityVerificationStepSummary",
-    "RelayEvent",
-    "CreditEmploymentGetRequest",
-    "PaymentProfileRemoveResponse",
-    "PaymentInitiationPaymentReverseResponse",
-    "EmploymentVerificationGetRequest",
+    "IncomeVerificationPrecheckResponse",
+    "Transaction",
+    "IncomeVerificationPaystubsGetRequest",
+    "LiabilitiesGetRequestOptions",
+    "LiabilitiesGetRequest",
+    "TransferCancelRequest",
+    "AccountProductAccessNullable",
+    "AccountAccess",
+    "CreditPayrollIncomeGetRequest",
+    "PaymentInitiationRecipientListRequest",
     "ApplicationGetRequest",
-    "BankTransferMigrateAccountResponse",
-    "NumbersAch",
-    "Cause",
-    "Warning",
-    "SandboxIncomeFireWebhookRequest",
-    "CreditBankIncomeWarningCode",
-    "TransferIntentGetRequest",
-    "UserCreateResponse",
-    "RequestId",
-    "WalletTransactionGetRequest",
-    "CountryCode",
-    "ReportType",
-    "CreditBankIncomeCategory",
-    "YtdNetIncomeSummaryFieldNumber",
-    "InvestmentTransactionSubtype",
-    "DashboardUser",
-    "PaginatedDashboardUserListResponse",
-    "ProgramArchived",
-    "ItemPublicTokenCreateRequest",
-    "PaystubOverrideEmployer",
-    "ProcessorIdentityGetRequest",
-    "TransactionsSyncRequestOptions",
-    "TransactionsSyncRequest",
-    "Error",
-    "ScreeningHitAnalysis",
-    "PayStubDeductionsBreakdown",
-    "AssetReportRemoveRequest",
-    "PaystubDetails",
-    "TransactionsRecurringGetRequestOptions",
-    "TransactionsRecurringGetRequest",
+    "AssetReportFilterResponse",
+    "PaymentInitiationPaymentListRequest",
+    "PayFrequency",
+    "PhysicalDocumentExtractedData",
+    "GetWatchlistScreeningEntityProgramRequest",
+    "EntityWatchlistProgramId",
+    "TotalCanonicalDescription",
+    "JwkPublicKey",
+    "WebhookVerificationKeyGetResponse",
+    "ListWatchlistScreeningIndividualProgramsRequest",
+    "Products",
+    "PaymentInitiationConsentPaymentExecuteResponse",
     "CustomerInitiatedRiskTier",
+    "SignalAddressData",
+    "IncomeVerificationPrecheckUser",
+    "CreditAuditCopyTokenRemoveResponse",
+    "AddressDataNullable",
+    "IdentityMatchUser",
+    "IdentityMatchRequest",
+    "Employer",
+    "EmployersSearchResponse",
+    "TransactionsRefreshRequest",
+    "CreditBankIncomePayFrequency",
     "ListWatchlistScreeningIndividualHistoryRequest",
-    "PostalCode",
-    "AccessTokenNullable",
-    "ListEntityWatchlistScreeningRequest",
-    "ItemStatusLastWebhook",
-    "ItemStatus",
-    "PaymentInitiationPaymentTokenCreateRequest",
-    "EntityWatchlistScreeningReviewId",
-    "CreditPlatformIds",
-    "LoanAccountSubtypes",
-    "KycCheckDateOfBirthSummary",
-    "WatchlistScreeningHitId",
+    "TransactionsRuleDetails",
+    "TransactionsCategoryRule",
+    "TransactionsRulesCreateResponse",
+    "TransactionsRulesListResponse",
+    "TransactionsRulesCreateRequest",
+    "PaymentInitiationConsentRevokeResponse",
+    "ApplicationId",
+    "AccountProductAccess",
+    "ItemImportResponse",
+    "CreditBankIncomeRefreshResponse",
+    "EntityScreeningHitEmails",
+    "LinkTokenCreateInstitutionData",
+    "W2Box12",
+    "SenderBacsNullable",
+    "WalletTransactionStatus",
+    "Strategy",
+    "TransferAuthorizationGuaranteeDecision",
+    "MatchSummary",
+    "EntityScreeningHitEmailsItems",
+    "ScreeningHitDateOfBirthItem",
+    "GenericScreeningHitLocationItems",
+    "LiabilitiesAccountIdsWithUpdatedLiabilities",
+    "DepositSwitchCreateRequestOptions",
+    "DepositSwitchCreateRequest",
+    "BankTransferSweepGetRequest",
     "PayStubVerificationAttribute",
     "CreditPayStubVerification",
-    "IdNumberType",
-    "ShareableUrl",
-    "BankTransferMetadata",
-    "WalletCreateRequest",
-    "AccountSubtypes",
-    "ClientUserId",
-    "NumbersEftNullable",
-    "UserIdNumber",
-    "ItemGetRequest",
-    "TransactionsRuleType",
-    "IdNumberValue",
-    "GetWatchlistScreeningIndividualProgramRequest",
-    "CreateEntityWatchlistScreeningReviewRequest",
-    "LinkTokenCreateRequestPaymentInitiation",
-    "SandboxBankTransferSimulateResponse",
-    "PaymentInitiationConsentStatus",
-    "TransferAuthorizationDevice",
-    "LoanAccountSubtype",
-    "RecipientBacsNullable",
-    "ExternalPaymentRefundDetails",
-    "AccountType",
-    "TransferAuthorizationDecisionRationaleCode",
-    "TransferIntentGetFailureReason",
-    "CreditBankIncomeRefreshResponse",
-    "DocumentMetadata",
+    "ProcessorStripeBankAccountTokenCreateRequest",
+    "DocumentDateOfBirthMatchCode",
+    "Security",
+    "TransactionsGetRequestOptions",
+    "TransactionsGetRequest",
+    "CreditEmploymentGetRequest",
+    "DepositSwitchStateUpdateWebhook",
+    "PaymentInitiationOptionalRestrictionBacs",
+    "ExternalPaymentInitiationConsentOptions",
+    "ExternalPaymentOptions",
+    "WatchlistScreeningIndividualId",
+    "AssetReportRelayRefreshRequest",
+    "WatchlistScreeningReviewId",
+    "AssetReportRelayRefreshResponse",
+    "SecurityOverride",
+    "InvestmentsTransactionsOverride",
+    "HoldingsOverride",
+    "PaymentConsentMaxPaymentAmount",
+    "WalletCreateResponse",
+    "ReviewComment",
+    "PaystubYtdDetails",
+    "EntityWatchlistScreeningId",
+    "DocumentNameMatchCode",
+    "ExternalPaymentScheduleRequest",
+    "AddressPurposeLabel",
+    "IdentityVerificationUserAddress",
+    "DocumentImageCroppedBack",
+    "EntityWatchlistScreeningName",
+    "DeductionsBreakdown",
+    "TimestampNullable",
+    "EntityWatchlistScreeningReviewId",
+    "WalletTransactionAmount",
+    "WalletTransactionExecuteRequest",
+    "WalletTransaction",
+    "WalletTransactionsListResponse",
+    "PayStubDeductionsTotal",
     "EmployerIncomeSummaryFieldString",
-    "BankTransferCancelResponse",
     "IncomeVerificationSourceType",
-    "BankTransferEventListBankTransferType",
-    "IdentityVerificationTemplateVersion",
-    "DepositoryFilter",
+    "IncomeVerificationCreateResponse",
+    "BankTransferMigrateAccountRequest",
+    "AssetReportRelayGetRequest",
+    "ItemPublicTokenCreateResponse",
+    "SandboxProcessorTokenCreateResponse",
+    "CreditEmployerVerification",
+    "ExternalPaymentScheduleBase",
+    "BankTransferEventListDirection",
+    "TransferMigrateAccountResponse",
+    "ItemStatusTransactions",
+    "AccountSubtype",
+    "SandboxTransferRepaymentSimulateResponse",
+    "SandboxTransferFireWebhookResponse",
+    "YtdGrossIncomeSummaryFieldNumber",
+    "CreditAuditCopyTokenRemoveRequest",
+    "ScopesState",
+    "ConsentPaymentIdempotencyKey",
+    "CreditBankIncomeWarningType",
+    "DepositSwitchTargetAccount",
+    "Holding",
+    "PaymentAmountCurrency",
+    "Numbers",
+    "RecurringTransactionsUpdateWebhook",
+    "ProgramArchived",
+    "DeductionsTotal",
+    "Deductions",
+    "PaymentConsentPeriodicAmountAmount",
+    "PaymentConsentPeriodicAmount",
+    "BankTransferMetadata",
+    "BankTransfer",
+    "BankTransferGetResponse",
+    "BankTransferCreateResponse",
+    "BankTransferListResponse",
+    "ProcessorBankTransferCreateResponse",
+    "BankTransferCreateRequest",
+    "ProcessorBankTransferCreateRequest",
+    "CreditDocumentType",
+    "PaymentScheme",
+    "WalletListRequest",
+    "AssetReportRelayRemoveRequest",
+    "PaystubOverrideEmployeeAddress",
+    "PaystubOverrideEmployee",
+    "PaystubOverride",
+    "IncomeOverride",
+    "StandaloneInvestmentTransactionCashType",
+    "GetWatchlistScreeningIndividualProgramRequest",
+    "ListWatchlistScreeningEntityHistoryRequest",
+    "TransactionsRuleField",
+    "IncomeBreakdownType",
+    "IdentityVerificationId",
+    "PaymentConsentValidDateTime",
+    "PaymentInitiationConsentConstraints",
+    "PaymentInitiationConsentCreateRequest",
+    "PaymentInitiationConsent",
+    "LoanFilter",
+    "VerificationAttribute",
+    "PaystubVerification",
+    "EmploymentVerificationGetRequest",
+    "ItemPublicTokenExchangeRequest",
+    "RecurringTransactionFrequency",
+    "EntityWatchlistCode",
+    "TransactionCode",
+    "DocumentAuthenticityMatchCode",
+    "EntityDocumentType",
+    "PhysicalDocumentIdNumber",
+    "CreditPayrollIncomeRefreshResponse",
+    "WalletTransactionGetRequest",
+    "Error",
+    "DocumentImageFront",
+    "InitialUpdateWebhook",
+    "TransferAuthorizationDecision",
+    "ProcessorStripeBankAccountTokenCreateResponse",
+    "KycCheckNameSummary",
+    "TransferSweepStatus",
+    "TransactionData",
+    "PaymentInitiationAddress",
+    "Iso8601Date",
+    "Source",
+    "DashboardUserResponse",
+    "TransactionsSyncRequestOptions",
+    "TransactionsSyncRequest",
+    "AssetReportAuditCopyCreateRequest",
+    "AutomaticallyVerifiedWebhook",
+    "ItemPublicTokenExchangeResponse",
+    "PayStubTaxpayerId",
+    "CreditPayStubEmployee",
+    "ProjectedIncomeSummaryFieldNumber",
+    "EmployeeIncomeSummaryFieldString",
+    "DepositSwitchAddressData",
+    "DepositSwitchTargetUser",
+    "DepositSwitchAltCreateRequest",
+    "PaymentInitiationPaymentGetRequest",
+    "ShareableUrl",
+    "SandboxItemResetLoginResponse",
+    "StandaloneInvestmentTransactionSellType",
+    "TransactionsRecurringGetRequestOptions",
+    "TransactionsRecurringGetRequest",
+    "PayStubEarningsBreakdown",
+    "Cursor",
+    "TransferUserAddressInResponse",
+    "TransferUserInResponse",
+    "TransferAuthorizationProposedTransfer",
+    "EmailAddress",
+    "PaymentInitiationConsentGetResponse",
+    "ItemStatusInvestments",
+    "LoanAccount",
+    "CreditRelayRemoveRequest",
+    "ListIndividualWatchlistScreeningRequest",
+    "WalletTransactionsListRequest",
+    "EmployersSearchRequest",
+    "TransferRepayment",
+    "TransferRepaymentListResponse",
+    "KycCheckDateOfBirthSummary",
+    "WebhookVerificationKeyGetRequest",
+    "ServicerAddressData",
+    "EntityDocument",
+    "EntityScreeningHitDocumentsItems",
+    "SignalPrepareRequest",
+    "NumbersBacs",
+    "CreditPayrollIncomeRiskSignalsGetRequest",
+    "WatchlistScreeningIndividualName",
+    "BankTransferStatus",
+    "LoanAccountSubtypes",
+    "UpdateIndividualScreeningRequestSearchTerms",
+    "UpdateIndividualScreeningRequest",
+    "PostalCode",
+    "PartnerEndCustomerClient",
+    "PartnerCustomersCreateResponse",
+    "IdNumberValue",
+    "TransferEventSyncRequest",
+    "ItemApplicationScopesUpdateResponse",
+    "Apr",
+    "CreditCardLiability",
+    "WatchlistScreeningDocument",
+    "ScreeningHitDocumentsItems",
+    "ItemApplicationListUserAuth",
+    "Street",
+    "Category",
+    "CategoriesGetResponse",
+    "EntityScreeningHitAnalysis",
+    "BankTransferBalance",
+    "BankTransferBalanceGetResponse",
+    "Form1099Type",
+    "EntityWatchlistScreeningHitId",
+    "InstitutionsSearchAccountFilter",
+    "BankInitiatedRiskTier",
+    "PlaidError",
+    "NewAccountsAvailableWebhook",
+    "DefaultUpdateWebhook",
+    "UserPermissionRevokedWebhook",
+    "PaymentStatusUpdateWebhook",
+    "ItemProductReadyWebhook",
+    "Item",
+    "ItemWebhookUpdateResponse",
+    "InvestmentsDefaultUpdateWebhook",
+    "LiabilitiesDefaultUpdateWebhook",
+    "AssetsErrorWebhook",
+    "WebhookUpdateAcknowledgedWebhook",
+    "TransactionsRemovedWebhook",
+    "HistoricalUpdateWebhook",
+    "HoldingsDefaultUpdateWebhook",
+    "ItemErrorWebhook",
+    "EntityScreeningHitUrls",
+    "EntityScreeningHitUrlsItems",
+    "PayStubDistributionBreakdown",
+    "PayStubPayPeriodDetails",
+    "SignalDecisionReportRequest",
+    "ProcessorIdentityGetRequest",
+    "BankTransferIdempotencyKey",
+    "ItemImportRequestUserAuth",
+    "ItemGetRequest",
+    "NumbersIbanNullable",
+    "AccountType",
+    "WebhookType",
+    "TransferMetadata",
+    "TransferIntentCreate",
+    "TransferIntentCreateResponse",
+    "TransferIntentCreateRequest",
+    "TransferCreateRequest",
+    "AssetReportId",
+    "CreditPayStubNetPay",
+    "AssetReportAuditCopyRemoveRequest",
+    "PhysicalDocumentCategory",
+    "CreditAccountSubtype",
+    "IdentityUpdateTypes",
+    "ItemAccessTokenInvalidateResponse",
     "InstitutionsGetRequestOptions",
     "InstitutionsGetRequest",
-    "TransactionOverride",
-    "RecipientBacs",
-    "WalletNumbers",
-    "TransferAuthorizationDecision",
-    "TransferRepaymentReturnListRequest",
-    "StudentRepaymentPlan",
-    "ItemApplicationListUserAuth",
-    "WalletIsoCurrencyCode",
-    "EmailAddress",
+    "ProgramNameSensitivity",
+    "GetEntityWatchlistScreeningRequest",
+    "AssetReportRemoveResponse",
+    "BankTransferDirection",
+    "TransferIntentGetRequest",
+    "CreditRelayRefreshResponse",
+    "SignalReturnReportRequest",
+    "PaymentProfileRemoveRequest",
+    "SignalEvaluateCoreAttributes",
+    "TransferAuthorizationDecisionRationale",
+    "PaymentConsentPeriodicAlignment",
+    "VerificationExpiredWebhook",
+    "ProductAccess",
+    "Scopes",
+    "ItemApplicationScopesUpdateRequest",
+    "AssetReportRelayRemoveResponse",
+    "DepositoryFilter",
+    "LinkTokenAccountFilters",
+    "AccountFiltersResponse",
+    "LinkTokenGetMetadataResponse",
+    "LinkTokenGetResponse",
+    "IdentityMatchResponse",
+    "LinkTokenCreateCreditFilter",
+    "IncomeVerificationPrecheckEmployerAddress",
+    "IncomeVerificationPrecheckEmployer",
+    "IncomeVerificationRefreshRequest",
+    "SandboxOverrideUsername",
+    "AssetReportFilterRequest",
+    "OverrideAccountType",
+    "ListWatchlistScreeningEntityReviewsRequest",
+    "TransferStatus",
+    "PhysicalDocumentImages",
+    "DocumentaryVerificationDocument",
+    "DocumentaryVerification",
+    "PoBoxStatus",
+    "WatchlistScreeningHitStatus",
+    "TransferGetRequest",
     "AssetReportUser",
     "AssetReportCreateRequestOptions",
     "AssetReportCreateRequest",
     "AssetReportRefreshRequestOptions",
     "AssetReportRefreshRequest",
-    "BankTransferType",
-    "PaymentConsentValidDateTime",
-    "IncomeVerificationRefreshRequest",
-    "AssetReportRefreshResponse",
-    "PayStubEarningsBreakdown",
-    "CreditPayStubEarnings",
-    "SandboxProcessorTokenCreateResponse",
-    "DocumentImageFront",
-    "TransferRepaymentListRequest",
-    "ProjectedIncomeSummaryFieldNumber",
-    "TransferEventSyncRequest",
+    "Street2",
+    "DocumentStatus",
+    "LinkTokenCreateRequestUserStatedIncomeSource",
+    "WalletBalance",
+    "CreateEntityWatchlistScreeningReviewRequest",
+    "NumbersInternational",
+    "SandboxTransferSweepSimulateRequest",
+    "PaystubPayFrequency",
+    "UserCreateRequest",
     "TransactionStreamStatus",
-    "AssetReportId",
-    "YtdGrossIncomeSummaryFieldNumber",
-    "GetEntityWatchlistScreeningRequest",
-    "AuthSupportedMethods",
-    "AuthMetadata",
-    "AutomaticallyVerifiedWebhook",
-    "DepositSwitchAltCreateResponse",
-    "WalletGetRequest",
-    "CreditPayStubNetPay",
-    "SandboxBankTransferFireWebhookRequest",
-    "SimulatedTransferSweep",
-    "SandboxTransferSweepSimulateResponse",
-    "PaystubOverrideEmployeeAddress",
-    "PaystubOverrideEmployee",
-    "RecaptchaRequiredError",
-    "EntityDocument",
-    "EntityScreeningHitDocumentsItems",
-    "InstitutionsSearchPaymentInitiationOptions",
-    "InstitutionsSearchRequestOptions",
-    "InstitutionsSearchRequest",
-    "AssetReportRelayRefreshRequest",
-    "CreditAccount",
-    "AssetReportAuditCopyGetRequest",
-    "PaystubDeduction",
-    "PaymentProfileCreateRequest",
-    "BankTransferUser",
-    "BankTransferCreateRequest",
-    "ProcessorBankTransferCreateRequest",
-    "TransactionsRulesRemoveRequest",
-    "AssetReportToken",
-    "TransactionsRefreshRequest",
-    "TransferMetadata",
-    "Date",
-    "KycCheckNameSummary",
-    "StudentLoanStatus",
-    "StandaloneInvestmentTransactionTransferType",
-    "PaymentInitiationAddress",
-    "PaymentInitiationRecipient",
-    "PaymentInitiationRecipientListResponse",
-    "PaymentInitiationRecipientCreateRequest",
-    "IdentityVerificationRetriedWebhook",
-    "BankTransferCancelRequest",
     "SandboxItemSetVerificationStatusResponse",
-    "SignalEvaluateCoreAttributes",
-    "ItemImportResponse",
-    "NumbersBacsNullable",
-    "DocumentRiskSignalInstitutionMetadata",
-    "DocumentRiskSignal",
-    "SingleDocumentRiskSignal",
-    "MultiDocumentRiskSignal",
-    "DocumentRiskSignalsObject",
-    "PayrollRiskSignalsItem",
-    "Strategy",
-    "TransactionsRuleField",
-    "SandboxBankTransferFireWebhookResponse",
-    "InvestmentFilter",
-    "InvestmentsTransactionsGetRequestOptions",
-    "InvestmentsTransactionsGetRequest",
-    "AssetReportAuditCopyRemoveResponse",
-    "PhoneNumber",
-    "ListWatchlistScreeningEntityHitRequest",
-    "TransferAmount",
+    "BankTransferBalanceGetRequest",
+    "VerificationStatus",
+    "TransferIntentGetFailureReason",
+    "StandaloneCurrencyCodeList",
+    "ApiSecret",
+    "UserStatedIncomeSourceFrequency",
+    "SignalDecisionReportResponse",
+    "IncomeSummaryFieldString",
     "AccountAssets",
     "AssetReportItem",
     "AssetReport",
-    "AssetReportGetResponse",
-    "CreditBankIncomePayFrequency",
-    "PaymentInitiationConsentGetResponse",
-    "AccountsGetRequestOptions",
-    "AccountsGetRequest",
-    "IdentityVerificationTemplateId",
-    "PaymentProfileStatus",
-    "BankInitiatedReturnRisk",
-    "SignalScores",
-    "SignalEvaluateResponse",
-    "StandaloneInvestmentTransactionSellType",
-    "AccountIdentity",
-    "ProcessorIdentityGetResponse",
-    "SandboxIncomeFireWebhookResponse",
-    "IdentityMatchRequestOptions",
-    "PaymentInitiationConsentScope",
-    "IncomeVerificationWebhookStatus",
-    "AddressNullable",
-    "UserId",
-    "TransferAuthorizationDecisionRationale",
-    "ProcessorAuthGetRequest",
-    "ProcessorApexProcessorTokenCreateRequest",
-    "ReportToken",
-    "CreditRelayCreateRequest",
-    "CreditAuditCopyTokenCreateRequest",
+    "BankTransferType",
+    "PaystubAddress",
+    "PaystubEmployer",
+    "ListWatchlistScreeningIndividualHitRequest",
+    "IndividualScreeningHitNames",
+    "ScreeningHitNamesItems",
+    "ScreeningHitData",
     "StandaloneInvestmentTransactionBuyType",
-    "Source",
-    "IncomeVerificationStatusWebhook",
-    "SignalPrepareResponse",
-    "LinkTokenCreateRequestUpdate",
-    "PayFrequency",
-    "IdentityUpdateTypes",
-    "WatchlistScreeningIndividualId",
-    "DepositSwitchStateUpdateWebhook",
-    "CreditRelayRefreshResponse",
-    "UserCreateRequest",
-    "WatchlistScreeningHitLocations",
-    "GenericScreeningHitLocationItems",
-    "TransferGetRequest",
-    "TransferRepaymentReturn",
-    "TransferRepaymentReturnListResponse",
-    "SandboxTransferRepaymentSimulateResponse",
-    "ItemApplicationListRequest",
-    "TransactionsRuleDetails",
-    "TransactionsCategoryRule",
-    "TransactionsRulesListResponse",
-    "TransactionsRulesCreateResponse",
-    "TransactionsRulesCreateRequest",
-    "SandboxTransferSimulateResponse",
-    "IncomeBreakdown",
-    "DocumentNameMatchCode",
-    "WalletTransactionAmount",
-    "ItemId",
-    "IdentityVerificationId",
-    "AccountsBalanceGetRequestOptions",
-    "AccountsBalanceGetRequest",
-    "EmployeeIncomeSummaryFieldString",
-    "IncomeVerificationPrecheckMilitaryInfo",
-    "Street",
-    "PaymentConsentPeriodicAmountAmount",
-    "PaymentConsentPeriodicAmount",
-    "SignalDevice",
-    "AssetReportRelayRefreshResponse",
-    "TransactionData",
-    "IncomeSummary",
-    "LinkTokenCreateRequestIncomeVerificationBankIncome",
-    "PaymentInitiationPaymentGetResponse",
-    "Pay",
-    "EmploymentDetails",
-    "Total",
-    "NetPay",
-    "Deductions",
-    "EarningsTotal",
-    "Earnings",
-    "DistributionBreakdown",
-    "PayPeriodDetails",
-    "PaystubOverride",
-    "IncomeOverride",
-    "KycCheckIdNumberSummary",
-    "InvestmentAccountSubtype",
-    "CreditFilter",
-    "PaymentInitiationPaymentStatus",
-    "AssetReportRelayCreateRequest",
-    "ProcessorTokenCreateRequest",
-    "HistoricalBalance",
-    "InstitutionsGetByIdRequestOptions",
-    "InstitutionsGetByIdRequest",
-    "SignalAddressData",
-    "IncomeVerificationPrecheckUser",
-    "PaystubVerificationStatus",
-    "ListWatchlistScreeningEntityHistoryRequest",
-    "SandboxTransferFireWebhookResponse",
-    "CreditBankIncomeCause",
-    "CreditBankIncomeWarning",
-    "PlaidError",
-    "CreditPayrollIncomeRiskSignalsGetResponse",
-    "ItemProductReadyWebhook",
-    "AssetsErrorWebhook",
-    "IdentityDefaultUpdateWebhook",
-    "InvestmentsDefaultUpdateWebhook",
-    "UserPermissionRevokedWebhook",
-    "HistoricalUpdateWebhook",
-    "HoldingsDefaultUpdateWebhook",
-    "Item",
-    "ItemGetResponse",
-    "ItemWebhookUpdateResponse",
-    "IdentityGetResponse",
-    "NewAccountsAvailableWebhook",
-    "TransactionsRemovedWebhook",
-    "ItemErrorWebhook",
-    "DefaultUpdateWebhook",
-    "WebhookUpdateAcknowledgedWebhook",
-    "PaymentStatusUpdateWebhook",
-    "W2Box12",
-    "CreditAuditCopyTokenRemoveRequest",
-    "DepositSwitchCreateRequestOptions",
-    "DepositSwitchCreateRequest",
+    "PaymentInitiationConsentStatus",
+    "AssetReportAuditCopyCreateResponse",
+    "Region",
+    "IndividualWatchlistScreeningProgramName",
+    "CreditBankIncomePdfGetResponse",
+    "TransactionsRulesListRequest",
+    "BankTransferAmount",
+    "RecaptchaRequiredError",
+    "Location",
+    "Enhancements",
+    "ClientProvidedEnhancedTransaction",
+    "TransactionsEnhanceGetResponse",
+    "IdentityVerificationTemplateReference",
+    "PayStubDeductionsBreakdown",
+    "CreditPayStubDeductions",
+    "PaymentProfileRemoveResponse",
+    "SandboxBankTransferFireWebhookResponse",
     "CreditBankIncomeGetRequestOptions",
     "CreditBankIncomeGetRequest",
-    "AssetReportAuditCopyCreateRequest",
+    "IncidentUpdate",
+    "HealthIncident",
+    "AccountFilter",
+    "MatchSummaryCode",
+    "EntityScreeningHitNames",
+    "EntityScreeningHitNamesItems",
+    "PslfStatus",
+    "LiabilityOverride",
+    "AccountIdsWithUpdatedIdentity",
+    "IdentityDefaultUpdateWebhook",
+    "PaymentInitiationPaymentReverseResponse",
+    "CreditEmploymentVerificationStatus",
+    "SandboxIncomeFireWebhookResponse",
+    "InflowModel",
+    "PaymentInitiationConsentRevokeRequest",
+    "AssetReportRelayCreateResponse",
+    "DocumentRiskSignalInstitutionMetadata",
+    "DocumentRiskSignal",
+    "SandboxBankTransferFireWebhookRequest",
+    "SignalDevice",
+    "RecipientBacsNullable",
+    "ExternalPaymentRefundDetails",
+    "PaymentInitiationRecipient",
+    "PaymentInitiationRecipientListResponse",
+    "PaymentInitiationRecipientCreateRequest",
+    "CreditBankIncomeCause",
+    "CreditBankIncomeWarning",
+    "VerificationRefreshStatus",
+    "TransferSweepAmount",
+    "IdentityVerificationStepUpdatedWebhook",
+    "BankTransferSweepListRequest",
+    "WalletIsoCurrencyCode",
+    "CreditBankIncomeTransaction",
+    "CreditBankIncomeHistoricalSummary",
+    "CreditBankIncomeSummary",
+    "CreditBankIncomeSource",
+    "SignalReturnReportResponse",
+    "IncomeVerificationDocumentsDownloadRequest",
+    "TransferEventListTransferType",
+    "PaymentInitiationConsentCreateResponse",
+    "PreviousIdentityVerificationAttemptId",
+    "CreditUnofficialCurrencyCode",
+    "InvestmentsTransactionsGetRequestOptions",
+    "InvestmentsTransactionsGetRequest",
+    "DepositoryAccountSubtypes",
+    "NumbersBacsNullable",
+    "IdentityVerificationConsent",
+    "YtdNetIncomeSummaryFieldNumber",
+    "IncomeSummary",
+    "TransferSweepGetRequest",
+    "SandboxItemSetVerificationStatusRequest",
+    "EmploymentVerificationStatus",
+    "Date",
+    "GetIdentityVerificationRequest",
+    "PaymentConsentPeriodicInterval",
+    "WalletCreateRequest",
+    "TransferMigrateAccountRequest",
+    "AccountSubtypes",
+    "TransactionOverride",
+    "AuthSupportedMethods",
+    "AuthMetadata",
+    "ItemAccessTokenInvalidateRequest",
+    "InvestmentTransactionSubtype",
+    "LinkTokenCreateLoanFilter",
+    "LinkTokenCreateRequestAccountSubtypes",
+    "CreditPayrollIncomeRefreshRequest",
+    "AssetReportAuditCopyRemoveResponse",
+    "BankTransferEventListBankTransferType",
+    "CreditPayrollIncomeRefreshStatus",
+    "AccountSelectionCardinality",
+    "CreditPlatformIds",
+    "CreditEmploymentVerification",
+    "CreditEmploymentItem",
+    "CreditEmploymentGetResponse",
+    "DashboardUserId",
+    "UserStatedIncomeSourcePayType",
+    "SandboxOauthSelectAccountsRequest",
+    "CreditRelayRefreshRequest",
+    "EntityWatchlistScreeningProgramName",
+    "UserCreateResponse",
+    "PaymentInitiationConsentGetRequest",
+    "CreditRelayCreateResponse",
+    "PaymentInitiationPaymentTokenCreateResponse",
+    "CreditBankIncomeWarningCode",
+    "IdentityGetRequestOptions",
+    "IdentityGetRequest",
+    "LinkTokenCreateRequestIncomeVerificationBankIncome",
+    "EarningsBreakdownCanonicalDescription",
+    "DepositSwitchTokenCreateResponse",
+    "TransferAmount",
+    "CreditBankIncomeRefreshRequestOptions",
+    "CreditBankIncomeRefreshRequest",
+    "ItemStatusNullable",
+    "ItemGetResponse",
+    "TaxpayerId",
+    "Employee",
+    "BankTransferMigrateAccountResponse",
+    "UpdateIndividualScreeningRequestResettableFieldList",
+    "SandboxPublicTokenCreateResponse",
+    "AssetsRelayWebhook",
+    "EntityScreeningStatusUpdatedWebhook",
+    "PhoneType",
+    "PaymentInitiationStandingOrderMetadata",
+    "TransferRepaymentReturn",
+    "TransferRepaymentReturnListResponse",
+    "StandaloneAccountType",
+    "PaymentAmount",
+    "PaymentInitiationConsentPaymentExecuteRequest",
+    "PaymentInitiationPaymentCreateRequest",
+    "BankTransferEventType",
+    "AchClass",
+    "LinkTokenGetRequest",
+    "TransferAccessToken",
+    "InvestmentAccountSubtype",
+    "SignalPersonName",
+    "SignalUser",
+    "SignalEvaluateRequest",
+    "AccountIdentity",
+    "ProcessorIdentityGetResponse",
+    "IdentityGetResponse",
+    "PhoneNumber",
+    "RelayEvent",
+    "BankTransferCancelRequest",
+    "InvestmentTransaction",
+    "WalletGetRequest",
+    "WatchlistScreeningDocumentValue",
+    "TransferEventType",
+    "EarningsBreakdown",
+    "Earnings",
+    "Paystub",
+    "IncomeVerificationPaystubsGetResponse",
+    "DepositSwitchGetResponse",
+    "AssetReportRefreshAssetReportToken",
+    "AssetReportRemoveRequest",
+    "StudentRepaymentPlan",
+    "StudentLoan",
     "CreateIndividualWatchlistScreeningReviewRequest",
+    "PaymentInitiationPaymentStatus",
+    "AssetReportAuditCopyGetRequest",
+    "BankTransferEventListRequest",
+    "ItemApplicationListRequest",
+    "PaymentProfileCreateRequest",
+    "CreditPullId",
+    "DocumentImageFace",
+    "AddressNullable",
+    "CreditRelayRemoveResponse",
+    "ListWatchlistScreeningEntityProgramsRequest",
+    "PlatformIds",
+    "EmploymentVerification",
+    "EmploymentVerificationGetResponse",
+    "ItemRemoveRequest",
+    "PaymentInitiationRefundStatus",
+    "ExternalPaymentScheduleGet",
+    "PaymentInitiationPayment",
+    "PaymentInitiationPaymentListResponse",
+    "BankTransferEventSyncRequest",
+    "LinkTokenCreateRequestIncomeVerificationPayrollIncome",
+    "LinkTokenCreateRequestIncomeVerification",
+    "PaymentProfileGetResponse",
+    "ItemStatusLastWebhook",
+    "ItemStatus",
+    "IpAddress",
+    "BankTransferId",
+    "IdempotencyFlag",
+    "SourceUid",
+    "TransactionsRefreshResponse",
+    "MinLastUpdatedDatetime",
+    "BankTransferAccessToken",
+    "SignalPrepareResponse",
+    "NumbersAchNullable",
+    "TransactionsRulesRemoveRequest",
+    "AssetReportPdfGetRequest",
+    "SandboxOverridePassword",
+    "SignalScore",
+    "ScopesContext",
+    "WalletTransactionIdempotencyKey",
+    "CreditBankIncomeAccountType",
+    "WatchlistScreeningRequestSearchTerms",
+    "WatchlistScreeningCreateRequest",
+    "TransferRepaymentReturnListRequest",
+    "PaymentInitiationPaymentTokenCreateRequest",
+    "StandaloneInvestmentTransactionType",
+    "UserName",
+    "IdentityVerificationUserData",
+    "IdentityVerificationRequestUser",
+    "IdentityVerificationCreateRequest",
+    "PaymentInitiationPaymentGetResponse",
+    "PaymentInitiationPaymentCreateStatus",
+    "TransferIntentAuthorizationDecision",
+    "SimulatedTransferSweep",
+    "SandboxTransferSweepSimulateResponse",
+    "DocType",
+    "DepositSwitchAltCreateResponse",
+    "LinkTokenCreateRequestIdentityVerification",
+    "PayStubEarningsTotal",
+    "CreditPayStubEarnings",
+    "PaymentProfileId",
+    "TransferRepaymentListRequest",
+    "BankTransferNetwork",
+    "ItemRemoveResponse",
+    "AccountBalance",
+    "AccountBase",
+    "ProcessorBalanceGetResponse",
+    "InvestmentsHoldingsGetResponse",
+    "AccountsGetResponse",
+    "TransactionsGetResponse",
+    "InvestmentsTransactionsGetResponse",
+    "AssetReportCreateResponse",
+    "WatchlistScreeningAuditTrail",
+    "WatchlistScreeningReviewResponse",
+    "WatchlistScreeningReview",
+    "PaginatedIndividualWatchlistScreeningReviewListResponse",
+    "EntityWatchlistScreeningReviewResponse",
+    "EntityWatchlistProgramResponse",
+    "EntityWatchlistScreening",
+    "PaginatedEntityWatchlistScreeningListResponse",
+    "WatchlistScreeningIndividualResponse",
+    "IndividualWatchlistProgramResponse",
+    "EntityWatchlistScreeningResponse",
+    "WatchlistScreeningIndividual",
+    "PaginatedIndividualWatchlistScreeningListResponse",
+    "EntityWatchlistScreeningReview",
+    "PaginatedEntityWatchlistScreeningReviewListResponse",
+    "IndividualWatchlistProgram",
+    "PaginatedIndividualWatchlistProgramListResponse",
+    "EntityWatchlistProgram",
+    "PaginatedEntityWatchlistProgramListResponse",
+    "NumbersAch",
+    "AuthGetNumbers",
+    "AuthGetResponse",
+    "PaymentChannel",
+    "CreditBankIncomePdfGetRequest",
+    "ExpirationDate",
+    "AccessToken",
+    "TransferCancelResponse",
+    "KycCheckIdNumberSummary",
+    "KycCheckDetails",
+    "IdentityVerificationResponse",
+    "IdentityVerification",
+    "PaginatedIdentityVerificationListResponse",
+    "ListEntityWatchlistScreeningRequest",
+    "AssetsProductReadyWebhook",
+    "AccountsGetRequestOptions",
+    "AccountsGetRequest",
+    "PaymentScheduleInterval",
+    "TransferAuthorizationId",
+    "ItemImportRequestOptions",
+    "ItemImportRequest",
+    "EntityWatchlistSearchTerms",
+    "CreateEntityScreeningRequest",
+    "CreditEmploymentEmployeeType",
+    "InvestmentAccountSubtypeStandalone",
+    "SandboxOauthSelectAccountsResponse",
+    "AssetReportTransaction",
+    "PaymentMeta",
+    "TransactionBase",
+    "SandboxTransferSimulateResponse",
+    "CreditDocumentMetadata",
+    "Credit1099",
+    "CreditPayStub",
+    "LoanAccountSubtype",
     "EntityScreeningHitPhoneNumbers",
     "EntityScreeningHitsPhoneNumberItems",
     "EntityScreeningHitData",
     "EntityWatchlistScreeningHit",
     "PaginatedEntityWatchlistScreeningHitListResponse",
-    "PaymentInitiationOptionalRestrictionBacs",
-    "ExternalPaymentInitiationConsentOptions",
-    "ExternalPaymentOptions",
-    "PaymentInitiationPaymentCreateRequest",
-    "LoanAccount",
-    "ProcessorBalanceGetRequestOptions",
-    "ProcessorBalanceGetRequest",
-    "EarningsBreakdownCanonicalDescription",
-    "MinLastUpdatedDatetime",
-    "UserName",
-    "CreditRelayRemoveRequest",
-    "WatchlistScreeningDocumentType",
-    "BankTransferDirection",
-    "AccountSubtype",
-    "CreditAccountSubtypes",
-    "SandboxOauthSelectAccountsRequest",
-    "DepositSwitchCreateResponse",
-    "SandboxProcessorTokenCreateRequestOptions",
-    "SandboxProcessorTokenCreateRequest",
-    "BankTransferAmount",
-    "GenericCountryCode",
-    "NumbersIban",
-    "NumbersBacs",
-    "CreditPayrollIncomePrecheckResponse",
-    "EmployerVerification",
-    "UserStatedIncomeSourceCategory",
-    "WatchlistScreeningHitStatus",
-    "LiabilitiesAccountIdsWithUpdatedLiabilities",
-    "LiabilitiesDefaultUpdateWebhook",
-    "Region",
-    "DocumentDateOfBirthMatchCode",
-    "LinkTokenCreateCreditFilter",
-    "PaystubYtdDetails",
-    "BankTransferNetwork",
-    "SandboxItemFireWebhookResponse",
-    "TransferAuthorizationId",
-    "DepositSwitchTokenCreateResponse",
-    "ListIndividualWatchlistScreeningRequest",
-    "PaymentProfileGetResponse",
-    "ServicerAddressData",
-    "PaymentChannel",
-    "NumbersAchNullable",
-    "ProcessorStripeBankAccountTokenCreateRequest",
-    "WatchlistScreeningPhoneNumber",
-    "SenderBacsNullable",
-    "SignalPrepareRequest",
-    "EmploymentVerificationStatus",
-    "TransferType",
-    "ListWatchlistScreeningEntityProgramsRequest",
-    "StandaloneInvestmentTransactionType",
-    "DocumentImageFace",
-    "BankTransferBalanceGetRequest",
-    "CategoriesGetRequest",
-    "IncomeVerificationPrecheckConfidence",
-    "VerificationRefreshStatus",
-    "IdentityVerificationStepStatus",
-    "ItemImportRequestUserAuth",
-    "EntityWatchlistScreeningSearchTerms",
-    "CreditPayrollIncomeGetRequest",
-    "SandboxItemFireWebhookRequest",
-    "PaymentProfileId",
-    "GivenNameField",
-    "TransferAuthorizationGuaranteeDecision",
-    "WebhookType",
-    "TransferSweepId",
-    "WatchlistProgramId",
-    "DepositoryAccountSubtype",
-    "SandboxTransferFireWebhookRequest",
-    "LiabilitiesGetRequestOptions",
-    "LiabilitiesGetRequest",
-    "AssetReportAuditCopyCreateResponse",
-    "ReviewComment",
-    "VerificationStatus",
-    "PaymentInitiationRecipientGetRequest",
-    "CreditRelayRefreshRequest",
-    "EntityWatchlistScreeningProgramName",
-    "CreditUnofficialCurrencyCode",
-    "PaymentProfileCreateResponse",
-    "PaymentConsentPeriodicInterval",
-    "AssetReportRemoveResponse",
-    "RecurringTransactionsUpdateWebhook",
-    "LinkTokenCreateRequestDepositSwitch",
-    "JwtHeader",
-    "CreditRelayCreateResponse",
-    "InitialUpdateWebhook",
-    "CreditPayStubVerificationStatus",
-    "RemovedTransaction",
-    "TransactionsSyncResponse",
-    "DepositSwitchGetRequest",
-    "MortgagePropertyAddress",
-    "WatchlistScreeningDocument",
-    "ScreeningHitDocumentsItems",
-    "CreditPayrollIncomeRefreshResponse",
-    "InstitutionsSearchAccountFilter",
-    "ItemRemoveResponse",
-    "SandboxItemResetLoginResponse",
-    "WalletTransactionGetResponse",
-    "BankTransferMigrateAccountRequest",
-    "AssetReportAuditCopyRemoveRequest",
-    "LinkTokenCreateRequestIncomeVerificationPayrollIncome",
-    "LinkTokenCreateRequestIncomeVerification",
-    "WalletListRequest",
-    "StandaloneInvestmentTransactionCashType",
-    "ExternalPaymentScheduleGet",
-    "PaymentInitiationPayment",
-    "PaymentInitiationPaymentListResponse",
-    "PersonalFinanceCategory",
-    "Enhancements",
-    "ClientProvidedEnhancedTransaction",
-    "TransactionsEnhanceGetResponse",
-    "TransactionStream",
-    "TransactionsRecurringGetResponse",
-    "WalletTransactionsListRequest",
-    "CreditBankIncomeTransaction",
-    "CreditBankIncomeHistoricalSummary",
-    "CreditBankIncomeSummary",
-    "CreditBankIncomeSource",
-    "CreditEmployerVerification",
-    "CreditEmploymentVerification",
-    "CreditEmploymentItem",
-    "CreditEmploymentGetResponse",
-    "DocumentAuthenticityMatchCode",
-    "Products",
-    "PayFrequencyValue",
-    "TransferStatus",
-    "AssetReportCreateResponse",
-    "ItemPublicTokenExchangeRequest",
-    "UpdateIndividualScreeningRequestResettableFieldList",
-    "CreditAuditCopyTokenRemoveResponse",
-    "GetWatchlistScreeningEntityProgramRequest",
-    "AssetReportRefreshAssetReportToken",
-    "WatchlistScreeningAuditTrail",
-    "WatchlistScreeningReview",
-    "PaginatedIndividualWatchlistScreeningReviewListResponse",
-    "IndividualWatchlistProgram",
-    "PaginatedIndividualWatchlistProgramListResponse",
-    "EntityWatchlistScreeningReviewResponse",
-    "EntityWatchlistProgramResponse",
-    "EntityWatchlistScreeningReview",
-    "PaginatedEntityWatchlistScreeningReviewListResponse",
-    "EntityWatchlistProgram",
-    "PaginatedEntityWatchlistProgramListResponse",
-    "WatchlistScreeningReviewResponse",
-    "EntityWatchlistScreeningResponse",
-    "IndividualWatchlistProgramResponse",
-    "EntityWatchlistScreening",
-    "PaginatedEntityWatchlistScreeningListResponse",
-    "DepositSwitchGetResponse",
-    "TransactionsRulesListRequest",
-    "WatchlistScreeningIndividualName",
-    "UnofficialCurrencyCodeList",
-    "PaymentInitiationConsentCreateResponse",
-    "EntityWatchlistScreeningName",
-    "CreditBankIncomePdfGetRequest",
-    "SignalReturnReportResponse",
-    "Application",
-    "ApplicationGetResponse",
-    "NumbersEft",
-    "AuthGetNumbers",
-    "EntityWatchlistCode",
-    "TransferCancelRequest",
-    "IdentityVerificationUserAddress",
-    "IdentityVerificationUserData",
-    "TransferIntentCreateMode",
-    "ConsentPaymentIdempotencyKey",
-    "IncomeVerificationPayrollFlowType",
-    "LinkTokenCreateInstitutionData",
-    "TransferUserAddressInRequest",
-    "TransferUserInRequest",
-    "TransferCreateRequest",
-    "TransferIntentCreateRequest",
-    "TransferAuthorizationUserInRequest",
-    "TransferAuthorizationCreateRequest",
-    "EntityWatchlistScreeningId",
-    "PartnerEndCustomerClient",
-    "PartnerCustomersCreateResponse",
-    "PayStubTaxpayerId",
-    "CreditPayStubEmployee",
-    "CreditW2",
-    "ImageQuality",
-    "LinkTokenGetRequest",
-    "InvestmentAccountSubtypeStandalone",
-    "BankTransferSweepGetRequest",
-    "ListWatchlistScreeningEntityReviewsRequest",
-    "DateRange",
-    "ScreeningHitDateOfBirthItem",
-    "ScreeningHitData",
-    "WatchlistScreeningHit",
-    "PaginatedIndividualWatchlistScreeningHitListResponse",
-    "BankTransferStatus",
-    "PaystubPayFrequency",
-    "SignalPersonName",
-    "SignalUser",
-    "SignalEvaluateRequest",
-    "CreditPayrollIncomeRefreshRequest",
-    "ClientProvidedRawTransaction",
-    "TransactionsEnhanceGetRequest",
-    "DocumentImageCroppedFront",
-    "IncomeSummaryFieldNumber",
-    "WalletBalance",
-    "Wallet",
-    "WalletListResponse",
-    "IncomeVerificationCreateRequestOptions",
-    "IncomeVerificationCreateRequest",
-    "ScopesState",
-    "PaymentProfileRemoveRequest",
-    "IncomeVerificationCreateResponse",
-    "Email",
-    "BankTransferEventListDirection",
-    "EntityWatchlistSearchTerms",
-    "CreateEntityScreeningRequest",
-    "Category",
-    "CategoriesGetResponse",
-    "IncomeVerificationPrecheckEmployerAddress",
-    "IncomeVerificationPrecheckEmployer",
-    "CreditPayrollIncomePrecheckRequest",
-    "IncomeVerificationPrecheckRequest",
-    "Holding",
-    "MatchSummaryCode",
-    "PayrollItemStatus",
-    "IncomeVerificationDocumentsDownloadRequest",
-    "TransferAuthorizationGuaranteeDecisionRationaleCode",
-    "AccountProductAccess",
-    "SandboxPublicTokenCreateRequestOptionsTransactions",
-    "SandboxPublicTokenCreateRequestOptions",
-    "SandboxPublicTokenCreateRequest",
-    "PaymentInitiationRecipientListRequest",
-    "Street2",
-    "SyncUpdatesAvailableWebhook",
-    "ItemAccessTokenInvalidateRequest",
-    "SignalDecisionReportResponse",
-    "ApiClientId",
-    "TransactionCode",
-    "KycCheckPhoneSummary",
-    "KycCheckDetails",
-    "SandboxOauthSelectAccountsResponse",
-    "SignalScore",
-    "AssetReportPdfGetRequest",
-    "IncomeVerificationPaystubsGetRequest",
-    "CreditBankIncomeWarningType",
-    "MortgageInterestRate",
-    "MortgageLiability",
-    "WalletTransactionCounterpartyInternational",
-    "WalletTransactionCounterpartyNumbers",
-    "WalletTransactionCounterparty",
-    "WalletTransaction",
-    "WalletTransactionsListResponse",
-    "WalletTransactionExecuteRequest",
-    "BankInitiatedRiskTier",
-    "BankTransferAccessToken",
-    "OverrideAccountType",
-    "DashboardUserId",
-    "LinkTokenCreateDepositoryFilter",
-    "BankTransferEventType",
-    "WatchlistScreeningDocumentValue",
-    "IpAddress",
-    "IdentityMatchResponse",
-    "IncomeBreakdownType",
-    "AchClass",
-    "UserToken",
-    "TransferSweepListRequest",
-    "PaymentInitiationRefundStatus",
-    "CreditAccountSubtype",
-    "GetIndividualWatchlistScreeningRequest",
-    "CreditRelayGetRequest",
-    "EntityWatchlistProgramId",
-    "PaymentScheme",
-    "LinkTokenEuConfig",
-    "PlatformIds",
-    "EmploymentVerification",
-    "EmploymentVerificationGetResponse",
-    "UpdateEntityScreeningRequestResettableField",
-    "WatchlistScreeningSearchTerms",
-    "WatchlistScreeningIndividualResponse",
-    "WatchlistScreeningIndividual",
-    "PaginatedIndividualWatchlistScreeningListResponse",
-    "CreditEmploymentEmployeeType",
-    "WatchlistScreeningReviewId",
-    "TransferUserAddressInResponse",
-    "TransferUserInResponse",
-    "TransferAuthorizationProposedTransfer",
+    "RiskSignalDocumentReference",
+    "SingleDocumentRiskSignal",
+    "MultiDocumentRiskSignal",
+    "DocumentRiskSignalsObject",
+    "PayrollRiskSignalsItem",
+    "CreditPayrollIncomeRiskSignalsGetResponse",
+    "IdentityVerificationStatusUpdatedWebhook",
+    "PaystubVerificationStatus",
+    "PaystubDeduction",
+    "DocumentImageBack",
+    "AuthGetRequestOptions",
+    "AuthGetRequest",
+    "TransferAuthorizationGuaranteeDecisionRationale",
     "TransferAuthorization",
     "TransferAuthorizationCreateResponse",
+    "Transfer",
+    "TransferListResponse",
+    "TransferGetResponse",
+    "TransferCreateResponse",
     "TransferIntentGet",
     "TransferIntentGetResponse",
-    "TransferIntentCreate",
-    "TransferIntentCreateResponse",
-    "AccountBalance",
-    "AccountBase",
-    "ProcessorBalanceGetResponse",
-    "InvestmentsHoldingsGetResponse",
-    "InvestmentsTransactionsGetResponse",
-    "TransactionsGetResponse",
-    "AuthGetResponse",
-    "AccountsGetResponse",
-    "DocumentImageCroppedBack",
-    "IssuingCountry",
-    "LoanFilter",
-    "LinkTokenAccountFilters",
-    "AccountFiltersResponse",
-    "LinkTokenGetMetadataResponse",
-    "LinkTokenGetResponse",
-    "LinkTokenCreateRequestAuth",
-    "PaymentInitiationPaymentCreateStatus",
-    "PayrollIncomeRateOfPay",
-    "PayrollIncomeAccountData",
-    "PaymentInitiationRecipientCreateResponse",
-    "CreditIsoCurrencyCode",
-    "PhysicalDocumentImages",
-    "LinkTokenCreateResponse",
-    "WalletCreateResponse",
-    "PhysicalDocumentExtractedDataAnalysis",
-    "DocumentAnalysis",
-    "DocumentaryVerificationDocument",
-    "DocumentaryVerification",
-    "InvestmentHoldingsGetRequestOptions",
-    "InvestmentsHoldingsGetRequest",
-    "ItemImportRequestOptions",
-    "ItemImportRequest",
-    "SignalReturnReportRequest",
-    "ListWatchlistScreeningIndividualProgramsRequest",
-    "EntityDocumentType",
-    "AssetReportTransaction",
-    "WatchlistScreeningStatus",
-    "AddressPurposeLabel",
-    "PaymentInitiationConsentGetRequest",
-    "AssetsRelayWebhook",
-    "TransferCancelResponse",
-    "ListDashboardUserRequest",
-    "DepositSwitchAddressData",
-    "DepositSwitchTargetUser",
-    "DepositSwitchAltCreateRequest",
-    "WatchlistScreeningRequestSearchTerms",
-    "WatchlistScreeningCreateRequest",
-    "TotalCanonicalDescription",
-    "ListIdentityVerificationRequest",
-    "SignalDecisionReportRequest",
-    "PayStubEarningsBreakdownCanonicalDescription",
-    "GetDashboardUserRequest",
-    "TransferSweepAmount",
-    "NumbersInternationalNullable",
-    "ProcessorNumber",
-    "ProcessorAuthGetResponse",
-    "Numbers",
-    "BankTransferEventListRequest",
-    "TransferEventListRequest",
-    "ListWatchlistScreeningIndividualHitRequest",
-    "LinkTokenCreateInvestmentFilter",
-    "PreviousIdentityVerificationAttemptId",
-    "AddressDataNullable",
-    "Employer",
-    "EmployersSearchResponse",
-    "IdentityMatchUser",
-    "IdentityMatchRequest",
-    "IncomeVerificationPrecheckEmployerAddressData",
-    "AssetReportRelayCreateResponse",
-    "InflowModel",
-    "TransferIntentStatus",
-    "DashboardUserStatus",
-    "IndividualWatchlistScreeningProgramName",
-    "AccessToken",
-    "TaxpayerId",
-    "EmployersSearchRequest",
-    "IdentityVerificationStepUpdatedWebhook",
-    "UpdateIndividualScreeningRequestSearchTerms",
-    "UpdateIndividualScreeningRequest",
-    "PoBoxStatus",
-    "PslfStatus",
-    "StudentLoan",
-    "LiabilitiesObject",
-    "LiabilitiesGetResponse",
-    "PayStubDeductionsTotal",
-    "CreditPayStubDeductions",
-    "CreditPayStub",
-    "PayrollIncomeObject",
-    "PayrollItem",
-    "CreditPayrollIncomeGetResponse",
-    "PaymentConsentPeriodicAlignment",
-    "BankTransferFailure",
-    "SandboxBankTransferSimulateRequest",
-    "BankTransferEvent",
-    "BankTransferEventListResponse",
-    "BankTransferEventSyncResponse",
-    "BankTransfer",
-    "BankTransferCreateResponse",
-    "BankTransferGetResponse",
-    "ProcessorBankTransferCreateResponse",
-    "BankTransferListResponse",
-    "IndividualWatchlistCode",
-    "PaymentInitiationStandingOrderMetadata",
+    "CustomerInitiatedReturnRisk",
+    "SignalScores",
+    "SignalEvaluateResponse",
+    "DepositSwitchGetRequest",
+    "ProcessorAuthGetRequest",
+    "ProcessorTokenCreateRequest",
+    "ProductStatusBreakdown",
+    "ProductStatus",
+    "InstitutionStatus",
+    "LinkTokenCreateRequestTransfer",
+    "PaymentInitiationMaximumPaymentAmount",
     "PaymentInitiationMetadata",
     "Institution",
     "InstitutionsSearchResponse",
     "InstitutionsGetByIdResponse",
     "InstitutionsGetResponse",
-    "AddressData",
-    "Address",
-    "LiabilityOverride",
+    "ScreeningHitAnalysis",
+    "WatchlistScreeningHit",
+    "PaginatedIndividualWatchlistScreeningHitListResponse",
+    "NumbersInternationalNullable",
+    "TransferAuthorizationDecisionRationaleCode",
+    "WalletTransactionGetResponse",
+    "BankTransferGetRequest",
+    "TransferNetwork",
+    "BankTransferCancelResponse",
+    "W2StateAndLocalWages",
+    "CreditW2",
+    "PayrollIncomeObject",
+    "W2",
+    "Taxform",
+    "IncomeVerificationTaxformsGetResponse",
+    "InstitutionsSearchPaymentInitiationOptions",
+    "InstitutionsSearchRequestOptions",
+    "InstitutionsSearchRequest",
+    "IncomeVerificationPrecheckMilitaryInfo",
+    "CreditPayrollIncomePrecheckRequest",
+    "IncomeVerificationPrecheckRequest",
+    "Cause",
+    "Warning",
+    "AssetReportGetResponse",
+    "TransferAuthorizationGuaranteeDecisionRationaleCode",
+    "PayrollItemStatus",
+    "PayrollItem",
+    "CreditPayrollIncomeGetResponse",
+    "DepositoryAccount",
+    "TransferIntentCreateMode",
+    "IncomeSummaryFieldNumber",
+    "CreditPayStubVerificationStatus",
+    "ReportToken",
+    "CreditAuditCopyTokenCreateRequest",
+    "CreditRelayCreateRequest",
+    "CategoriesGetRequest",
+    "Meta",
+    "GetIndividualWatchlistScreeningRequest",
+    "SyncUpdatesAvailableWebhook",
+    "WalletTransactionExecuteResponse",
+    "Email",
     "Owner",
     "CreditBankIncomeAccount",
     "CreditBankIncomeItem",
@@ -2123,57 +2126,54 @@ __all__ = [
     "OwnerOverride",
     "OverrideAccounts",
     "UserCustomPassword",
-    "BankTransferId",
-    "IdentityVerificationRetryRequestStepsObject",
-    "IdentityVerificationRetryRequest",
+    "TransferEventListRequest",
+    "ProcessorBalanceGetRequestOptions",
+    "ProcessorBalanceGetRequest",
+    "NumbersEftNullable",
+    "ProcessorNumber",
+    "ProcessorAuthGetResponse",
+    "City",
+    "TransferType",
+    "IncomeVerificationPayrollFlowType",
+    "TransactionsRuleType",
+    "TransactionStreamAmount",
+    "TransactionStream",
+    "TransactionsRecurringGetResponse",
+    "RequestId",
+    "AccountFilterSubtypes",
+    "IncomeVerificationRefreshResponse",
+    "DocumentImageCroppedFront",
+    "GetDashboardUserRequest",
+    "InstitutionsGetByIdRequestOptions",
+    "InstitutionsGetByIdRequest",
+    "IdentityVerificationUserPhoneNumber",
+    "IdentityVerificationTemplateVersion",
+    "Timestamp",
     "TransferCreateIdempotencyKey",
-    "AuthGetRequestOptions",
-    "AuthGetRequest",
-    "PaymentConsentMaxPaymentAmount",
-    "PaymentInitiationConsentConstraints",
-    "PaymentInitiationConsentCreateRequest",
-    "PaymentInitiationConsent",
-    "SandboxOverridePassword",
-    "AssetReportRelayGetRequest",
-    "TransferSweep",
-    "TransferSweepGetResponse",
-    "TransferSweepListResponse",
-    "UserAddress",
-    "IdentityVerificationRequestUser",
-    "IdentityVerificationCreateRequest",
-    "LinkTokenCreateRequestUser",
+    "JwtHeader",
+    "IdNumberType",
+    "RecipientBacs",
+    "WalletNumbers",
+    "Wallet",
+    "WalletListResponse",
+    "ListWatchlistScreeningEntityHitRequest",
+    "WatchlistScreeningPhoneNumber",
+    "RemovedTransaction",
+    "TransactionsSyncResponse",
+    "LinkTokenCreateRequestDepositSwitch",
     "LinkTokenCreateRequest",
-    "IdentityGetRequestOptions",
-    "IdentityGetRequest",
-    "SandboxItemResetLoginRequest",
-    "PaystubAddress",
-    "Employee",
-    "PaystubEmployer",
-    "Paystub",
-    "IncomeVerificationPaystubsGetResponse",
-    "W2",
-    "Taxform",
-    "IncomeVerificationTaxformsGetResponse",
-    "LinkTokenCreateLoanFilter",
-    "LinkTokenCreateRequestAccountSubtypes",
-    "StandaloneAccountType",
-    "CreditPullId",
-    "StandaloneInvestmentTransactionFeeType",
-    "IdempotencyFlag",
-    "AccountSelectionCardinality",
-    "IdentityVerificationTemplateReference",
-    "IdentityVerification",
-    "PaginatedIdentityVerificationListResponse",
-    "IdentityVerificationResponse",
-    "PaymentInitiationPaymentGetRequest",
-    "PartnerCustomersCreateRequest",
-    "TransferFailure",
-    "Transfer",
-    "TransferGetResponse",
-    "TransferListResponse",
-    "TransferCreateResponse",
-    "TransferEvent",
-    "TransferEventSyncResponse",
-    "TransferEventListResponse",
-    "SandboxTransferSimulateRequest",
+    "MortgageInterestRate",
+    "MortgageLiability",
+    "LiabilitiesObject",
+    "LiabilitiesGetResponse",
+    "SandboxTransferRepaymentSimulateRequest",
+    "ItemId",
+    "CreditAccount",
+    "ClientUserId",
+    "IncomeVerificationPrecheckConfidence",
+    "IdentityVerificationRetriedWebhook",
+    "ListIdentityVerificationRequest",
+    "InvestmentTransactionType",
+    "SandboxTransferFireWebhookRequest",
+    "UserToken",
 ]

@@ -2,7 +2,7 @@ import os
 import json
 import logging
 import requests
-from typing import Optional, List, Any
+from typing import Optional, List, Any, Dict
 from .authenticator import PlaidAuthenticator
 from .logger import logger
 from . import model
@@ -25,12 +25,22 @@ class PlaidClient:
         self.session.headers["Content-Type"] = "application/json"
         self.session.headers["User-Agent"] = "plaid2/python/0.1.0"
 
-    def authenticate(self, req: requests.Request) -> None:
-        if self.authenticator is not None:
-            self.authenticator.authenticate(req)
-
-    def send(self, req: requests.Request) -> requests.Response:
-        self.authenticate(req)
+    def send(
+        self,
+        method: str,
+        url: str,
+        headers: Dict[str, str],
+        params: Dict[str, str],
+        data: Dict[str, Any],
+    ) -> requests.Response:
+        self.authenticator.authenticate(headers, params, data)
+        req = requests.Request(
+            method=method,
+            url=url,
+            headers=headers,
+            params=params,
+            json=data,
+        )
         prepped = req.prepare()
         do_debug = logger.getEffectiveLevel() == logging.DEBUG
         if do_debug:
@@ -62,21 +72,14 @@ class PlaidClient:
         self, access_token: Optional[str] = None
     ) -> model.ItemApplicationListResponse:
         """List a user’s connected applications"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/item/application/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/item/application/list", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.ItemApplicationListResponse.parse_obj(data)
 
@@ -91,9 +94,7 @@ class PlaidClient:
         """Update the scopes of access for a particular application
 
         Enable consumers to update product access on selected accounts for an application."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
@@ -102,14 +103,13 @@ class PlaidClient:
             "state": state,
             "context": context,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/item/application/scopes/update",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/item/application/scopes/update",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.ItemApplicationScopesUpdateResponse.parse_obj(data)
 
@@ -117,21 +117,14 @@ class PlaidClient:
         """Retrieve information about a Plaid application
 
         Allows financial institutions to retrieve information about Plaid clients for the purpose of building control-tower experiences"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "application_id": application_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/application/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/application/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.ApplicationGetResponse.parse_obj(data)
 
@@ -141,21 +134,12 @@ class PlaidClient:
         Returns information about the status of an Item.
 
         See endpoint docs at <https://plaid.com/docs/api/items/#itemget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/item/get",
-            headers=headers,
-            params=params,
-            json=data,
-        )
-        res = self.send(req)
+        res = self.send("POST", self.base_url + "/item/get", headers, params, data)
         data = res.json()
         return model.ItemGetResponse.parse_obj(data)
 
@@ -173,22 +157,13 @@ class PlaidClient:
         Versioning note: In API version 2017-03-08, the schema of the `numbers` object returned by this endpoint is substantially different. For details, see [Plaid API versioning](https://plaid.com/docs/api/versioning/#version-2018-05-22).
 
         See endpoint docs at <https://plaid.com/docs/api/products/auth/#authget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/auth/get",
-            headers=headers,
-            params=params,
-            json=data,
-        )
-        res = self.send(req)
+        res = self.send("POST", self.base_url + "/auth/get", headers, params, data)
         data = res.json()
         return model.AuthGetResponse.parse_obj(data)
 
@@ -212,9 +187,7 @@ class PlaidClient:
         Note that data may not be immediately available to `/transactions/get`. Plaid will begin to prepare transactions data upon Item link, if Link was initialized with `transactions`, or upon the first call to `/transactions/get`, if it wasn't. To be alerted when transaction data is ready to be fetched, listen for the [`INITIAL_UPDATE`](https://plaid.com/docs/api/products/transactions/#initial_update) and [`HISTORICAL_UPDATE`](https://plaid.com/docs/api/products/transactions/#historical_update) webhooks. If no transaction history is ready when `/transactions/get` is called, it will return a `PRODUCT_NOT_READY` error.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transactions/#transactionsget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "options": None if options is None else options.dict(),
@@ -222,14 +195,9 @@ class PlaidClient:
             "start_date": start_date,
             "end_date": end_date,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/transactions/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/transactions/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.TransactionsGetResponse.parse_obj(data)
 
@@ -243,21 +211,14 @@ class PlaidClient:
         Access to `/transactions/refresh` in Production is specific to certain pricing plans. If you cannot access `/transactions/refresh` in Production, [contact Sales](https://www.plaid.com/contact) for assistance.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transactions/#transactionsrefresh>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/transactions/refresh",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/transactions/refresh", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.TransactionsRefreshResponse.parse_obj(data)
 
@@ -278,23 +239,16 @@ class PlaidClient:
         After the initial call, you can call `/transactions/recurring/get` endpoint at any point in the future to retrieve the latest summary of recurring streams. Since recurring streams do not change often, it will typically not be necessary to call this endpoint more than once per day.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transactions/#transactionsrecurringget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "options": None if options is None else options.dict(),
             "account_ids": account_ids,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/transactions/recurring/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/transactions/recurring/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.TransactionsRecurringGetResponse.parse_obj(data)
 
@@ -326,9 +280,7 @@ class PlaidClient:
         To be alerted when new data is available, listen for the [`SYNC_UPDATES_AVAILABLE`](https://plaid.com/docs/api/products/transactions/#sync_updates_available) webhook.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transactions/#transactionssync>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
@@ -336,14 +288,9 @@ class PlaidClient:
             "count": count,
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/transactions/sync",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/transactions/sync", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.TransactionsSyncResponse.parse_obj(data)
 
@@ -361,9 +308,7 @@ class PlaidClient:
         If there is no overlap between an institution’s enabled products and a client’s enabled products, then the institution will be filtered out from the response. As a result, the number of institutions returned may not match the count specified in the call.
 
         See endpoint docs at <https://plaid.com/docs/api/institutions/#institutionsget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "count": count,
@@ -371,14 +316,9 @@ class PlaidClient:
             "country_codes": country_codes,
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/institutions/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/institutions/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.InstitutionsGetResponse.parse_obj(data)
 
@@ -397,9 +337,7 @@ class PlaidClient:
 
 
         See endpoint docs at <https://plaid.com/docs/api/institutions/#institutionssearch>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "query": query,
@@ -407,14 +345,9 @@ class PlaidClient:
             "country_codes": country_codes,
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/institutions/search",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/institutions/search", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.InstitutionsSearchResponse.parse_obj(data)
 
@@ -432,23 +365,16 @@ class PlaidClient:
 
 
         See endpoint docs at <https://plaid.com/docs/api/institutions/#institutionsget_by_id>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "institution_id": institution_id,
             "country_codes": country_codes,
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/institutions/get_by_id",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/institutions/get_by_id", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.InstitutionsGetByIdResponse.parse_obj(data)
 
@@ -464,21 +390,12 @@ class PlaidClient:
         API versions 2019-05-29 and earlier return a `removed` boolean as part of the response.
 
         See endpoint docs at <https://plaid.com/docs/api/items/#itemremove>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/item/remove",
-            headers=headers,
-            params=params,
-            json=data,
-        )
-        res = self.send(req)
+        res = self.send("POST", self.base_url + "/item/remove", headers, params, data)
         data = res.json()
         return model.ItemRemoveResponse.parse_obj(data)
 
@@ -495,22 +412,13 @@ class PlaidClient:
         This endpoint retrieves cached information, rather than extracting fresh information from the institution. As a result, balances returned may not be up-to-date; for realtime balance information, use `/accounts/balance/get` instead. Note that some information is nullable.
 
         See endpoint docs at <https://plaid.com/docs/api/accounts/#accountsget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/accounts/get",
-            headers=headers,
-            params=params,
-            json=data,
-        )
-        res = self.send(req)
+        res = self.send("POST", self.base_url + "/accounts/get", headers, params, data)
         data = res.json()
         return model.AccountsGetResponse.parse_obj(data)
 
@@ -520,19 +428,12 @@ class PlaidClient:
         Send a request to the `/categories/get` endpoint to get detailed information on categories returned by Plaid. This endpoint does not require authentication.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transactions/#categoriesget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {}
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/categories/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/categories/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.CategoriesGetResponse.parse_obj(data)
 
@@ -546,22 +447,19 @@ class PlaidClient:
         Use the `/sandbox/processor_token/create` endpoint to create a valid `processor_token` for an arbitrary institution ID and test credentials. The created `processor_token` corresponds to a new Sandbox Item. You can then use this `processor_token` with the `/processor/` API endpoints in Sandbox. You can also use `/sandbox/processor_token/create` with the [`user_custom` test username](https://plaid.com/docs/sandbox/user-custom) to generate a test account with custom data.
 
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxprocessor_tokencreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "institution_id": institution_id,
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/sandbox/processor_token/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/sandbox/processor_token/create",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.SandboxProcessorTokenCreateResponse.parse_obj(data)
 
@@ -577,9 +475,7 @@ class PlaidClient:
         Use the `/sandbox/public_token/create` endpoint to create a valid `public_token`  for an arbitrary institution ID, initial products, and test credentials. The created `public_token` maps to a new Sandbox Item. You can then call `/item/public_token/exchange` to exchange the `public_token` for an `access_token` and perform all API actions. `/sandbox/public_token/create` can also be used with the [`user_custom` test username](https://plaid.com/docs/sandbox/user-custom) to generate a test account with custom data. `/sandbox/public_token/create` cannot be used with OAuth institutions.
 
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxpublic_tokencreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "institution_id": institution_id,
@@ -587,14 +483,13 @@ class PlaidClient:
             "options": None if options is None else options.dict(),
             "user_token": user_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/sandbox/public_token/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/sandbox/public_token/create",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.SandboxPublicTokenCreateResponse.parse_obj(data)
 
@@ -616,23 +511,16 @@ class PlaidClient:
         Note that this endpoint is provided for developer ease-of-use and is not required for testing webhooks; webhooks will also fire in Sandbox under the same conditions that they would in Production or Development.
 
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxitemfire_webhook>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "webhook_type": webhook_type,
             "webhook_code": webhook_code,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/sandbox/item/fire_webhook",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/sandbox/item/fire_webhook", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.SandboxItemFireWebhookResponse.parse_obj(data)
 
@@ -646,22 +534,15 @@ class PlaidClient:
         The `/accounts/balance/get` endpoint returns the real-time balance for each of an Item's accounts. While other endpoints may return a balance object, only `/accounts/balance/get` forces the available and current balance fields to be refreshed rather than cached. This endpoint can be used for existing Items that were added via any of Plaid’s other products. This endpoint can be used as long as Link has been initialized with any other product, `balance` itself is not a product that can be used to initialize Link.
 
         See endpoint docs at <https://plaid.com/docs/api/products/balance/#accountsbalanceget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/accounts/balance/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/accounts/balance/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.AccountsGetResponse.parse_obj(data)
 
@@ -679,22 +560,13 @@ class PlaidClient:
         Note: In API versions 2018-05-22 and earlier, the `owners` object is not returned, and instead identity information is returned in the top level `identity` object. For more details, see [Plaid API versioning](https://plaid.com/docs/api/versioning/#version-2019-05-29).
 
         See endpoint docs at <https://plaid.com/docs/api/products/identity/#identityget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/identity/get",
-            headers=headers,
-            params=params,
-            json=data,
-        )
-        res = self.send(req)
+        res = self.send("POST", self.base_url + "/identity/get", headers, params, data)
         data = res.json()
         return model.IdentityGetResponse.parse_obj(data)
 
@@ -711,23 +583,16 @@ class PlaidClient:
         This request may take some time to complete if Identity was not specified as an initial product when creating the Item. This is because Plaid must communicate directly with the institution to retrieve the data.
 
         See endpoint docs at <https://plaid.com/docs/api/products/identity/#identitymatch>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "user": None if user is None else user.dict(),
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/identity/match",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/identity/match", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.IdentityMatchResponse.parse_obj(data)
 
@@ -737,21 +602,14 @@ class PlaidClient:
         Retrieve information about a dashboard user.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#dashboard_userget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "dashboard_user_id": dashboard_user_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/dashboard_user/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/dashboard_user/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.DashboardUserResponse.parse_obj(data)
 
@@ -763,21 +621,14 @@ class PlaidClient:
         List all dashboard users associated with your account.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#dashboard_userlist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "cursor": cursor,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/dashboard_user/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/dashboard_user/list", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.PaginatedDashboardUserListResponse.parse_obj(data)
 
@@ -796,9 +647,7 @@ class PlaidClient:
 
 
         See endpoint docs at <https://plaid.com/docs/api/products/identity-verification/#identity_verificationcreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "is_shareable": is_shareable,
@@ -807,14 +656,13 @@ class PlaidClient:
             "user": None if user is None else user.dict(),
             "is_idempotent": is_idempotent,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/identity_verification/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/identity_verification/create",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.IdentityVerificationResponse.parse_obj(data)
 
@@ -826,21 +674,14 @@ class PlaidClient:
         Retrieve a previously created identity verification
 
         See endpoint docs at <https://plaid.com/docs/api/products/identity-verification/#identity_verificationget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "identity_verification_id": identity_verification_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/identity_verification/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/identity_verification/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.IdentityVerificationResponse.parse_obj(data)
 
@@ -852,23 +693,16 @@ class PlaidClient:
         Filter and list Identity Verifications created by your account
 
         See endpoint docs at <https://plaid.com/docs/api/products/identity-verification/#identity_verificationlist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "template_id": template_id,
             "client_user_id": client_user_id,
             "cursor": cursor,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/identity_verification/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/identity_verification/list", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.PaginatedIdentityVerificationListResponse.parse_obj(data)
 
@@ -884,9 +718,7 @@ class PlaidClient:
         Allow a customer to retry their identity verification
 
         See endpoint docs at <https://plaid.com/docs/api/products/identity-verification/#identity_verificationretry>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "client_user_id": client_user_id,
@@ -894,14 +726,13 @@ class PlaidClient:
             "strategy": strategy,
             "steps": None if steps is None else steps.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/identity_verification/retry",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/identity_verification/retry",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.IdentityVerificationResponse.parse_obj(data)
 
@@ -915,22 +746,19 @@ class PlaidClient:
         Create a new entity watchlist screening to check your customer against watchlists defined in the associated entity watchlist program. If your associated program has ongoing screening enabled, this is the profile information that will be used to monitor your customer over time.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentitycreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "search_terms": None if search_terms is None else search_terms.dict(),
             "client_user_id": client_user_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/watchlist_screening/entity/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/entity/create",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.EntityWatchlistScreeningResponse.parse_obj(data)
 
@@ -942,21 +770,18 @@ class PlaidClient:
         Retrieve an entity watchlist screening.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/watchlist_screening/entity/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/entity/get",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.EntityWatchlistScreeningResponse.parse_obj(data)
 
@@ -968,22 +793,19 @@ class PlaidClient:
         List all changes to the entity watchlist screening in reverse-chronological order. If the watchlist screening has not been edited, no history will be returned.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityhistorylist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
             "cursor": cursor,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/watchlist_screening/entity/history/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/entity/history/list",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PaginatedEntityWatchlistScreeningListResponse.parse_obj(data)
 
@@ -995,22 +817,19 @@ class PlaidClient:
         List all hits for the entity watchlist screening.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityhitlist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
             "cursor": cursor,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/watchlist_screening/entity/hit/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/entity/hit/list",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PaginatedEntityWatchlistScreeningHitListResponse.parse_obj(data)
 
@@ -1027,9 +846,7 @@ class PlaidClient:
         List all entity screenings.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentitylist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "entity_watchlist_program_id": entity_watchlist_program_id,
@@ -1038,14 +855,13 @@ class PlaidClient:
             "assignee": assignee,
             "cursor": cursor,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/watchlist_screening/entity/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/entity/list",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PaginatedEntityWatchlistScreeningListResponse.parse_obj(data)
 
@@ -1057,21 +873,18 @@ class PlaidClient:
         Get an entity watchlist screening program
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityprogramget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "entity_watchlist_program_id": entity_watchlist_program_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/watchlist_screening/entity/program/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/entity/program/get",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.EntityWatchlistProgramResponse.parse_obj(data)
 
@@ -1083,21 +896,18 @@ class PlaidClient:
         List all entity watchlist screening programs
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityprogramlist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "cursor": cursor,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/watchlist_screening/entity/program/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/entity/program/list",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PaginatedEntityWatchlistProgramListResponse.parse_obj(data)
 
@@ -1113,9 +923,7 @@ class PlaidClient:
         Create a review for an entity watchlist screening. Reviews are compliance reports created by users in your organization regarding the relevance of potential hits found by Plaid.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityreviewcreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "confirmed_hits": confirmed_hits,
@@ -1123,14 +931,13 @@ class PlaidClient:
             "comment": comment,
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/watchlist_screening/entity/review/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/entity/review/create",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.EntityWatchlistScreeningReviewResponse.parse_obj(data)
 
@@ -1142,22 +949,19 @@ class PlaidClient:
         List all reviews for a particular entity watchlist screening. Reviews are compliance reports created by users in your organization regarding the relevance of potential hits found by Plaid.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityreviewlist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
             "cursor": cursor,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/watchlist_screening/entity/review/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/entity/review/list",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PaginatedEntityWatchlistScreeningReviewListResponse.parse_obj(data)
 
@@ -1175,9 +979,7 @@ class PlaidClient:
         Update an entity watchlist screening.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityupdate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
@@ -1187,14 +989,13 @@ class PlaidClient:
             "client_user_id": client_user_id,
             "reset_fields": reset_fields,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/watchlist_screening/entity/update",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/entity/update",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.EntityWatchlistScreeningResponse.parse_obj(data)
 
@@ -1208,22 +1009,19 @@ class PlaidClient:
         Create a new Watchlist Screening to check your customer against watchlists defined in the associated Watchlist Program. If your associated program has ongoing screening enabled, this is the profile information that will be used to monitor your customer over time.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualcreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "search_terms": None if search_terms is None else search_terms.dict(),
             "client_user_id": client_user_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/watchlist_screening/individual/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/individual/create",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.WatchlistScreeningIndividualResponse.parse_obj(data)
 
@@ -1235,21 +1033,18 @@ class PlaidClient:
         Retrieve a previously created individual watchlist screening
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "watchlist_screening_id": watchlist_screening_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/watchlist_screening/individual/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/individual/get",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.WatchlistScreeningIndividualResponse.parse_obj(data)
 
@@ -1261,22 +1056,19 @@ class PlaidClient:
         List all changes to the individual watchlist screening in reverse-chronological order. If the watchlist screening has not been edited, no history will be returned.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualhistorylist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "watchlist_screening_id": watchlist_screening_id,
             "cursor": cursor,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/watchlist_screening/individual/history/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/individual/history/list",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PaginatedIndividualWatchlistScreeningListResponse.parse_obj(data)
 
@@ -1288,22 +1080,19 @@ class PlaidClient:
         List all hits found by Plaid for a particular individual watchlist screening.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualhitlist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "watchlist_screening_id": watchlist_screening_id,
             "cursor": cursor,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/watchlist_screening/individual/hit/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/individual/hit/list",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PaginatedIndividualWatchlistScreeningHitListResponse.parse_obj(
             data
@@ -1322,9 +1111,7 @@ class PlaidClient:
         List previously created watchlist screenings for individuals
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividuallist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "watchlist_program_id": watchlist_program_id,
@@ -1333,14 +1120,13 @@ class PlaidClient:
             "assignee": assignee,
             "cursor": cursor,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/watchlist_screening/individual/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/individual/list",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PaginatedIndividualWatchlistScreeningListResponse.parse_obj(data)
 
@@ -1352,21 +1138,18 @@ class PlaidClient:
         Get an individual watchlist screening program
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualprogramget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "watchlist_program_id": watchlist_program_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/watchlist_screening/individual/program/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/individual/program/get",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.IndividualWatchlistProgramResponse.parse_obj(data)
 
@@ -1378,21 +1161,18 @@ class PlaidClient:
         List all individual watchlist screening programs
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualprogramlist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "cursor": cursor,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/watchlist_screening/individual/program/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/individual/program/list",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PaginatedIndividualWatchlistProgramListResponse.parse_obj(data)
 
@@ -1408,9 +1188,7 @@ class PlaidClient:
         Create a review for the individual watchlist screening. Reviews are compliance reports created by users in your organization regarding the relevance of potential hits found by Plaid.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualreviewcreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "confirmed_hits": confirmed_hits,
@@ -1418,14 +1196,13 @@ class PlaidClient:
             "comment": comment,
             "watchlist_screening_id": watchlist_screening_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/watchlist_screening/individual/review/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/individual/review/create",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.WatchlistScreeningReviewResponse.parse_obj(data)
 
@@ -1437,22 +1214,19 @@ class PlaidClient:
         List all reviews for the individual watchlist screening.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualreviewlist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "watchlist_screening_id": watchlist_screening_id,
             "cursor": cursor,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/watchlist_screening/individual/review/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/individual/review/list",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PaginatedIndividualWatchlistScreeningReviewListResponse.parse_obj(
             data
@@ -1474,9 +1248,7 @@ class PlaidClient:
         Update a specific individual watchlist screening. This endpoint can be used to add additional customer information, correct outdated information, add a reference id, assign the individual to a reviewer, and update which program it is associated with. Please note that you may not update `search_terms` and `status` at the same time since editing `search_terms` may trigger an automatic `status` change.
 
         See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualupdate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "watchlist_screening_id": watchlist_screening_id,
@@ -1486,14 +1258,13 @@ class PlaidClient:
             "client_user_id": client_user_id,
             "reset_fields": reset_fields,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/watchlist_screening/individual/update",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/individual/update",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.WatchlistScreeningIndividualResponse.parse_obj(data)
 
@@ -1508,21 +1279,14 @@ class PlaidClient:
 
 
         See endpoint docs at <https://plaid.com/docs/api/processors/#processorauthget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "processor_token": processor_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/processor/auth/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/processor/auth/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.ProcessorAuthGetResponse.parse_obj(data)
 
@@ -1546,9 +1310,7 @@ class PlaidClient:
         Use the `/processor/bank_transfer/create` endpoint to initiate a new bank transfer as a processor
 
         See endpoint docs at <https://plaid.com/docs/api/processors/#bank_transfercreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "idempotency_key": idempotency_key,
@@ -1564,14 +1326,13 @@ class PlaidClient:
             "metadata": None if metadata is None else metadata.dict(),
             "origination_account_id": origination_account_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/processor/bank_transfer/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/processor/bank_transfer/create",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.ProcessorBankTransferCreateResponse.parse_obj(data)
 
@@ -1583,21 +1344,14 @@ class PlaidClient:
         The `/processor/identity/get` endpoint allows you to retrieve various account holder information on file with the financial institution, including names, emails, phone numbers, and addresses.
 
         See endpoint docs at <https://plaid.com/docs/api/processors/#processoridentityget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "processor_token": processor_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/processor/identity/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/processor/identity/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.ProcessorIdentityGetResponse.parse_obj(data)
 
@@ -1611,22 +1365,15 @@ class PlaidClient:
         The `/processor/balance/get` endpoint returns the real-time balance for each of an Item's accounts. While other endpoints may return a balance object, only `/processor/balance/get` forces the available and current balance fields to be refreshed rather than cached.
 
         See endpoint docs at <https://plaid.com/docs/api/processors/#processorbalanceget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "processor_token": processor_token,
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/processor/balance/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/processor/balance/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.ProcessorBalanceGetResponse.parse_obj(data)
 
@@ -1638,22 +1385,15 @@ class PlaidClient:
         The POST `/item/webhook/update` allows you to update the webhook URL associated with an Item. This request triggers a [`WEBHOOK_UPDATE_ACKNOWLEDGED`](https://plaid.com/docs/api/items/#webhook_update_acknowledged) webhook to the newly specified webhook URL.
 
         See endpoint docs at <https://plaid.com/docs/api/items/#itemwebhookupdate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "webhook": webhook,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/item/webhook/update",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/item/webhook/update", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.ItemWebhookUpdateResponse.parse_obj(data)
 
@@ -1668,21 +1408,18 @@ class PlaidClient:
 
 
         See endpoint docs at <https://plaid.com/docs/api/tokens/#itemaccess_tokeninvalidate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/item/access_token/invalidate",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/item/access_token/invalidate",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.ItemAccessTokenInvalidateResponse.parse_obj(data)
 
@@ -1696,21 +1433,18 @@ class PlaidClient:
         The `/webhook_verification_key/get` endpoint provides a JSON Web Key (JWK) that can be used to verify a JWT.
 
         See endpoint docs at <https://plaid.com/docs/api/webhooks/webhook-verification/#webhook_verification_keyget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "key_id": key_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/webhook_verification_key/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/webhook_verification_key/get",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.WebhookVerificationKeyGetResponse.parse_obj(data)
 
@@ -1728,22 +1462,15 @@ class PlaidClient:
         Note: This request may take some time to complete if `liabilities` was not specified as an initial product when creating the Item. This is because Plaid must communicate directly with the institution to retrieve the additional data.
 
         See endpoint docs at <https://plaid.com/docs/api/products/liabilities/#liabilitiesget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/liabilities/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/liabilities/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.LiabilitiesGetResponse.parse_obj(data)
 
@@ -1762,9 +1489,7 @@ class PlaidClient:
 
 
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationrecipientcreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "name": name,
@@ -1772,14 +1497,13 @@ class PlaidClient:
             "bacs": None if bacs is None else bacs.dict(),
             "address": None if address is None else address.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/payment_initiation/recipient/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/payment_initiation/recipient/create",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationRecipientCreateResponse.parse_obj(data)
 
@@ -1794,23 +1518,20 @@ class PlaidClient:
 
 
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationpaymentreverse>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "payment_id": payment_id,
             "idempotency_key": idempotency_key,
             "reference": reference,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/payment_initiation/payment/reverse",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/payment_initiation/payment/reverse",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationPaymentReverseResponse.parse_obj(data)
 
@@ -1822,21 +1543,18 @@ class PlaidClient:
         Get details about a payment recipient you have previously created.
 
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationrecipientget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "recipient_id": recipient_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/payment_initiation/recipient/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/payment_initiation/recipient/get",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationRecipientGetResponse.parse_obj(data)
 
@@ -1848,19 +1566,16 @@ class PlaidClient:
         The `/payment_initiation/recipient/list` endpoint list the payment recipients that you have previously created.
 
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationrecipientlist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {}
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/payment_initiation/recipient/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/payment_initiation/recipient/list",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationRecipientListResponse.parse_obj(data)
 
@@ -1881,9 +1596,7 @@ class PlaidClient:
         In the Development environment, payments must be below 5 GBP / EUR. For details on any payment limits in Production, contact your Plaid Account Manager.
 
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationpaymentcreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "recipient_id": recipient_id,
@@ -1892,14 +1605,13 @@ class PlaidClient:
             "schedule": None if schedule is None else schedule.dict(),
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/payment_initiation/payment/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/payment_initiation/payment/create",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationPaymentCreateResponse.parse_obj(data)
 
@@ -1913,21 +1625,18 @@ class PlaidClient:
         The `/payment_initiation/payment/token/create` is used to create a `payment_token`, which can then be used in Link initialization to enter a payment initiation flow. You can only use a `payment_token` once. If this attempt fails, the end user aborts the flow, or the token expires, you will need to create a new payment token. Creating a new payment token does not require end user input.
 
         See endpoint docs at <https://plaid.com/docs/link/maintain-legacy-integration/#creating-a-payment-token>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "payment_id": payment_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/payment_initiation/payment/token/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/payment_initiation/payment/token/create",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationPaymentTokenCreateResponse.parse_obj(data)
 
@@ -1946,9 +1655,7 @@ class PlaidClient:
         Consents can be limited in time and scope, and have constraints that describe limitations for payments.
 
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationconsentcreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "recipient_id": recipient_id,
@@ -1957,14 +1664,13 @@ class PlaidClient:
             "constraints": None if constraints is None else constraints.dict(),
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/payment_initiation/consent/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/payment_initiation/consent/create",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationConsentCreateResponse.parse_obj(data)
 
@@ -1976,21 +1682,18 @@ class PlaidClient:
         The `/payment_initiation/consent/get` endpoint can be used to check the status of a payment consent, as well as to receive basic information such as recipient and constraints.
 
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationconsentget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "consent_id": consent_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/payment_initiation/consent/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/payment_initiation/consent/get",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationConsentGetResponse.parse_obj(data)
 
@@ -2002,21 +1705,18 @@ class PlaidClient:
         The `/payment_initiation/consent/revoke` endpoint can be used to revoke the payment consent. Once the consent is revoked, it is not possible to initiate payments using it.
 
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationconsentrevoke>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "consent_id": consent_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/payment_initiation/consent/revoke",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/payment_initiation/consent/revoke",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationConsentRevokeResponse.parse_obj(data)
 
@@ -2028,23 +1728,20 @@ class PlaidClient:
         The `/payment_initiation/consent/payment/execute` endpoint can be used to execute payments using payment consent.
 
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationconsentpaymentexecute>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "consent_id": consent_id,
             "amount": None if amount is None else amount.dict(),
             "idempotency_key": idempotency_key,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/payment_initiation/consent/payment/execute",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/payment_initiation/consent/payment/execute",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationConsentPaymentExecuteResponse.parse_obj(data)
 
@@ -2059,21 +1756,14 @@ class PlaidClient:
         In the Sandbox, Items will transition to an `ITEM_LOGIN_REQUIRED` error state automatically after 30 days, even if this endpoint is not called.
 
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxitemreset_login>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/sandbox/item/reset_login",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/sandbox/item/reset_login", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.SandboxItemResetLoginResponse.parse_obj(data)
 
@@ -2089,23 +1779,20 @@ class PlaidClient:
         For more information on testing Automated Micro-deposits in Sandbox, see [Auth full coverage testing](https://plaid.com/docs/auth/coverage/testing#).
 
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxitemset_verification_status>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "account_id": account_id,
             "verification_status": verification_status,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/sandbox/item/set_verification_status",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/sandbox/item/set_verification_status",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.SandboxItemSetVerificationStatusResponse.parse_obj(data)
 
@@ -2119,21 +1806,14 @@ class PlaidClient:
         The response also includes an `item_id` that should be stored with the `access_token`. The `item_id` is used to identify an Item in a webhook. The `item_id` can also be retrieved by making an `/item/get` request.
 
         See endpoint docs at <https://plaid.com/docs/api/tokens/#itempublic_tokenexchange>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "public_token": public_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/item/public_token/exchange",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/item/public_token/exchange", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.ItemPublicTokenExchangeResponse.parse_obj(data)
 
@@ -2151,21 +1831,14 @@ class PlaidClient:
         The `/item/public_token/create` endpoint is **not** used to create your initial `public_token`. If you have not already received an `access_token` for a specific Item, use Link to obtain your `public_token` instead. See the [Quickstart](https://plaid.com/docs/quickstart) for more information.
 
         See endpoint docs at <https://plaid.com/docs/api/tokens/#itempublic_tokencreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/item/public_token/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/item/public_token/create", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.ItemPublicTokenCreateResponse.parse_obj(data)
 
@@ -2177,21 +1850,12 @@ class PlaidClient:
         If you call the endpoint multiple times with the same `client_user_id`, the first creation call will succeed and the rest will fail with an error message indicating that the user has been created for the given `client_user_id`.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#usercreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "client_user_id": client_user_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/user/create",
-            headers=headers,
-            params=params,
-            json=data,
-        )
-        res = self.send(req)
+        res = self.send("POST", self.base_url + "/user/create", headers, params, data)
         data = res.json()
         return model.UserCreateResponse.parse_obj(data)
 
@@ -2203,21 +1867,18 @@ class PlaidClient:
         The `/payment_initiation/payment/get` endpoint can be used to check the status of a payment, as well as to receive basic information such as recipient and payment amount. In the case of standing orders, the `/payment_initiation/payment/get` endpoint will provide information about the status of the overall standing order itself; the API cannot be used to retrieve payment status for individual payments within a standing order.
 
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationpaymentget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "payment_id": payment_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/payment_initiation/payment/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/payment_initiation/payment/get",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationPaymentGetResponse.parse_obj(data)
 
@@ -2232,23 +1893,20 @@ class PlaidClient:
         The `/payment_initiation/payment/list` endpoint can be used to retrieve all created payments. By default, the 10 most recent payments are returned. You can request more payments and paginate through the results using the optional `count` and `cursor` parameters.
 
         See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationpaymentlist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "count": count,
             "cursor": cursor,
             "consent_id": consent_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/payment_initiation/payment/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/payment_initiation/payment/list",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PaymentInitiationPaymentListResponse.parse_obj(data)
 
@@ -2267,23 +1925,16 @@ class PlaidClient:
         The `/asset_report/create` endpoint creates an Asset Report at a moment in time. Asset Reports are immutable. To get an updated Asset Report, use the `/asset_report/refresh` endpoint.
 
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportcreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_tokens": access_tokens,
             "days_requested": days_requested,
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/asset_report/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/asset_report/create", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.AssetReportCreateResponse.parse_obj(data)
 
@@ -2300,23 +1951,16 @@ class PlaidClient:
         The new Asset Report will contain the same Items as the original Report, as well as the same filters applied by any call to `/asset_report/filter`. By default, the new Asset Report will also use the same parameters you submitted with your original `/asset_report/create` request, but the original `days_requested` value and the values of any parameters in the `options` object can be overridden with new values. To change these arguments, simply supply new values for them in your request to `/asset_report/refresh`. Submit an empty string ("") for any previously-populated fields you would like set as empty.
 
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportrefresh>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "asset_report_token": asset_report_token,
             "days_requested": days_requested,
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/asset_report/refresh",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/asset_report/refresh", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.AssetReportRefreshResponse.parse_obj(data)
 
@@ -2328,22 +1972,15 @@ class PlaidClient:
         The `/asset_report/relay/refresh` endpoint allows third parties to refresh an Asset Report that was relayed to them, using an `asset_relay_token` that was created by the report owner. A new Asset Report will be created based on the old one, but with the most recent data available.
 
         See endpoint docs at <https://plaid.com/docs/api/products/#asset_reportrelayrefresh>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "asset_relay_token": asset_relay_token,
             "webhook": webhook,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/asset_report/relay/refresh",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/asset_report/relay/refresh", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.AssetReportRelayRefreshResponse.parse_obj(data)
 
@@ -2357,21 +1994,14 @@ class PlaidClient:
         The `/asset_report/remove` endpoint allows you to remove an Asset Report. Removing an Asset Report invalidates its `asset_report_token`, meaning you will no longer be able to use it to access Report data or create new Audit Copies. Removing an Asset Report does not affect the underlying Items, but does invalidate any `audit_copy_tokens` associated with the Asset Report.
 
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportremove>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "asset_report_token": asset_report_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/asset_report/remove",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/asset_report/remove", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.AssetReportRemoveResponse.parse_obj(data)
 
@@ -2389,22 +2019,15 @@ class PlaidClient:
         Plaid will fire a [`PRODUCT_READY`](https://plaid.com/docs/api/products/assets/#product_ready) webhook once generation of the filtered Asset Report has completed.
 
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportfilter>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "asset_report_token": asset_report_token,
             "account_ids_to_exclude": account_ids_to_exclude,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/asset_report/filter",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/asset_report/filter", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.AssetReportFilterResponse.parse_obj(data)
 
@@ -2423,23 +2046,16 @@ class PlaidClient:
         To retrieve an Asset Report with Insights, call the `/asset_report/get` endpoint with `include_insights` set to `true`.
 
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "asset_report_token": asset_report_token,
             "include_insights": include_insights,
             "fast_report": fast_report,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/asset_report/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/asset_report/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.AssetReportGetResponse.parse_obj(data)
 
@@ -2453,21 +2069,14 @@ class PlaidClient:
         [View a sample PDF Asset Report](https://plaid.com/documents/sample-asset-report.pdf).
 
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportpdfget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "asset_report_token": asset_report_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/asset_report/pdf/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/asset_report/pdf/get", headers, params, data
         )
-        res = self.send(req)
 
     def asset_report_audit_copy_create(
         self, asset_report_token: str, auditor_id: str
@@ -2479,22 +2088,19 @@ class PlaidClient:
         To grant access to an Audit Copy, use the `/asset_report/audit_copy/create` endpoint to create an `audit_copy_token` and then pass that token to the third party who needs access. Each third party has its own `auditor_id`, for example `fannie_mae`. You’ll need to create a separate Audit Copy for each third party to whom you want to grant access to the Report.
 
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportaudit_copycreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "asset_report_token": asset_report_token,
             "auditor_id": auditor_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/asset_report/audit_copy/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/asset_report/audit_copy/create",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.AssetReportAuditCopyCreateResponse.parse_obj(data)
 
@@ -2506,21 +2112,18 @@ class PlaidClient:
         The `/asset_report/audit_copy/remove` endpoint allows you to remove an Audit Copy. Removing an Audit Copy invalidates the `audit_copy_token` associated with it, meaning both you and any third parties holding the token will no longer be able to use it to access Report data. Items associated with the Asset Report, the Asset Report itself and other Audit Copies of it are not affected and will remain accessible after removing the given Audit Copy.
 
         See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportaudit_copyremove>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "audit_copy_token": audit_copy_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/asset_report/audit_copy/remove",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/asset_report/audit_copy/remove",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.AssetReportAuditCopyRemoveResponse.parse_obj(data)
 
@@ -2537,23 +2140,16 @@ class PlaidClient:
         To grant access to an Asset Report to a third party, use the `/asset_report/relay/create` endpoint to create an `asset_relay_token` and then pass that token to the third party who needs access. Each third party has its own `secondary_client_id`, for example `ce5bd328dcd34123456`. You'll need to create a separate `asset_relay_token` for each third party to whom you want to grant access to the Report.
 
         See endpoint docs at <https://plaid.com/docs/none/>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "asset_report_token": asset_report_token,
             "secondary_client_id": secondary_client_id,
             "webhook": webhook,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/asset_report/relay/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/asset_report/relay/create", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.AssetReportRelayCreateResponse.parse_obj(data)
 
@@ -2565,21 +2161,14 @@ class PlaidClient:
         `/asset_report/relay/get` allows third parties to get an Asset Report that was shared with them, using an `asset_relay_token` that was created by the report owner.
 
         See endpoint docs at <https://plaid.com/docs/none/>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "asset_relay_token": asset_relay_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/asset_report/relay/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/asset_report/relay/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.AssetReportGetResponse.parse_obj(data)
 
@@ -2591,21 +2180,14 @@ class PlaidClient:
         The `/asset_report/relay/remove` endpoint allows you to invalidate an `asset_relay_token`, meaning the third party holding the token will no longer be able to use it to access the Asset Report to which the `asset_relay_token` gives access to. The Asset Report, Items associated with it, and other Asset Relay Tokens that provide access to the same Asset Report are not affected and will remain accessible after removing the given `asset_relay_token.
 
         See endpoint docs at <https://plaid.com/docs/none/>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "asset_relay_token": asset_relay_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/asset_report/relay/remove",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/asset_report/relay/remove", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.AssetReportRelayRemoveResponse.parse_obj(data)
 
@@ -2619,22 +2201,15 @@ class PlaidClient:
         The `/investments/holdings/get` endpoint allows developers to receive user-authorized stock position data for `investment`-type accounts.
 
         See endpoint docs at <https://plaid.com/docs/api/products/investments/#investmentsholdingsget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/investments/holdings/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/investments/holdings/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.InvestmentsHoldingsGetResponse.parse_obj(data)
 
@@ -2654,9 +2229,7 @@ class PlaidClient:
         Due to the potentially large number of investment transactions associated with an Item, results are paginated. Manipulate the count and offset parameters in conjunction with the `total_investment_transactions` response body field to fetch all available investment transactions.
 
         See endpoint docs at <https://plaid.com/docs/api/products/investments/#investmentstransactionsget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
@@ -2664,14 +2237,13 @@ class PlaidClient:
             "end_date": end_date,
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/investments/transactions/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/investments/transactions/get",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.InvestmentsTransactionsGetResponse.parse_obj(data)
 
@@ -2683,23 +2255,16 @@ class PlaidClient:
         Used to create a token suitable for sending to one of Plaid's partners to enable integrations. Note that Stripe partnerships use bank account tokens instead; see `/processor/stripe/bank_account_token/create` for creating tokens for use with Stripe integrations. Processor tokens can also be revoked, using `/item/remove`.
 
         See endpoint docs at <https://plaid.com/docs/api/processors/#processortokencreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "account_id": account_id,
             "processor": processor,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/processor/token/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/processor/token/create", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.ProcessorTokenCreateResponse.parse_obj(data)
 
@@ -2711,22 +2276,19 @@ class PlaidClient:
         Used to create a token suitable for sending to Stripe to enable Plaid-Stripe integrations. For a detailed guide on integrating Stripe, see [Add Stripe to your app](https://plaid.com/docs/auth/partnerships/stripe/). Bank account tokens can also be revoked, using `/item/remove`.
 
         See endpoint docs at <https://plaid.com/docs/api/processors/#processorstripebank_account_tokencreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "account_id": account_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/processor/stripe/bank_account_token/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/processor/stripe/bank_account_token/create",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.ProcessorStripeBankAccountTokenCreateResponse.parse_obj(data)
 
@@ -2738,22 +2300,19 @@ class PlaidClient:
         Used to create a token suitable for sending to Apex to enable Plaid-Apex integrations.
 
         See endpoint docs at <https://plaid.com/docs/none/>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "account_id": account_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/processor/apex/processor_token/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/processor/apex/processor_token/create",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.ProcessorTokenCreateResponse.parse_obj(data)
 
@@ -2769,9 +2328,7 @@ class PlaidClient:
         This endpoint creates a deposit switch entity that will be persisted throughout the lifecycle of the switch.
 
         See endpoint docs at <https://plaid.com/docs/deposit-switch/reference#deposit_switchcreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "target_access_token": target_access_token,
@@ -2779,14 +2336,9 @@ class PlaidClient:
             "country_code": country_code,
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/deposit_switch/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/deposit_switch/create", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.DepositSwitchCreateResponse.parse_obj(data)
 
@@ -2801,23 +2353,14 @@ class PlaidClient:
         `/item/import` creates an Item via your Plaid Exchange Integration and returns an `access_token`. As part of an `/item/import` request, you will include a User ID (`user_auth.user_id`) and Authentication Token (`user_auth.auth_token`) that enable data aggregation through your Plaid Exchange API endpoints. These authentication principals are to be chosen by you.
 
         Upon creating an Item via `/item/import`, Plaid will automatically begin an extraction of that Item through the Plaid Exchange infrastructure you have already integrated. This will automatically generate the Plaid native account ID for the account the user will switch their direct deposit to (`target_account_id`)."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "products": products,
             "user_auth": None if user_auth is None else user_auth.dict(),
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/item/import",
-            headers=headers,
-            params=params,
-            json=data,
-        )
-        res = self.send(req)
+        res = self.send("POST", self.base_url + "/item/import", headers, params, data)
         data = res.json()
         return model.ItemImportResponse.parse_obj(data)
 
@@ -2830,21 +2373,18 @@ class PlaidClient:
 
 
         See endpoint docs at <https://plaid.com/docs/deposit-switch/reference#deposit_switchtokencreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "deposit_switch_id": deposit_switch_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/deposit_switch/token/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/deposit_switch/token/create",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.DepositSwitchTokenCreateResponse.parse_obj(data)
 
@@ -2887,9 +2427,7 @@ class PlaidClient:
         A `link_token` generated by `/link/token/create` is also used to initialize other Link flows, such as the update mode flow for tokens with expired credentials, or the Payment Initiation (Europe) flow.
 
         See endpoint docs at <https://plaid.com/docs/api/tokens/#linktokencreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "client_name": client_name,
@@ -2926,14 +2464,9 @@ class PlaidClient:
             else identity_verification.dict(),
             "user_token": user_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/link/token/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/link/token/create", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.LinkTokenCreateResponse.parse_obj(data)
 
@@ -2944,21 +2477,14 @@ class PlaidClient:
         `/link/token/create` endpoint. It can be useful for debugging purposes.
 
         See endpoint docs at <https://plaid.com/docs/api/tokens/#linktokenget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "link_token": link_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/link/token/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/link/token/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.LinkTokenGetResponse.parse_obj(data)
 
@@ -2970,21 +2496,18 @@ class PlaidClient:
         `/asset_report/audit_copy/get` allows auditors to get a copy of an Asset Report that was previously shared via the `/asset_report/audit_copy/create` endpoint.  The caller of `/asset_report/audit_copy/create` must provide the `audit_copy_token` to the auditor.  This token can then be used to call `/asset_report/audit_copy/create`.
 
         See endpoint docs at <https://plaid.com/docs/none/>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "audit_copy_token": audit_copy_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/asset_report/audit_copy/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/asset_report/audit_copy/get",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.AssetReportGetResponse.parse_obj(data)
 
@@ -2996,21 +2519,14 @@ class PlaidClient:
         This endpoint returns information related to how the user has configured their payroll allocation and the state of the switch. You can use this information to build logic related to the user's direct deposit allocation preferences.
 
         See endpoint docs at <https://plaid.com/docs/deposit-switch/reference#deposit_switchget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "deposit_switch_id": deposit_switch_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/deposit_switch/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/deposit_switch/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.DepositSwitchGetResponse.parse_obj(data)
 
@@ -3020,21 +2536,12 @@ class PlaidClient:
         The `/transfer/get` fetches information about the transfer corresponding to the given `transfer_id`.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "transfer_id": transfer_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/transfer/get",
-            headers=headers,
-            params=params,
-            json=data,
-        )
-        res = self.send(req)
+        res = self.send("POST", self.base_url + "/transfer/get", headers, params, data)
         data = res.json()
         return model.TransferGetResponse.parse_obj(data)
 
@@ -3044,21 +2551,14 @@ class PlaidClient:
         The `/bank_transfer/get` fetches information about the bank transfer corresponding to the given `bank_transfer_id`.
 
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transferget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "bank_transfer_id": bank_transfer_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/bank_transfer/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/bank_transfer/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.BankTransferGetResponse.parse_obj(data)
 
@@ -3096,9 +2596,7 @@ class PlaidClient:
         For guaranteed ACH customers, the following fields are required : `user.phone_number` (optional if `email_address` provided), `user.email_address` (optional if `phone_number` provided), `device.ip_address`, `device.user_agent`, and `user_present`.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferauthorizationcreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
@@ -3114,14 +2612,13 @@ class PlaidClient:
             "user_present": user_present,
             "payment_profile_id": payment_profile_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/transfer/authorization/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/transfer/authorization/create",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.TransferAuthorizationCreateResponse.parse_obj(data)
 
@@ -3147,9 +2644,7 @@ class PlaidClient:
         Use the `/transfer/create` endpoint to initiate a new transfer.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfercreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "idempotency_key": idempotency_key,
@@ -3167,14 +2662,9 @@ class PlaidClient:
             "iso_currency_code": iso_currency_code,
             "payment_profile_id": payment_profile_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/transfer/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/transfer/create", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.TransferCreateResponse.parse_obj(data)
 
@@ -3199,9 +2689,7 @@ class PlaidClient:
         Use the `/bank_transfer/create` endpoint to initiate a new bank transfer.
 
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfercreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "idempotency_key": idempotency_key,
@@ -3218,14 +2706,9 @@ class PlaidClient:
             "metadata": None if metadata is None else metadata.dict(),
             "origination_account_id": origination_account_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/bank_transfer/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/bank_transfer/create", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.BankTransferCreateResponse.parse_obj(data)
 
@@ -3243,9 +2726,7 @@ class PlaidClient:
 
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferlist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "start_date": start_date,
@@ -3254,14 +2735,7 @@ class PlaidClient:
             "offset": offset,
             "origination_account_id": origination_account_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/transfer/list",
-            headers=headers,
-            params=params,
-            json=data,
-        )
-        res = self.send(req)
+        res = self.send("POST", self.base_url + "/transfer/list", headers, params, data)
         data = res.json()
         return model.TransferListResponse.parse_obj(data)
 
@@ -3280,9 +2754,7 @@ class PlaidClient:
 
 
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transferlist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "start_date": start_date,
@@ -3292,14 +2764,9 @@ class PlaidClient:
             "origination_account_id": origination_account_id,
             "direction": direction,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/bank_transfer/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/bank_transfer/list", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.BankTransferListResponse.parse_obj(data)
 
@@ -3309,21 +2776,14 @@ class PlaidClient:
         Use the `/transfer/cancel` endpoint to cancel a transfer.  A transfer is eligible for cancelation if the `cancellable` property returned by `/transfer/get` is `true`.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfercancel>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "transfer_id": transfer_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/transfer/cancel",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/transfer/cancel", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.TransferCancelResponse.parse_obj(data)
 
@@ -3335,21 +2795,14 @@ class PlaidClient:
         Use the `/bank_transfer/cancel` endpoint to cancel a bank transfer.  A transfer is eligible for cancelation if the `cancellable` property returned by `/bank_transfer/get` is `true`.
 
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfercancel>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "bank_transfer_id": bank_transfer_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/bank_transfer/cancel",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/bank_transfer/cancel", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.BankTransferCancelResponse.parse_obj(data)
 
@@ -3371,9 +2824,7 @@ class PlaidClient:
         Use the `/transfer/event/list` endpoint to get a list of transfer events based on specified filter criteria.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfereventlist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "start_date": start_date,
@@ -3387,14 +2838,9 @@ class PlaidClient:
             "offset": offset,
             "origination_account_id": origination_account_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/transfer/event/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/transfer/event/list", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.TransferEventListResponse.parse_obj(data)
 
@@ -3416,9 +2862,7 @@ class PlaidClient:
         Use the `/bank_transfer/event/list` endpoint to get a list of bank transfer events based on specified filter criteria.
 
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfereventlist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "start_date": start_date,
@@ -3432,14 +2876,9 @@ class PlaidClient:
             "origination_account_id": origination_account_id,
             "direction": direction,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/bank_transfer/event/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/bank_transfer/event/list", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.BankTransferEventListResponse.parse_obj(data)
 
@@ -3451,22 +2890,15 @@ class PlaidClient:
         `/transfer/event/sync` allows you to request up to the next 25 transfer events that happened after a specific `event_id`. Use the `/transfer/event/sync` endpoint to guarantee you have seen all transfer events.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfereventsync>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "after_id": after_id,
             "count": count,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/transfer/event/sync",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/transfer/event/sync", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.TransferEventSyncResponse.parse_obj(data)
 
@@ -3478,22 +2910,15 @@ class PlaidClient:
         `/bank_transfer/event/sync` allows you to request up to the next 25 bank transfer events that happened after a specific `event_id`. Use the `/bank_transfer/event/sync` endpoint to guarantee you have seen all bank transfer events.
 
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfereventsync>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "after_id": after_id,
             "count": count,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/bank_transfer/event/sync",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/bank_transfer/event/sync", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.BankTransferEventSyncResponse.parse_obj(data)
 
@@ -3503,21 +2928,14 @@ class PlaidClient:
         The `/transfer/sweep/get` endpoint fetches a sweep corresponding to the given `sweep_id`.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfersweepget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "sweep_id": sweep_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/transfer/sweep/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/transfer/sweep/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.TransferSweepGetResponse.parse_obj(data)
 
@@ -3529,21 +2947,14 @@ class PlaidClient:
         The `/bank_transfer/sweep/get` endpoint fetches information about the sweep corresponding to the given `sweep_id`.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#bank_transfersweepget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "sweep_id": sweep_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/bank_transfer/sweep/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/bank_transfer/sweep/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.BankTransferSweepGetResponse.parse_obj(data)
 
@@ -3559,9 +2970,7 @@ class PlaidClient:
         The `/transfer/sweep/list` endpoint fetches sweeps matching the given filters.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfersweeplist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "start_date": start_date,
@@ -3569,14 +2978,9 @@ class PlaidClient:
             "count": count,
             "offset": offset,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/transfer/sweep/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/transfer/sweep/list", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.TransferSweepListResponse.parse_obj(data)
 
@@ -3592,9 +2996,7 @@ class PlaidClient:
         The `/bank_transfer/sweep/list` endpoint fetches information about the sweeps matching the given filters.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#bank_transfersweeplist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "origination_account_id": origination_account_id,
@@ -3602,14 +3004,9 @@ class PlaidClient:
             "end_time": end_time,
             "count": count,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/bank_transfer/sweep/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/bank_transfer/sweep/list", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.BankTransferSweepListResponse.parse_obj(data)
 
@@ -3625,21 +3022,14 @@ class PlaidClient:
         Note that this endpoint can only be used with FBO accounts, when using Bank Transfers in the Full Service configuration. It cannot be used on your own account when using Bank Transfers in the BTS Platform configuration.
 
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transferbalanceget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "origination_account_id": origination_account_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/bank_transfer/balance/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/bank_transfer/balance/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.BankTransferBalanceGetResponse.parse_obj(data)
 
@@ -3655,9 +3045,7 @@ class PlaidClient:
         As an alternative to adding Items via Link, you can also use the `/bank_transfer/migrate_account` endpoint to migrate known account and routing numbers to Plaid Items.  Note that Items created in this way are not compatible with endpoints for other products, such as `/accounts/balance/get`, and can only be used with Bank Transfer endpoints.  If you require access to other endpoints, create the Item through Link instead.  Access to `/bank_transfer/migrate_account` is not enabled by default; to obtain access, contact your Plaid Account Manager.
 
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfermigrate_account>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "account_number": account_number,
@@ -3665,14 +3053,13 @@ class PlaidClient:
             "wire_routing_number": wire_routing_number,
             "account_type": account_type,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/bank_transfer/migrate_account",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/bank_transfer/migrate_account",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.BankTransferMigrateAccountResponse.parse_obj(data)
 
@@ -3688,9 +3075,7 @@ class PlaidClient:
         As an alternative to adding Items via Link, you can also use the `/transfer/migrate_account` endpoint to migrate known account and routing numbers to Plaid Items.  Note that Items created in this way are not compatible with endpoints for other products, such as `/accounts/balance/get`, and can only be used with Transfer endpoints.  If you require access to other endpoints, create the Item through Link instead.  Access to `/transfer/migrate_account` is not enabled by default; to obtain access, contact your Plaid Account Manager.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfermigrate_account>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "account_number": account_number,
@@ -3698,14 +3083,9 @@ class PlaidClient:
             "wire_routing_number": wire_routing_number,
             "account_type": account_type,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/transfer/migrate_account",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/transfer/migrate_account", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.TransferMigrateAccountResponse.parse_obj(data)
 
@@ -3727,9 +3107,7 @@ class PlaidClient:
         Use the `/transfer/intent/create` endpoint to generate a transfer intent object and invoke the Transfer UI.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferintentcreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "account_id": account_id,
@@ -3743,14 +3121,9 @@ class PlaidClient:
             "iso_currency_code": iso_currency_code,
             "require_guarantee": require_guarantee,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/transfer/intent/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/transfer/intent/create", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.TransferIntentCreateResponse.parse_obj(data)
 
@@ -3762,21 +3135,14 @@ class PlaidClient:
         Use the `/transfer/intent/get` endpoint to retrieve more information about a transfer intent.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferintentget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "transfer_intent_id": transfer_intent_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/transfer/intent/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/transfer/intent/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.TransferIntentGetResponse.parse_obj(data)
 
@@ -3792,9 +3158,7 @@ class PlaidClient:
         The `/transfer/repayment/list` endpoint fetches repayments matching the given filters. Repayments are returned in reverse-chronological order (most recent first) starting at the given `start_time`.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferrepaymentlist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "start_date": start_date,
@@ -3802,14 +3166,9 @@ class PlaidClient:
             "count": count,
             "offset": offset,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/transfer/repayment/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/transfer/repayment/list", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.TransferRepaymentListResponse.parse_obj(data)
 
@@ -3824,23 +3183,20 @@ class PlaidClient:
         The `/transfer/repayment/return/list` endpoint retrieves the set of returns that were batched together into the specified repayment. The sum of amounts of returns retrieved by this request equals the amount of the repayment.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferrepaymentreturnlist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "repayment_id": repayment_id,
             "count": count,
             "offset": offset,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/transfer/repayment/return/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/transfer/repayment/return/list",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.TransferRepaymentReturnListResponse.parse_obj(data)
 
@@ -3855,23 +3211,20 @@ class PlaidClient:
         Use the `/sandbox/bank_transfer/simulate` endpoint to simulate a bank transfer event in the Sandbox environment.  Note that while an event will be simulated and will appear when using endpoints such as `/bank_transfer/event/sync` or `/bank_transfer/event/list`, no transactions will actually take place and funds will not move between accounts, even within the Sandbox.
 
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference/#sandboxbank_transfersimulate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "bank_transfer_id": bank_transfer_id,
             "event_type": event_type,
             "failure_reason": None if failure_reason is None else failure_reason.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/sandbox/bank_transfer/simulate",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/sandbox/bank_transfer/simulate",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.SandboxBankTransferSimulateResponse.parse_obj(data)
 
@@ -3883,19 +3236,16 @@ class PlaidClient:
         Use the `/sandbox/transfer/sweep/simulate` endpoint to create a sweep and associated events in the Sandbox environment. Upon calling this endpoint, all `posted` or `pending` transfers with a sweep status of `unswept` will become `swept`, and all `returned` transfers with a sweep status of `swept` will become `return_swept`.
 
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxtransfersweepsimulate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {}
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/sandbox/transfer/sweep/simulate",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/sandbox/transfer/sweep/simulate",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.SandboxTransferSweepSimulateResponse.parse_obj(data)
 
@@ -3910,23 +3260,16 @@ class PlaidClient:
         Use the `/sandbox/transfer/simulate` endpoint to simulate a transfer event in the Sandbox environment.  Note that while an event will be simulated and will appear when using endpoints such as `/transfer/event/sync` or `/transfer/event/list`, no transactions will actually take place and funds will not move between accounts, even within the Sandbox.
 
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxtransfersimulate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "transfer_id": transfer_id,
             "event_type": event_type,
             "failure_reason": None if failure_reason is None else failure_reason.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/sandbox/transfer/simulate",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/sandbox/transfer/simulate", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.SandboxTransferSimulateResponse.parse_obj(data)
 
@@ -3938,19 +3281,16 @@ class PlaidClient:
         Use the `/sandbox/transfer/repayment/simulate` endpoint to trigger the creation of a repayment. As a side effect of calling this route, a repayment is created that includes all unreimbursed returns of guaranteed transfers. If there are no such returns, an 400 error is returned.
 
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxtransferrepaymentsimulate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {}
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/sandbox/transfer/repayment/simulate",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/sandbox/transfer/repayment/simulate",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.SandboxTransferRepaymentSimulateResponse.parse_obj(data)
 
@@ -3962,21 +3302,18 @@ class PlaidClient:
         Use the `/sandbox/transfer/fire_webhook` endpoint to manually trigger a Transfer webhook in the Sandbox environment.
 
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxtransferfire_webhook>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "webhook": webhook,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/sandbox/transfer/fire_webhook",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/sandbox/transfer/fire_webhook",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.SandboxTransferFireWebhookResponse.parse_obj(data)
 
@@ -3990,22 +3327,15 @@ class PlaidClient:
         The data in the employer database is currently limited. As the Deposit Switch and Income products progress through their respective beta periods, more employers are being regularly added. Because the employer database is frequently updated, we recommend that you do not cache or store data from this endpoint for more than a day.
 
         See endpoint docs at <https://plaid.com/docs/api/employers/#employerssearch>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "query": query,
             "products": products,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/employers/search",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/employers/search", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.EmployersSearchResponse.parse_obj(data)
 
@@ -4020,23 +3350,16 @@ class PlaidClient:
         `/income/verification/create` begins the income verification process by returning an `income_verification_id`. You can then provide the `income_verification_id` to `/link/token/create` under the `income_verification` parameter in order to create a Link instance that will prompt the user to go through the income verification flow. Plaid will fire an `INCOME` webhook once the user completes the Payroll Income flow, or when the uploaded documents in the Document Income flow have finished processing.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationcreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "webhook": webhook,
             "precheck_id": precheck_id,
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/income/verification/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/income/verification/create", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.IncomeVerificationCreateResponse.parse_obj(data)
 
@@ -4052,22 +3375,19 @@ class PlaidClient:
         This endpoint has been deprecated; new integrations should use `/credit/payroll_income/get` instead.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationpaystubsget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "income_verification_id": income_verification_id,
             "access_token": access_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/income/verification/paystubs/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/income/verification/paystubs/get",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.IncomeVerificationPaystubsGetResponse.parse_obj(data)
 
@@ -4090,23 +3410,20 @@ class PlaidClient:
         The `request_id` is returned in the `Plaid-Request-ID` header.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationdocumentsdownload>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "income_verification_id": income_verification_id,
             "access_token": access_token,
             "document_id": document_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/income/verification/documents/download",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/income/verification/documents/download",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
 
     def income_verification_refresh(
         self,
@@ -4118,22 +3435,19 @@ class PlaidClient:
         `/income/verification/refresh` refreshes a given income verification.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationrefresh>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "income_verification_id": income_verification_id,
             "access_token": access_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/income/verification/refresh",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/income/verification/refresh",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.IncomeVerificationRefreshResponse.parse_obj(data)
 
@@ -4149,22 +3463,19 @@ class PlaidClient:
         This endpoint has been deprecated; new integrations should use `/credit/payroll_income/get` instead.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationtaxformsget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "income_verification_id": income_verification_id,
             "access_token": access_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/income/verification/taxforms/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/income/verification/taxforms/get",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.IncomeVerificationTaxformsGetResponse.parse_obj(data)
 
@@ -4185,9 +3496,7 @@ class PlaidClient:
         This endpoint has been deprecated; new integrations should use `/credit/payroll_income/precheck` instead.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationprecheck>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "user": None if user is None else user.dict(),
@@ -4198,14 +3507,13 @@ class PlaidClient:
             if us_military_info is None
             else us_military_info.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/income/verification/precheck",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/income/verification/precheck",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.IncomeVerificationPrecheckResponse.parse_obj(data)
 
@@ -4219,21 +3527,18 @@ class PlaidClient:
         This endpoint has been deprecated; new integrations should use `/credit/employment/get` instead.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#employmentverificationget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/employment/verification/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/employment/verification/get",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.EmploymentVerificationGetResponse.parse_obj(data)
 
@@ -4249,9 +3554,7 @@ class PlaidClient:
         This endpoint provides an alternative to `/deposit_switch/create` for customers who have not yet fully integrated with Plaid Exchange. Like `/deposit_switch/create`, it creates a deposit switch entity that will be persisted throughout the lifecycle of the switch.
 
         See endpoint docs at <https://plaid.com/docs/deposit-switch/reference#deposit_switchaltcreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "target_account": None if target_account is None else target_account.dict(),
@@ -4259,14 +3562,9 @@ class PlaidClient:
             "options": None if options is None else options.dict(),
             "country_code": country_code,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/deposit_switch/alt/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/deposit_switch/alt/create", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.DepositSwitchAltCreateResponse.parse_obj(data)
 
@@ -4280,22 +3578,19 @@ class PlaidClient:
         To grant access to an Audit Copy token, use the `/credit/audit_copy_token/create` endpoint to create an `audit_copy_token` and then pass that token to the third party who needs access. Each third party has its own `auditor_id`, for example `fannie_mae`. You’ll need to create a separate Audit Copy for each third party to whom you want to grant access to the Report.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditaudit_copy_tokencreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "report_tokens": None if report_tokens is None else report_tokens.dict(),
             "auditor_id": auditor_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/credit/audit_copy_token/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/credit/audit_copy_token/create",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.CreditAuditCopyTokenCreateResponse.parse_obj(data)
 
@@ -4307,21 +3602,18 @@ class PlaidClient:
         The `/credit/audit_copy_token/remove` endpoint allows you to remove an Audit Copy. Removing an Audit Copy invalidates the `audit_copy_token` associated with it, meaning both you and any third parties holding the token will no longer be able to use it to access Report data. Items associated with the Report data and other Audit Copies of it are not affected and will remain accessible after removing the given Audit Copy.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditaudit_copy_tokenremove>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "audit_copy_token": audit_copy_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/credit/audit_copy_token/remove",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/credit/audit_copy_token/remove",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.CreditAuditCopyTokenRemoveResponse.parse_obj(data)
 
@@ -4335,22 +3627,15 @@ class PlaidClient:
         `/credit/bank_income/get` returns the bank income report(s) for a specified user.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditbank_incomeget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "user_token": user_token,
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/credit/bank_income/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/credit/bank_income/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.CreditBankIncomeGetResponse.parse_obj(data)
 
@@ -4360,21 +3645,14 @@ class PlaidClient:
         `/credit/bank_income/pdf/get` returns the most recent bank income report for a specified user in PDF format.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditbank_incomepdfget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "user_token": user_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/credit/bank_income/pdf/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/credit/bank_income/pdf/get", headers, params, data
         )
-        res = self.send(req)
 
     def credit_bank_income_refresh(
         self,
@@ -4386,22 +3664,15 @@ class PlaidClient:
         `/credit/bank_income/refresh` refreshes the bank income report data for a specific user.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditbank_incomerefresh>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "user_token": user_token,
             "options": None if options is None else options.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/credit/bank_income/refresh",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/credit/bank_income/refresh", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.CreditBankIncomeRefreshResponse.parse_obj(data)
 
@@ -4413,21 +3684,14 @@ class PlaidClient:
         This endpoint gets payroll income information for a specific user, either as a result of the user connecting to their payroll provider or uploading a pay related document.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditpayroll_incomeget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "user_token": user_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/credit/payroll_income/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/credit/payroll_income/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.CreditPayrollIncomeGetResponse.parse_obj(data)
 
@@ -4445,9 +3709,7 @@ class PlaidClient:
         While all request fields are optional, providing `employer` data will increase the chance of receiving a useful result.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditpayroll_incomeprecheck>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "user_token": user_token,
@@ -4457,14 +3719,13 @@ class PlaidClient:
             if us_military_info is None
             else us_military_info.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/credit/payroll_income/precheck",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/credit/payroll_income/precheck",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.CreditPayrollIncomePrecheckResponse.parse_obj(data)
 
@@ -4476,21 +3737,14 @@ class PlaidClient:
         `/credit/employment/get` returns a list of items with employment information from a user's payroll provider that was verified by an end user.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditemploymentget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "user_token": user_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/credit/employment/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/credit/employment/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.CreditEmploymentGetResponse.parse_obj(data)
 
@@ -4502,21 +3756,18 @@ class PlaidClient:
         `/credit/payroll_income/refresh` refreshes a given digital payroll income verification.
 
         See endpoint docs at <https://plaid.com/docs/api/products/income/#creditpayroll_incomerefresh>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "user_token": user_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/credit/payroll_income/refresh",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/credit/payroll_income/refresh",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.CreditPayrollIncomeRefreshResponse.parse_obj(data)
 
@@ -4533,23 +3784,16 @@ class PlaidClient:
         To grant access to an Asset Report to a third party, use the `/credit/relay/create` endpoint to create a `relay_token` and then pass that token to the third party who needs access. Each third party has its own `secondary_client_id`, for example `ce5bd328dcd34123456`. You'll need to create a separate `relay_token` for each third party to whom you want to grant access to the Report.
 
         See endpoint docs at <https://plaid.com/docs/none/>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "report_tokens": None if report_tokens is None else report_tokens.dict(),
             "secondary_client_id": secondary_client_id,
             "webhook": webhook,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/credit/relay/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/credit/relay/create", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.CreditRelayCreateResponse.parse_obj(data)
 
@@ -4561,22 +3805,15 @@ class PlaidClient:
         `/credit/relay/get` allows third parties to get a report that was shared with them, using an `relay_token` that was created by the report owner.
 
         See endpoint docs at <https://plaid.com/docs/none/>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "relay_token": relay_token,
             "report_type": report_type,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/credit/relay/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/credit/relay/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.AssetReportGetResponse.parse_obj(data)
 
@@ -4588,23 +3825,16 @@ class PlaidClient:
         The `/credit/relay/refresh` endpoint allows third parties to refresh an report that was relayed to them, using a `relay_token` that was created by the report owner. A new report will be created based on the old one, but with the most recent data available.
 
         See endpoint docs at <https://plaid.com/docs/api/products/#creditrelayrefresh>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "relay_token": relay_token,
             "report_type": report_type,
             "webhook": webhook,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/credit/relay/refresh",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/credit/relay/refresh", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.CreditRelayRefreshResponse.parse_obj(data)
 
@@ -4614,21 +3844,14 @@ class PlaidClient:
         The `/credit/relay/remove` endpoint allows you to invalidate a `relay_token`, meaning the third party holding the token will no longer be able to use it to access the reports to which the `relay_token` gives access to. The report, items associated with it, and other Relay tokens that provide access to the same report are not affected and will remain accessible after removing the given `relay_token.
 
         See endpoint docs at <https://plaid.com/docs/none/>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "relay_token": relay_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/credit/relay/remove",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/credit/relay/remove", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.CreditRelayRemoveResponse.parse_obj(data)
 
@@ -4640,21 +3863,18 @@ class PlaidClient:
         Use the `/sandbox/bank_transfer/fire_webhook` endpoint to manually trigger a Bank Transfers webhook in the Sandbox environment.
 
         See endpoint docs at <https://plaid.com/docs/bank-transfers/reference/#sandboxbank_transferfire_webhook>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "webhook": webhook,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/sandbox/bank_transfer/fire_webhook",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/sandbox/bank_transfer/fire_webhook",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.SandboxBankTransferFireWebhookResponse.parse_obj(data)
 
@@ -4670,9 +3890,7 @@ class PlaidClient:
         Use the `/sandbox/income/fire_webhook` endpoint to manually trigger an Income webhook in the Sandbox environment.
 
         See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxincomefire_webhook>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "item_id": item_id,
@@ -4680,14 +3898,13 @@ class PlaidClient:
             "webhook": webhook,
             "verification_status": verification_status,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/sandbox/income/fire_webhook",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/sandbox/income/fire_webhook",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.SandboxIncomeFireWebhookResponse.parse_obj(data)
 
@@ -4695,22 +3912,19 @@ class PlaidClient:
         self, oauth_state_id: str, accounts: List[str]
     ) -> model.SandboxOauthSelectAccountsResponse:
         """Save the selected accounts when connecting to the Platypus Oauth institution"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "oauth_state_id": oauth_state_id,
             "accounts": accounts,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/sandbox/oauth/select_accounts",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/sandbox/oauth/select_accounts",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.SandboxOauthSelectAccountsResponse.parse_obj(data)
 
@@ -4732,9 +3946,7 @@ class PlaidClient:
         In order to obtain a valid score for an ACH transaction, Plaid must have an access token for the account, and the Item must be healthy (receiving product updates) or have recently been in a healthy state. If the transaction does not meet eligibility requirements, an error will be returned corresponding to the underlying cause. If `/signal/evaluate` is called on the same transaction multiple times within a 24-hour period, cached results may be returned.
 
         See endpoint docs at <https://plaid.com/docs/signal/reference#signalevaluate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
@@ -4746,14 +3958,9 @@ class PlaidClient:
             "user": None if user is None else user.dict(),
             "device": None if device is None else device.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/signal/evaluate",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/signal/evaluate", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.SignalEvaluateResponse.parse_obj(data)
 
@@ -4768,23 +3975,16 @@ class PlaidClient:
         After calling `/signal/evaluate`, call `/signal/decision/report` to report whether the transaction was initiated. This endpoint will return an `INVALID_REQUEST` error if called a second time with a different value for `initiated`.
 
         See endpoint docs at <https://plaid.com/docs/signal/reference#signaldecisionreport>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "client_transaction_id": client_transaction_id,
             "initiated": initiated,
             "days_funds_on_hold": days_funds_on_hold,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/signal/decision/report",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/signal/decision/report", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.SignalDecisionReportResponse.parse_obj(data)
 
@@ -4796,22 +3996,15 @@ class PlaidClient:
         Call the `/signal/return/report` endpoint to report a returned transaction that was previously sent to the `/signal/evaluate` endpoint. Your feedback will be used by the model to incorporate the latest risk trend in your portfolio.
 
         See endpoint docs at <https://plaid.com/docs/signal/reference#signalreturnreport>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "client_transaction_id": client_transaction_id,
             "return_code": return_code,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/signal/return/report",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/signal/return/report", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.SignalReturnReportResponse.parse_obj(data)
 
@@ -4821,21 +4014,14 @@ class PlaidClient:
         Call `/signal/prepare` with Plaid-linked bank account information at least 10 seconds before calling `/signal/evaluate` or as soon as an end-user enters the ACH deposit flow in your application.
 
         See endpoint docs at <https://plaid.com/docs/signal/reference#signalprepare>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/signal/prepare",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/signal/prepare", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.SignalPrepareResponse.parse_obj(data)
 
@@ -4845,21 +4031,12 @@ class PlaidClient:
         Create an e-wallet. The response is the newly created e-wallet object.
 
         See endpoint docs at <https://plaid.com/docs/api/products/#walletcreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "iso_currency_code": iso_currency_code,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/wallet/create",
-            headers=headers,
-            params=params,
-            json=data,
-        )
-        res = self.send(req)
+        res = self.send("POST", self.base_url + "/wallet/create", headers, params, data)
         data = res.json()
         return model.WalletCreateResponse.parse_obj(data)
 
@@ -4869,21 +4046,12 @@ class PlaidClient:
         Fetch an e-wallet. The response includes the current balance.
 
         See endpoint docs at <https://plaid.com/docs/api/products/#walletget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "wallet_id": wallet_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/wallet/get",
-            headers=headers,
-            params=params,
-            json=data,
-        )
-        res = self.send(req)
+        res = self.send("POST", self.base_url + "/wallet/get", headers, params, data)
         data = res.json()
         return model.WalletGetResponse.parse_obj(data)
 
@@ -4898,23 +4066,14 @@ class PlaidClient:
         This endpoint lists all e-wallets in descending order of creation.
 
         See endpoint docs at <https://plaid.com/docs/api/products/#walletlist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "iso_currency_code": iso_currency_code,
             "cursor": cursor,
             "count": count,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/wallet/list",
-            headers=headers,
-            params=params,
-            json=data,
-        )
-        res = self.send(req)
+        res = self.send("POST", self.base_url + "/wallet/list", headers, params, data)
         data = res.json()
         return model.WalletListResponse.parse_obj(data)
 
@@ -4933,9 +4092,7 @@ class PlaidClient:
         The payouts are executed over the Faster Payment rails, where settlement usually only takes a few seconds.
 
         See endpoint docs at <https://plaid.com/docs/api/products/#wallettransactionexecute>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "idempotency_key": idempotency_key,
@@ -4944,14 +4101,9 @@ class PlaidClient:
             "amount": None if amount is None else amount.dict(),
             "reference": reference,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/wallet/transaction/execute",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/wallet/transaction/execute", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.WalletTransactionExecuteResponse.parse_obj(data)
 
@@ -4961,21 +4113,14 @@ class PlaidClient:
         """Fetch a specific e-wallet transaction
 
         See endpoint docs at <https://plaid.com/docs/api/products/#wallettransactionget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "transaction_id": transaction_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/wallet/transaction/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/wallet/transaction/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.WalletTransactionGetResponse.parse_obj(data)
 
@@ -4987,23 +4132,16 @@ class PlaidClient:
         This endpoint lists the latest transactions of the specified e-wallet. Transactions are returned in descending order by the `created_at` time.
 
         See endpoint docs at <https://plaid.com/docs/api/products/#wallettransactionslist>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "wallet_id": wallet_id,
             "cursor": cursor,
             "count": count,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/wallet/transactions/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/wallet/transactions/list", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.WalletTransactionsListResponse.parse_obj(data)
 
@@ -5015,22 +4153,19 @@ class PlaidClient:
         The '/beta/transactions/v1/enhance' endpoint enriches raw transaction data provided directly by clients.
 
         The product is currently in beta."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "account_type": account_type,
             "transactions": None if transactions is None else transactions.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/beta/transactions/v1/enhance",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/beta/transactions/v1/enhance",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.TransactionsEnhanceGetResponse.parse_obj(data)
 
@@ -5047,23 +4182,20 @@ class PlaidClient:
         Rules will be applied on the Item's transactions returned in `/transactions/get` response.
 
         The product is currently in beta. To request access, contact transactions-feedback@plaid.com."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "personal_finance_category": personal_finance_category,
             "rule_details": None if rule_details is None else rule_details.dict(),
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/beta/transactions/rules/v1/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/beta/transactions/rules/v1/create",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.TransactionsRulesCreateResponse.parse_obj(data)
 
@@ -5073,21 +4205,18 @@ class PlaidClient:
         """Return a list of rules created for the Item associated with the access token.
 
         The `/transactions/rules/v1/list` returns a list of transaction rules created for the Item associated with the access token."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/beta/transactions/rules/v1/list",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/beta/transactions/rules/v1/list",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.TransactionsRulesListResponse.parse_obj(data)
 
@@ -5097,22 +4226,19 @@ class PlaidClient:
         """Remove transaction rule
 
         The `/transactions/rules/v1/remove` endpoint is used to remove a transaction rule."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "rule_id": rule_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/beta/transactions/rules/v1/remove",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/beta/transactions/rules/v1/remove",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.TransactionsRulesRemoveResponse.parse_obj(data)
 
@@ -5122,19 +4248,12 @@ class PlaidClient:
         Use `/payment_profile/create` endpoint to create a new payment profile, the return value is a Payment Profile ID. Attach it to the link token create request and the link workflow will then "activate" this Payment Profile if the linkage is successful. It can then be used to create Transfers using `/transfer/authorization/create` and /transfer/create`.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#payment_profilecreate>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {}
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/payment_profile/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/payment_profile/create", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.PaymentProfileCreateResponse.parse_obj(data)
 
@@ -5146,21 +4265,14 @@ class PlaidClient:
         Use the `/payment_profile/get` endpoint to get the status of a given Payment Profile.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#payment_profileget>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "payment_profile_id": payment_profile_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/payment_profile/get",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/payment_profile/get", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.PaymentProfileGetResponse.parse_obj(data)
 
@@ -5172,21 +4284,14 @@ class PlaidClient:
         Use the `/payment_profile/remove` endpoint to remove a given Payment Profile. Once it’s removed, it can no longer be used to create transfers.
 
         See endpoint docs at <https://plaid.com/docs/api/products/transfer/#payment_profileremove>."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "payment_profile_id": payment_profile_id,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/payment_profile/remove",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST", self.base_url + "/payment_profile/remove", headers, params, data
         )
-        res = self.send(req)
         data = res.json()
         return model.PaymentProfileRemoveResponse.parse_obj(data)
 
@@ -5200,9 +4305,7 @@ class PlaidClient:
         """Creates a new client for a reseller partner end customer.
 
         The `/partner/v1/customers/create` endpoint is used by reseller partners to create an end customer client."""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {}
         params = {}
         data = {
             "company_name": company_name,
@@ -5210,19 +4313,18 @@ class PlaidClient:
             "products": products,
             "create_link_customization": create_link_customization,
         }
-        req = requests.Request(
-            method="POST",
-            url=self.base_url + "/beta/partner/v1/customers/create",
-            headers=headers,
-            params=params,
-            json=data,
+        res = self.send(
+            "POST",
+            self.base_url + "/beta/partner/v1/customers/create",
+            headers,
+            params,
+            data,
         )
-        res = self.send(req)
         data = res.json()
         return model.PartnerCustomersCreateResponse.parse_obj(data)
 
     @classmethod
     def from_env(cls) -> "PlaidClient":
         env = os.environ["PLAID_ENV"]
-        url = f"https://{env}.plaid.com/"
+        url = f"https://{env}.plaid.com"
         return cls(base_url=url, authenticator=PlaidAuthenticator.from_env())

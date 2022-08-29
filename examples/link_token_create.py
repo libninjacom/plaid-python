@@ -17,8 +17,15 @@ def main():
 
 async def async_main():
     client = AsyncPlaidClient.from_env()
-    res = await client.item_get("access-sandbox-b4957595-eae2-4130-9da7-114d14726a62")
-    print(res)
+    enable_debug_logging()
+    res = await client.link_token_create(
+        "plaid-test",
+        "en",
+        ["US"],
+        user=LinkTokenCreateRequestUser(client_user_id="user-id"),
+        products=["auth", "transactions"],
+    )
+    print(f"{res!r}")
 
 
 if __name__ == "__main__":

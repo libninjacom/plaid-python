@@ -1,44 +1,86 @@
 import os
 import aiohttp
-from typing import Optional, List, Any
-import plaid2.model as model
+import asyncio
+import json
+import logging
+from .logger import logger
+from .authenticator import PlaidAuthenticator
+from typing import Optional, List, Any, Dict
+from . import model
 
 
 class AsyncPlaidClient:
-    def __init__(self, base_url: str):
-        self.authenticator = None
+    def __init__(self, base_url: str, authenticator: PlaidAuthenticator):
+        self.authenticator = authenticator
         self.base_url = base_url
-
-    def _raise_for_status(self, response: aiohttp.ClientResponse) -> None:
-        if response.status < 400:
-            return
-        raise requests.exceptions.HTTPError(
-            response.status, response.reason, response.content
+        self.session = aiohttp.ClientSession(
+            headers={
+                "User-Agent": "plaid2/python/0.1.0",
+                "Content-Type": "application/json",
+            }
         )
+
+    async def send(
+        self,
+        method: str,
+        url: str,
+        headers: Dict[str, str],
+        params: Dict[str, str],
+        data: Dict[str, Any],
+    ) -> aiohttp.ClientResponse:
+        self.authenticator.authenticate(headers, params, data)
+        do_debug = logger.getEffectiveLevel() == logging.DEBUG
+        if do_debug:
+            logger.debug(
+                json.dumps(
+                    dict(
+                        method=method,
+                        url=url,
+                        headers=dict(**headers, **self.session.headers),
+                        params=params,
+                        json=data,
+                    )
+                )
+            )
+        async with self.session.request(
+            method, url, headers=headers, params=params, json=data
+        ) as res:
+            if do_debug:
+                data = dict(
+                    status_code=res.status,
+                    headers=dict(**res.headers),
+                )
+                try:
+                    data["json"] = await res.json()
+                except json.JSONDecodeError:
+                    data["body"] = await res.text()
+                logger.debug(json.dumps(data))
+            if not res.ok:
+                content = await res.text()
+                res.release()
+                raise aiohttp.ClientResponseError(
+                    res.request_info,
+                    res.history,
+                    status=res.status,
+                    message=content,
+                    headers=res.headers,
+                )
+            return res
 
     async def item_application_list(
         self, access_token: Optional[str] = None
     ) -> model.ItemApplicationListResponse:
-        """List a user’s connected applications
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        """List a user’s connected applications"""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/item/application/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.ItemApplicationListResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/item/application/list", headers, params, data
+        )
+        data = await res.json()
+        return model.ItemApplicationListResponse.parse_obj(data)
 
     async def item_application_scopes_update(
         self,
@@ -50,12 +92,8 @@ class AsyncPlaidClient:
     ) -> model.ItemApplicationScopesUpdateResponse:
         """Update the scopes of access for a particular application
 
-        Enable consumers to update product access on selected accounts for an application.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        Enable consumers to update product access on selected accounts for an application."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
@@ -64,65 +102,49 @@ class AsyncPlaidClient:
             "state": state,
             "context": context,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/item/application/scopes/update",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.ItemApplicationScopesUpdateResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/item/application/scopes/update",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.ItemApplicationScopesUpdateResponse.parse_obj(data)
 
     async def application_get(
         self, application_id: str
     ) -> model.ApplicationGetResponse:
         """Retrieve information about a Plaid application
 
-        Allows financial institutions to retrieve information about Plaid clients for the purpose of building control-tower experiences
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        Allows financial institutions to retrieve information about Plaid clients for the purpose of building control-tower experiences"""
+        headers = {}
         params = {}
         data = {
             "application_id": application_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/application/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.ApplicationGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/application/get", headers, params, data
+        )
+        data = await res.json()
+        return model.ApplicationGetResponse.parse_obj(data)
 
     async def item_get(self, access_token: str) -> model.ItemGetResponse:
         """Retrieve an Item
 
         Returns information about the status of an Item.
 
-        See endpoint docs at <https://plaid.com/docs/api/items/#itemget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/items/#itemget>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/item/get", params=params, headers=headers, data=data
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.ItemGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/item/get", headers, params, data
+        )
+        data = await res.json()
+        return model.ItemGetResponse.parse_obj(data)
 
     async def auth_get(
         self, access_token: str, options: Optional[model.AuthGetRequestOptions] = None
@@ -137,24 +159,18 @@ class AsyncPlaidClient:
 
         Versioning note: In API version 2017-03-08, the schema of the `numbers` object returned by this endpoint is substantially different. For details, see [Plaid API versioning](https://plaid.com/docs/api/versioning/#version-2018-05-22).
 
-        See endpoint docs at <https://plaid.com/docs/api/products/auth/#authget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/auth/#authget>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/auth/get", params=params, headers=headers, data=data
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.AuthGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/auth/get", headers, params, data
+        )
+        data = await res.json()
+        return model.AuthGetResponse.parse_obj(data)
 
     async def transactions_get(
         self,
@@ -175,12 +191,8 @@ class AsyncPlaidClient:
 
         Note that data may not be immediately available to `/transactions/get`. Plaid will begin to prepare transactions data upon Item link, if Link was initialized with `transactions`, or upon the first call to `/transactions/get`, if it wasn't. To be alerted when transaction data is ready to be fetched, listen for the [`INITIAL_UPDATE`](https://plaid.com/docs/api/products/transactions/#initial_update) and [`HISTORICAL_UPDATE`](https://plaid.com/docs/api/products/transactions/#historical_update) webhooks. If no transaction history is ready when `/transactions/get` is called, it will return a `PRODUCT_NOT_READY` error.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transactions/#transactionsget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transactions/#transactionsget>."""
+        headers = {}
         params = {}
         data = {
             "options": None if options is None else options.dict(),
@@ -188,16 +200,11 @@ class AsyncPlaidClient:
             "start_date": start_date,
             "end_date": end_date,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/transactions/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.TransactionsGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/transactions/get", headers, params, data
+        )
+        data = await res.json()
+        return model.TransactionsGetResponse.parse_obj(data)
 
     async def transactions_refresh(
         self, access_token: str
@@ -208,26 +215,17 @@ class AsyncPlaidClient:
 
         Access to `/transactions/refresh` in Production is specific to certain pricing plans. If you cannot access `/transactions/refresh` in Production, [contact Sales](https://www.plaid.com/contact) for assistance.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transactions/#transactionsrefresh>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transactions/#transactionsrefresh>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/transactions/refresh",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.TransactionsRefreshResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/transactions/refresh", headers, params, data
+        )
+        data = await res.json()
+        return model.TransactionsRefreshResponse.parse_obj(data)
 
     async def transactions_recurring_get(
         self,
@@ -245,28 +243,19 @@ class AsyncPlaidClient:
 
         After the initial call, you can call `/transactions/recurring/get` endpoint at any point in the future to retrieve the latest summary of recurring streams. Since recurring streams do not change often, it will typically not be necessary to call this endpoint more than once per day.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transactions/#transactionsrecurringget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transactions/#transactionsrecurringget>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "options": None if options is None else options.dict(),
             "account_ids": account_ids,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/transactions/recurring/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.TransactionsRecurringGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/transactions/recurring/get", headers, params, data
+        )
+        data = await res.json()
+        return model.TransactionsRecurringGetResponse.parse_obj(data)
 
     async def transactions_sync(
         self,
@@ -295,12 +284,8 @@ class AsyncPlaidClient:
 
         To be alerted when new data is available, listen for the [`SYNC_UPDATES_AVAILABLE`](https://plaid.com/docs/api/products/transactions/#sync_updates_available) webhook.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transactions/#transactionssync>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transactions/#transactionssync>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
@@ -308,16 +293,11 @@ class AsyncPlaidClient:
             "count": count,
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/transactions/sync",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.TransactionsSyncResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/transactions/sync", headers, params, data
+        )
+        data = await res.json()
+        return model.TransactionsSyncResponse.parse_obj(data)
 
     async def institutions_get(
         self,
@@ -332,12 +312,8 @@ class AsyncPlaidClient:
 
         If there is no overlap between an institution’s enabled products and a client’s enabled products, then the institution will be filtered out from the response. As a result, the number of institutions returned may not match the count specified in the call.
 
-        See endpoint docs at <https://plaid.com/docs/api/institutions/#institutionsget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/institutions/#institutionsget>."""
+        headers = {}
         params = {}
         data = {
             "count": count,
@@ -345,16 +321,11 @@ class AsyncPlaidClient:
             "country_codes": country_codes,
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/institutions/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.InstitutionsGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/institutions/get", headers, params, data
+        )
+        data = await res.json()
+        return model.InstitutionsGetResponse.parse_obj(data)
 
     async def institutions_search(
         self,
@@ -370,12 +341,8 @@ class AsyncPlaidClient:
         Versioning note: API versions 2019-05-29 and earlier allow use of the `public_key` parameter instead of the `client_id` and `secret` parameters to authenticate to this endpoint. The `public_key` parameter has since been deprecated; all customers are encouraged to use `client_id` and `secret` instead.
 
 
-        See endpoint docs at <https://plaid.com/docs/api/institutions/#institutionssearch>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/institutions/#institutionssearch>."""
+        headers = {}
         params = {}
         data = {
             "query": query,
@@ -383,16 +350,11 @@ class AsyncPlaidClient:
             "country_codes": country_codes,
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/institutions/search",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.InstitutionsSearchResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/institutions/search", headers, params, data
+        )
+        data = await res.json()
+        return model.InstitutionsSearchResponse.parse_obj(data)
 
     async def institutions_get_by_id(
         self,
@@ -407,28 +369,19 @@ class AsyncPlaidClient:
         Versioning note: API versions 2019-05-29 and earlier allow use of the `public_key` parameter instead of the `client_id` and `secret` to authenticate to this endpoint. The `public_key` has been deprecated; all customers are encouraged to use `client_id` and `secret` instead.
 
 
-        See endpoint docs at <https://plaid.com/docs/api/institutions/#institutionsget_by_id>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/institutions/#institutionsget_by_id>."""
+        headers = {}
         params = {}
         data = {
             "institution_id": institution_id,
             "country_codes": country_codes,
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/institutions/get_by_id",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.InstitutionsGetByIdResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/institutions/get_by_id", headers, params, data
+        )
+        data = await res.json()
+        return model.InstitutionsGetByIdResponse.parse_obj(data)
 
     async def item_remove(self, access_token: str) -> model.ItemRemoveResponse:
         """Remove an Item
@@ -441,26 +394,17 @@ class AsyncPlaidClient:
 
         API versions 2019-05-29 and earlier return a `removed` boolean as part of the response.
 
-        See endpoint docs at <https://plaid.com/docs/api/items/#itemremove>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/items/#itemremove>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/item/remove",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.ItemRemoveResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/item/remove", headers, params, data
+        )
+        data = await res.json()
+        return model.ItemRemoveResponse.parse_obj(data)
 
     async def accounts_get(
         self,
@@ -474,51 +418,33 @@ class AsyncPlaidClient:
 
         This endpoint retrieves cached information, rather than extracting fresh information from the institution. As a result, balances returned may not be up-to-date; for realtime balance information, use `/accounts/balance/get` instead. Note that some information is nullable.
 
-        See endpoint docs at <https://plaid.com/docs/api/accounts/#accountsget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/accounts/#accountsget>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/accounts/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.AccountsGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/accounts/get", headers, params, data
+        )
+        data = await res.json()
+        return model.AccountsGetResponse.parse_obj(data)
 
     async def categories_get(self) -> model.CategoriesGetResponse:
         """Get Categories
 
         Send a request to the `/categories/get` endpoint to get detailed information on categories returned by Plaid. This endpoint does not require authentication.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transactions/#categoriesget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transactions/#categoriesget>."""
+        headers = {}
         params = {}
         data = {}
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/categories/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.CategoriesGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/categories/get", headers, params, data
+        )
+        data = await res.json()
+        return model.CategoriesGetResponse.parse_obj(data)
 
     async def sandbox_processor_token_create(
         self,
@@ -529,27 +455,22 @@ class AsyncPlaidClient:
 
         Use the `/sandbox/processor_token/create` endpoint to create a valid `processor_token` for an arbitrary institution ID and test credentials. The created `processor_token` corresponds to a new Sandbox Item. You can then use this `processor_token` with the `/processor/` API endpoints in Sandbox. You can also use `/sandbox/processor_token/create` with the [`user_custom` test username](https://plaid.com/docs/sandbox/user-custom) to generate a test account with custom data.
 
-        See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxprocessor_tokencreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxprocessor_tokencreate>."""
+        headers = {}
         params = {}
         data = {
             "institution_id": institution_id,
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/sandbox/processor_token/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.SandboxProcessorTokenCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/sandbox/processor_token/create",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.SandboxProcessorTokenCreateResponse.parse_obj(data)
 
     async def sandbox_public_token_create(
         self,
@@ -562,12 +483,8 @@ class AsyncPlaidClient:
 
         Use the `/sandbox/public_token/create` endpoint to create a valid `public_token`  for an arbitrary institution ID, initial products, and test credentials. The created `public_token` maps to a new Sandbox Item. You can then call `/item/public_token/exchange` to exchange the `public_token` for an `access_token` and perform all API actions. `/sandbox/public_token/create` can also be used with the [`user_custom` test username](https://plaid.com/docs/sandbox/user-custom) to generate a test account with custom data. `/sandbox/public_token/create` cannot be used with OAuth institutions.
 
-        See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxpublic_tokencreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxpublic_tokencreate>."""
+        headers = {}
         params = {}
         data = {
             "institution_id": institution_id,
@@ -575,16 +492,15 @@ class AsyncPlaidClient:
             "options": None if options is None else options.dict(),
             "user_token": user_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/sandbox/public_token/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.SandboxPublicTokenCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/sandbox/public_token/create",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.SandboxPublicTokenCreateResponse.parse_obj(data)
 
     async def sandbox_item_fire_webhook(
         self, access_token: str, webhook_code: str, webhook_type: Optional[str] = None
@@ -603,28 +519,19 @@ class AsyncPlaidClient:
 
         Note that this endpoint is provided for developer ease-of-use and is not required for testing webhooks; webhooks will also fire in Sandbox under the same conditions that they would in Production or Development.
 
-        See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxitemfire_webhook>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxitemfire_webhook>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "webhook_type": webhook_type,
             "webhook_code": webhook_code,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/sandbox/item/fire_webhook",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.SandboxItemFireWebhookResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/sandbox/item/fire_webhook", headers, params, data
+        )
+        data = await res.json()
+        return model.SandboxItemFireWebhookResponse.parse_obj(data)
 
     async def accounts_balance_get(
         self,
@@ -635,27 +542,18 @@ class AsyncPlaidClient:
 
         The `/accounts/balance/get` endpoint returns the real-time balance for each of an Item's accounts. While other endpoints may return a balance object, only `/accounts/balance/get` forces the available and current balance fields to be refreshed rather than cached. This endpoint can be used for existing Items that were added via any of Plaid’s other products. This endpoint can be used as long as Link has been initialized with any other product, `balance` itself is not a product that can be used to initialize Link.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/balance/#accountsbalanceget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/balance/#accountsbalanceget>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/accounts/balance/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.AccountsGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/accounts/balance/get", headers, params, data
+        )
+        data = await res.json()
+        return model.AccountsGetResponse.parse_obj(data)
 
     async def identity_get(
         self,
@@ -670,27 +568,18 @@ class AsyncPlaidClient:
 
         Note: In API versions 2018-05-22 and earlier, the `owners` object is not returned, and instead identity information is returned in the top level `identity` object. For more details, see [Plaid API versioning](https://plaid.com/docs/api/versioning/#version-2019-05-29).
 
-        See endpoint docs at <https://plaid.com/docs/api/products/identity/#identityget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/identity/#identityget>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/identity/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.IdentityGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/identity/get", headers, params, data
+        )
+        data = await res.json()
+        return model.IdentityGetResponse.parse_obj(data)
 
     async def identity_match(
         self,
@@ -704,28 +593,19 @@ class AsyncPlaidClient:
 
         This request may take some time to complete if Identity was not specified as an initial product when creating the Item. This is because Plaid must communicate directly with the institution to retrieve the data.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/identity/#identitymatch>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/identity/#identitymatch>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "user": None if user is None else user.dict(),
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/identity/match",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.IdentityMatchResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/identity/match", headers, params, data
+        )
+        data = await res.json()
+        return model.IdentityMatchResponse.parse_obj(data)
 
     async def dashobard_user_get(
         self, dashboard_user_id: str
@@ -734,26 +614,17 @@ class AsyncPlaidClient:
 
         Retrieve information about a dashboard user.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#dashboard_userget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#dashboard_userget>."""
+        headers = {}
         params = {}
         data = {
             "dashboard_user_id": dashboard_user_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/dashboard_user/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.DashboardUserResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/dashboard_user/get", headers, params, data
+        )
+        data = await res.json()
+        return model.DashboardUserResponse.parse_obj(data)
 
     async def dashboard_user_list(
         self, cursor: Optional[str] = None
@@ -762,26 +633,17 @@ class AsyncPlaidClient:
 
         List all dashboard users associated with your account.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#dashboard_userlist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#dashboard_userlist>."""
+        headers = {}
         params = {}
         data = {
             "cursor": cursor,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/dashboard_user/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaginatedDashboardUserListResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/dashboard_user/list", headers, params, data
+        )
+        data = await res.json()
+        return model.PaginatedDashboardUserListResponse.parse_obj(data)
 
     async def identity_verification_create(
         self,
@@ -797,12 +659,8 @@ class AsyncPlaidClient:
         If you don't know whether the associated user already has an active Identity Verification, you can specify `"is_idempotent": true` in the request body. With idempotency enabled, a new Identity Verification will only be created if one does not already exist for the associated `client_user_id` and `template_id`. If an Identity Verification is found, it will be returned unmodified with an `200 OK` HTTP status code.
 
 
-        See endpoint docs at <https://plaid.com/docs/api/products/identity-verification/#identity_verificationcreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/identity-verification/#identity_verificationcreate>."""
+        headers = {}
         params = {}
         data = {
             "is_shareable": is_shareable,
@@ -811,16 +669,15 @@ class AsyncPlaidClient:
             "user": None if user is None else user.dict(),
             "is_idempotent": is_idempotent,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/identity_verification/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.IdentityVerificationResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/identity_verification/create",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.IdentityVerificationResponse.parse_obj(data)
 
     async def identity_verification_get(
         self, identity_verification_id: str
@@ -829,26 +686,17 @@ class AsyncPlaidClient:
 
         Retrieve a previously created identity verification
 
-        See endpoint docs at <https://plaid.com/docs/api/products/identity-verification/#identity_verificationget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/identity-verification/#identity_verificationget>."""
+        headers = {}
         params = {}
         data = {
             "identity_verification_id": identity_verification_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/identity_verification/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.IdentityVerificationResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/identity_verification/get", headers, params, data
+        )
+        data = await res.json()
+        return model.IdentityVerificationResponse.parse_obj(data)
 
     async def identity_verification_list(
         self, template_id: str, client_user_id: str, cursor: Optional[str] = None
@@ -857,28 +705,19 @@ class AsyncPlaidClient:
 
         Filter and list Identity Verifications created by your account
 
-        See endpoint docs at <https://plaid.com/docs/api/products/identity-verification/#identity_verificationlist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/identity-verification/#identity_verificationlist>."""
+        headers = {}
         params = {}
         data = {
             "template_id": template_id,
             "client_user_id": client_user_id,
             "cursor": cursor,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/identity_verification/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaginatedIdentityVerificationListResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/identity_verification/list", headers, params, data
+        )
+        data = await res.json()
+        return model.PaginatedIdentityVerificationListResponse.parse_obj(data)
 
     async def identity_verification_retry(
         self,
@@ -891,12 +730,8 @@ class AsyncPlaidClient:
 
         Allow a customer to retry their identity verification
 
-        See endpoint docs at <https://plaid.com/docs/api/products/identity-verification/#identity_verificationretry>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/identity-verification/#identity_verificationretry>."""
+        headers = {}
         params = {}
         data = {
             "client_user_id": client_user_id,
@@ -904,16 +739,15 @@ class AsyncPlaidClient:
             "strategy": strategy,
             "steps": None if steps is None else steps.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/identity_verification/retry",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.IdentityVerificationResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/identity_verification/retry",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.IdentityVerificationResponse.parse_obj(data)
 
     async def watchlist_screening_entity_create(
         self,
@@ -924,27 +758,22 @@ class AsyncPlaidClient:
 
         Create a new entity watchlist screening to check your customer against watchlists defined in the associated entity watchlist program. If your associated program has ongoing screening enabled, this is the profile information that will be used to monitor your customer over time.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentitycreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentitycreate>."""
+        headers = {}
         params = {}
         data = {
             "search_terms": None if search_terms is None else search_terms.dict(),
             "client_user_id": client_user_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/watchlist_screening/entity/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.EntityWatchlistScreeningResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/entity/create",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.EntityWatchlistScreeningResponse.parse_obj(data)
 
     async def watchlist_screening_entity_get(
         self, entity_watchlist_screening_id: str
@@ -953,26 +782,21 @@ class AsyncPlaidClient:
 
         Retrieve an entity watchlist screening.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityget>."""
+        headers = {}
         params = {}
         data = {
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/watchlist_screening/entity/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.EntityWatchlistScreeningResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/entity/get",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.EntityWatchlistScreeningResponse.parse_obj(data)
 
     async def watchlist_screening_entity_history_list(
         self, entity_watchlist_screening_id: str, cursor: Optional[str] = None
@@ -981,29 +805,22 @@ class AsyncPlaidClient:
 
         List all changes to the entity watchlist screening in reverse-chronological order. If the watchlist screening has not been edited, no history will be returned.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityhistorylist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityhistorylist>."""
+        headers = {}
         params = {}
         data = {
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
             "cursor": cursor,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/watchlist_screening/entity/history/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaginatedEntityWatchlistScreeningListResponse.parse_obj(
-                    data
-                )
+        res = await self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/entity/history/list",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PaginatedEntityWatchlistScreeningListResponse.parse_obj(data)
 
     async def watchlist_screening_entity_hits_list(
         self, entity_watchlist_screening_id: str, cursor: Optional[str] = None
@@ -1012,29 +829,22 @@ class AsyncPlaidClient:
 
         List all hits for the entity watchlist screening.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityhitlist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityhitlist>."""
+        headers = {}
         params = {}
         data = {
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
             "cursor": cursor,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/watchlist_screening/entity/hit/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaginatedEntityWatchlistScreeningHitListResponse.parse_obj(
-                    data
-                )
+        res = await self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/entity/hit/list",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PaginatedEntityWatchlistScreeningHitListResponse.parse_obj(data)
 
     async def watchlist_screening_entity_list(
         self,
@@ -1048,12 +858,8 @@ class AsyncPlaidClient:
 
         List all entity screenings.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentitylist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentitylist>."""
+        headers = {}
         params = {}
         data = {
             "entity_watchlist_program_id": entity_watchlist_program_id,
@@ -1062,18 +868,15 @@ class AsyncPlaidClient:
             "assignee": assignee,
             "cursor": cursor,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/watchlist_screening/entity/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaginatedEntityWatchlistScreeningListResponse.parse_obj(
-                    data
-                )
+        res = await self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/entity/list",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PaginatedEntityWatchlistScreeningListResponse.parse_obj(data)
 
     async def watchlist_screening_entity_program_get(
         self, entity_watchlist_program_id: str
@@ -1082,26 +885,21 @@ class AsyncPlaidClient:
 
         Get an entity watchlist screening program
 
-        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityprogramget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityprogramget>."""
+        headers = {}
         params = {}
         data = {
             "entity_watchlist_program_id": entity_watchlist_program_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/watchlist_screening/entity/program/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.EntityWatchlistProgramResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/entity/program/get",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.EntityWatchlistProgramResponse.parse_obj(data)
 
     async def watchlist_screening_entity_program_list(
         self, cursor: Optional[str] = None
@@ -1110,26 +908,21 @@ class AsyncPlaidClient:
 
         List all entity watchlist screening programs
 
-        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityprogramlist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityprogramlist>."""
+        headers = {}
         params = {}
         data = {
             "cursor": cursor,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/watchlist_screening/entity/program/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaginatedEntityWatchlistProgramListResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/entity/program/list",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PaginatedEntityWatchlistProgramListResponse.parse_obj(data)
 
     async def watchlist_screening_entity_review_create(
         self,
@@ -1142,12 +935,8 @@ class AsyncPlaidClient:
 
         Create a review for an entity watchlist screening. Reviews are compliance reports created by users in your organization regarding the relevance of potential hits found by Plaid.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityreviewcreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityreviewcreate>."""
+        headers = {}
         params = {}
         data = {
             "confirmed_hits": confirmed_hits,
@@ -1155,16 +944,15 @@ class AsyncPlaidClient:
             "comment": comment,
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/watchlist_screening/entity/review/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.EntityWatchlistScreeningReviewResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/entity/review/create",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.EntityWatchlistScreeningReviewResponse.parse_obj(data)
 
     async def watchlist_screening_entity_review_list(
         self, entity_watchlist_screening_id: str, cursor: Optional[str] = None
@@ -1173,31 +961,22 @@ class AsyncPlaidClient:
 
         List all reviews for a particular entity watchlist screening. Reviews are compliance reports created by users in your organization regarding the relevance of potential hits found by Plaid.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityreviewlist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityreviewlist>."""
+        headers = {}
         params = {}
         data = {
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
             "cursor": cursor,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/watchlist_screening/entity/review/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return (
-                    model.PaginatedEntityWatchlistScreeningReviewListResponse.parse_obj(
-                        data
-                    )
-                )
+        res = await self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/entity/review/list",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PaginatedEntityWatchlistScreeningReviewListResponse.parse_obj(data)
 
     async def watchlist_screening_entity_update(
         self,
@@ -1212,12 +991,8 @@ class AsyncPlaidClient:
 
         Update an entity watchlist screening.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityupdate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningentityupdate>."""
+        headers = {}
         params = {}
         data = {
             "entity_watchlist_screening_id": entity_watchlist_screening_id,
@@ -1227,16 +1002,15 @@ class AsyncPlaidClient:
             "client_user_id": client_user_id,
             "reset_fields": reset_fields,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/watchlist_screening/entity/update",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.EntityWatchlistScreeningResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/entity/update",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.EntityWatchlistScreeningResponse.parse_obj(data)
 
     async def watchlist_screening_individual_create(
         self,
@@ -1247,27 +1021,22 @@ class AsyncPlaidClient:
 
         Create a new Watchlist Screening to check your customer against watchlists defined in the associated Watchlist Program. If your associated program has ongoing screening enabled, this is the profile information that will be used to monitor your customer over time.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualcreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualcreate>."""
+        headers = {}
         params = {}
         data = {
             "search_terms": None if search_terms is None else search_terms.dict(),
             "client_user_id": client_user_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/watchlist_screening/individual/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.WatchlistScreeningIndividualResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/individual/create",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.WatchlistScreeningIndividualResponse.parse_obj(data)
 
     async def watchlist_screening_individual_get(
         self, watchlist_screening_id: str
@@ -1276,26 +1045,21 @@ class AsyncPlaidClient:
 
         Retrieve a previously created individual watchlist screening
 
-        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualget>."""
+        headers = {}
         params = {}
         data = {
             "watchlist_screening_id": watchlist_screening_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/watchlist_screening/individual/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.WatchlistScreeningIndividualResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/individual/get",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.WatchlistScreeningIndividualResponse.parse_obj(data)
 
     async def watchlist_screening_individual_history_list(
         self, watchlist_screening_id: str, cursor: Optional[str] = None
@@ -1304,31 +1068,22 @@ class AsyncPlaidClient:
 
         List all changes to the individual watchlist screening in reverse-chronological order. If the watchlist screening has not been edited, no history will be returned.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualhistorylist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualhistorylist>."""
+        headers = {}
         params = {}
         data = {
             "watchlist_screening_id": watchlist_screening_id,
             "cursor": cursor,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/watchlist_screening/individual/history/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return (
-                    model.PaginatedIndividualWatchlistScreeningListResponse.parse_obj(
-                        data
-                    )
-                )
+        res = await self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/individual/history/list",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PaginatedIndividualWatchlistScreeningListResponse.parse_obj(data)
 
     async def watchlist_screening_individual_hit_list(
         self, watchlist_screening_id: str, cursor: Optional[str] = None
@@ -1337,29 +1092,24 @@ class AsyncPlaidClient:
 
         List all hits found by Plaid for a particular individual watchlist screening.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualhitlist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualhitlist>."""
+        headers = {}
         params = {}
         data = {
             "watchlist_screening_id": watchlist_screening_id,
             "cursor": cursor,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/watchlist_screening/individual/hit/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaginatedIndividualWatchlistScreeningHitListResponse.parse_obj(
-                    data
-                )
+        res = await self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/individual/hit/list",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PaginatedIndividualWatchlistScreeningHitListResponse.parse_obj(
+            data
+        )
 
     async def watchlist_screening_individual_list(
         self,
@@ -1373,12 +1123,8 @@ class AsyncPlaidClient:
 
         List previously created watchlist screenings for individuals
 
-        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividuallist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividuallist>."""
+        headers = {}
         params = {}
         data = {
             "watchlist_program_id": watchlist_program_id,
@@ -1387,20 +1133,15 @@ class AsyncPlaidClient:
             "assignee": assignee,
             "cursor": cursor,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/watchlist_screening/individual/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return (
-                    model.PaginatedIndividualWatchlistScreeningListResponse.parse_obj(
-                        data
-                    )
-                )
+        res = await self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/individual/list",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PaginatedIndividualWatchlistScreeningListResponse.parse_obj(data)
 
     async def watchlist_screening_individual_program_get(
         self, watchlist_program_id: str
@@ -1409,26 +1150,21 @@ class AsyncPlaidClient:
 
         Get an individual watchlist screening program
 
-        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualprogramget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualprogramget>."""
+        headers = {}
         params = {}
         data = {
             "watchlist_program_id": watchlist_program_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/watchlist_screening/individual/program/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.IndividualWatchlistProgramResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/individual/program/get",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.IndividualWatchlistProgramResponse.parse_obj(data)
 
     async def watchlist_screening_individual_program_list(
         self, cursor: Optional[str] = None
@@ -1437,28 +1173,21 @@ class AsyncPlaidClient:
 
         List all individual watchlist screening programs
 
-        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualprogramlist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualprogramlist>."""
+        headers = {}
         params = {}
         data = {
             "cursor": cursor,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/watchlist_screening/individual/program/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaginatedIndividualWatchlistProgramListResponse.parse_obj(
-                    data
-                )
+        res = await self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/individual/program/list",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PaginatedIndividualWatchlistProgramListResponse.parse_obj(data)
 
     async def watchlist_screening_individual_review_create(
         self,
@@ -1471,12 +1200,8 @@ class AsyncPlaidClient:
 
         Create a review for the individual watchlist screening. Reviews are compliance reports created by users in your organization regarding the relevance of potential hits found by Plaid.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualreviewcreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualreviewcreate>."""
+        headers = {}
         params = {}
         data = {
             "confirmed_hits": confirmed_hits,
@@ -1484,16 +1209,15 @@ class AsyncPlaidClient:
             "comment": comment,
             "watchlist_screening_id": watchlist_screening_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/watchlist_screening/individual/review/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.WatchlistScreeningReviewResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/individual/review/create",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.WatchlistScreeningReviewResponse.parse_obj(data)
 
     async def watchlist_screening_individual_reviews_list(
         self, watchlist_screening_id: str, cursor: Optional[str] = None
@@ -1502,29 +1226,24 @@ class AsyncPlaidClient:
 
         List all reviews for the individual watchlist screening.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualreviewlist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualreviewlist>."""
+        headers = {}
         params = {}
         data = {
             "watchlist_screening_id": watchlist_screening_id,
             "cursor": cursor,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/watchlist_screening/individual/review/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaginatedIndividualWatchlistScreeningReviewListResponse.parse_obj(
-                    data
-                )
+        res = await self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/individual/review/list",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PaginatedIndividualWatchlistScreeningReviewListResponse.parse_obj(
+            data
+        )
 
     async def watchlist_screening_individual_update(
         self,
@@ -1541,12 +1260,8 @@ class AsyncPlaidClient:
 
         Update a specific individual watchlist screening. This endpoint can be used to add additional customer information, correct outdated information, add a reference id, assign the individual to a reviewer, and update which program it is associated with. Please note that you may not update `search_terms` and `status` at the same time since editing `search_terms` may trigger an automatic `status` change.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualupdate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/monitor/#watchlist_screeningindividualupdate>."""
+        headers = {}
         params = {}
         data = {
             "watchlist_screening_id": watchlist_screening_id,
@@ -1556,16 +1271,15 @@ class AsyncPlaidClient:
             "client_user_id": client_user_id,
             "reset_fields": reset_fields,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/watchlist_screening/individual/update",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.WatchlistScreeningIndividualResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/watchlist_screening/individual/update",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.WatchlistScreeningIndividualResponse.parse_obj(data)
 
     async def processor_auth_get(
         self, processor_token: str
@@ -1577,26 +1291,17 @@ class AsyncPlaidClient:
         Versioning note: API versions 2019-05-29 and earlier use a different schema for the `numbers` object returned by this endpoint. For details, see [Plaid API versioning](https://plaid.com/docs/api/versioning/#version-2020-09-14).
 
 
-        See endpoint docs at <https://plaid.com/docs/api/processors/#processorauthget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/processors/#processorauthget>."""
+        headers = {}
         params = {}
         data = {
             "processor_token": processor_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/processor/auth/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.ProcessorAuthGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/processor/auth/get", headers, params, data
+        )
+        data = await res.json()
+        return model.ProcessorAuthGetResponse.parse_obj(data)
 
     async def processor_bank_transfer_create(
         self,
@@ -1617,12 +1322,8 @@ class AsyncPlaidClient:
 
         Use the `/processor/bank_transfer/create` endpoint to initiate a new bank transfer as a processor
 
-        See endpoint docs at <https://plaid.com/docs/api/processors/#bank_transfercreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/processors/#bank_transfercreate>."""
+        headers = {}
         params = {}
         data = {
             "idempotency_key": idempotency_key,
@@ -1638,16 +1339,15 @@ class AsyncPlaidClient:
             "metadata": None if metadata is None else metadata.dict(),
             "origination_account_id": origination_account_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/processor/bank_transfer/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.ProcessorBankTransferCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/processor/bank_transfer/create",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.ProcessorBankTransferCreateResponse.parse_obj(data)
 
     async def processor_identity_get(
         self, processor_token: str
@@ -1656,26 +1356,17 @@ class AsyncPlaidClient:
 
         The `/processor/identity/get` endpoint allows you to retrieve various account holder information on file with the financial institution, including names, emails, phone numbers, and addresses.
 
-        See endpoint docs at <https://plaid.com/docs/api/processors/#processoridentityget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/processors/#processoridentityget>."""
+        headers = {}
         params = {}
         data = {
             "processor_token": processor_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/processor/identity/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.ProcessorIdentityGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/processor/identity/get", headers, params, data
+        )
+        data = await res.json()
+        return model.ProcessorIdentityGetResponse.parse_obj(data)
 
     async def processor_balance_get(
         self,
@@ -1686,27 +1377,18 @@ class AsyncPlaidClient:
 
         The `/processor/balance/get` endpoint returns the real-time balance for each of an Item's accounts. While other endpoints may return a balance object, only `/processor/balance/get` forces the available and current balance fields to be refreshed rather than cached.
 
-        See endpoint docs at <https://plaid.com/docs/api/processors/#processorbalanceget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/processors/#processorbalanceget>."""
+        headers = {}
         params = {}
         data = {
             "processor_token": processor_token,
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/processor/balance/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.ProcessorBalanceGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/processor/balance/get", headers, params, data
+        )
+        data = await res.json()
+        return model.ProcessorBalanceGetResponse.parse_obj(data)
 
     async def item_webhook_update(
         self, access_token: str, webhook: Optional[str] = None
@@ -1715,27 +1397,18 @@ class AsyncPlaidClient:
 
         The POST `/item/webhook/update` allows you to update the webhook URL associated with an Item. This request triggers a [`WEBHOOK_UPDATE_ACKNOWLEDGED`](https://plaid.com/docs/api/items/#webhook_update_acknowledged) webhook to the newly specified webhook URL.
 
-        See endpoint docs at <https://plaid.com/docs/api/items/#itemwebhookupdate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/items/#itemwebhookupdate>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "webhook": webhook,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/item/webhook/update",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.ItemWebhookUpdateResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/item/webhook/update", headers, params, data
+        )
+        data = await res.json()
+        return model.ItemWebhookUpdateResponse.parse_obj(data)
 
     async def item_access_token_invalidate(
         self, access_token: str
@@ -1747,26 +1420,21 @@ class AsyncPlaidClient:
         You can use the `/item/access_token/invalidate` endpoint to rotate the `access_token` associated with an Item. The endpoint returns a new `access_token` and immediately invalidates the previous `access_token`.
 
 
-        See endpoint docs at <https://plaid.com/docs/api/tokens/#itemaccess_tokeninvalidate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/tokens/#itemaccess_tokeninvalidate>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/item/access_token/invalidate",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.ItemAccessTokenInvalidateResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/item/access_token/invalidate",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.ItemAccessTokenInvalidateResponse.parse_obj(data)
 
     async def webhook_verification_key_get(
         self, key_id: str
@@ -1777,26 +1445,21 @@ class AsyncPlaidClient:
 
         The `/webhook_verification_key/get` endpoint provides a JSON Web Key (JWK) that can be used to verify a JWT.
 
-        See endpoint docs at <https://plaid.com/docs/api/webhooks/webhook-verification/#webhook_verification_keyget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/webhooks/webhook-verification/#webhook_verification_keyget>."""
+        headers = {}
         params = {}
         data = {
             "key_id": key_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/webhook_verification_key/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.WebhookVerificationKeyGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/webhook_verification_key/get",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.WebhookVerificationKeyGetResponse.parse_obj(data)
 
     async def liabilities_get(
         self,
@@ -1811,27 +1474,18 @@ class AsyncPlaidClient:
 
         Note: This request may take some time to complete if `liabilities` was not specified as an initial product when creating the Item. This is because Plaid must communicate directly with the institution to retrieve the additional data.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/liabilities/#liabilitiesget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/liabilities/#liabilitiesget>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/liabilities/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.LiabilitiesGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/liabilities/get", headers, params, data
+        )
+        data = await res.json()
+        return model.LiabilitiesGetResponse.parse_obj(data)
 
     async def payment_initiation_recipient_create(
         self,
@@ -1847,12 +1501,8 @@ class AsyncPlaidClient:
         The endpoint is idempotent: if a developer has already made a request with the same payment details, Plaid will return the same `recipient_id`.
 
 
-        See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationrecipientcreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationrecipientcreate>."""
+        headers = {}
         params = {}
         data = {
             "name": name,
@@ -1860,16 +1510,15 @@ class AsyncPlaidClient:
             "bacs": None if bacs is None else bacs.dict(),
             "address": None if address is None else address.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/payment_initiation/recipient/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaymentInitiationRecipientCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/payment_initiation/recipient/create",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PaymentInitiationRecipientCreateResponse.parse_obj(data)
 
     async def payment_initiation_payment_reverse(
         self, payment_id: str, idempotency_key: str, reference: str
@@ -1881,28 +1530,23 @@ class AsyncPlaidClient:
         A payment can only be reversed once and will be refunded to the original sender's account.
 
 
-        See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationpaymentreverse>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationpaymentreverse>."""
+        headers = {}
         params = {}
         data = {
             "payment_id": payment_id,
             "idempotency_key": idempotency_key,
             "reference": reference,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/payment_initiation/payment/reverse",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaymentInitiationPaymentReverseResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/payment_initiation/payment/reverse",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PaymentInitiationPaymentReverseResponse.parse_obj(data)
 
     async def payment_initiation_recipient_get(
         self, recipient_id: str
@@ -1911,26 +1555,21 @@ class AsyncPlaidClient:
 
         Get details about a payment recipient you have previously created.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationrecipientget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationrecipientget>."""
+        headers = {}
         params = {}
         data = {
             "recipient_id": recipient_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/payment_initiation/recipient/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaymentInitiationRecipientGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/payment_initiation/recipient/get",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PaymentInitiationRecipientGetResponse.parse_obj(data)
 
     async def payment_initiation_recipient_list(
         self,
@@ -1939,24 +1578,19 @@ class AsyncPlaidClient:
 
         The `/payment_initiation/recipient/list` endpoint list the payment recipients that you have previously created.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationrecipientlist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationrecipientlist>."""
+        headers = {}
         params = {}
         data = {}
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/payment_initiation/recipient/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaymentInitiationRecipientListResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/payment_initiation/recipient/list",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PaymentInitiationRecipientListResponse.parse_obj(data)
 
     async def payment_initiation_payment_create(
         self,
@@ -1974,12 +1608,8 @@ class AsyncPlaidClient:
 
         In the Development environment, payments must be below 5 GBP / EUR. For details on any payment limits in Production, contact your Plaid Account Manager.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationpaymentcreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationpaymentcreate>."""
+        headers = {}
         params = {}
         data = {
             "recipient_id": recipient_id,
@@ -1988,16 +1618,15 @@ class AsyncPlaidClient:
             "schedule": None if schedule is None else schedule.dict(),
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/payment_initiation/payment/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaymentInitiationPaymentCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/payment_initiation/payment/create",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PaymentInitiationPaymentCreateResponse.parse_obj(data)
 
     async def create_payment_token(
         self, payment_id: str
@@ -2008,26 +1637,21 @@ class AsyncPlaidClient:
 
         The `/payment_initiation/payment/token/create` is used to create a `payment_token`, which can then be used in Link initialization to enter a payment initiation flow. You can only use a `payment_token` once. If this attempt fails, the end user aborts the flow, or the token expires, you will need to create a new payment token. Creating a new payment token does not require end user input.
 
-        See endpoint docs at <https://plaid.com/docs/link/maintain-legacy-integration/#creating-a-payment-token>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/link/maintain-legacy-integration/#creating-a-payment-token>."""
+        headers = {}
         params = {}
         data = {
             "payment_id": payment_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/payment_initiation/payment/token/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaymentInitiationPaymentTokenCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/payment_initiation/payment/token/create",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PaymentInitiationPaymentTokenCreateResponse.parse_obj(data)
 
     async def payment_initiation_consent_create(
         self,
@@ -2043,12 +1667,8 @@ class AsyncPlaidClient:
 
         Consents can be limited in time and scope, and have constraints that describe limitations for payments.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationconsentcreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationconsentcreate>."""
+        headers = {}
         params = {}
         data = {
             "recipient_id": recipient_id,
@@ -2057,16 +1677,15 @@ class AsyncPlaidClient:
             "constraints": None if constraints is None else constraints.dict(),
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/payment_initiation/consent/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaymentInitiationConsentCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/payment_initiation/consent/create",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PaymentInitiationConsentCreateResponse.parse_obj(data)
 
     async def payment_initiation_consent_get(
         self, consent_id: str
@@ -2075,26 +1694,21 @@ class AsyncPlaidClient:
 
         The `/payment_initiation/consent/get` endpoint can be used to check the status of a payment consent, as well as to receive basic information such as recipient and constraints.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationconsentget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationconsentget>."""
+        headers = {}
         params = {}
         data = {
             "consent_id": consent_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/payment_initiation/consent/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaymentInitiationConsentGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/payment_initiation/consent/get",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PaymentInitiationConsentGetResponse.parse_obj(data)
 
     async def payment_initiation_consent_revoke(
         self, consent_id: str
@@ -2103,26 +1717,21 @@ class AsyncPlaidClient:
 
         The `/payment_initiation/consent/revoke` endpoint can be used to revoke the payment consent. Once the consent is revoked, it is not possible to initiate payments using it.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationconsentrevoke>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationconsentrevoke>."""
+        headers = {}
         params = {}
         data = {
             "consent_id": consent_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/payment_initiation/consent/revoke",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaymentInitiationConsentRevokeResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/payment_initiation/consent/revoke",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PaymentInitiationConsentRevokeResponse.parse_obj(data)
 
     async def payment_initiation_consent_payment_execute(
         self, consent_id: str, amount: model.PaymentAmount, idempotency_key: str
@@ -2131,30 +1740,23 @@ class AsyncPlaidClient:
 
         The `/payment_initiation/consent/payment/execute` endpoint can be used to execute payments using payment consent.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationconsentpaymentexecute>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationconsentpaymentexecute>."""
+        headers = {}
         params = {}
         data = {
             "consent_id": consent_id,
             "amount": None if amount is None else amount.dict(),
             "idempotency_key": idempotency_key,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/payment_initiation/consent/payment/execute",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaymentInitiationConsentPaymentExecuteResponse.parse_obj(
-                    data
-                )
+        res = await self.send(
+            "POST",
+            self.base_url + "/payment_initiation/consent/payment/execute",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PaymentInitiationConsentPaymentExecuteResponse.parse_obj(data)
 
     async def sandbox_item_reset_login(
         self, access_token: str
@@ -2166,26 +1768,17 @@ class AsyncPlaidClient:
 
         In the Sandbox, Items will transition to an `ITEM_LOGIN_REQUIRED` error state automatically after 30 days, even if this endpoint is not called.
 
-        See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxitemreset_login>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxitemreset_login>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/sandbox/item/reset_login",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.SandboxItemResetLoginResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/sandbox/item/reset_login", headers, params, data
+        )
+        data = await res.json()
+        return model.SandboxItemResetLoginResponse.parse_obj(data)
 
     async def sandbox_item_set_verification_status(
         self, access_token: str, account_id: str, verification_status: str
@@ -2198,28 +1791,23 @@ class AsyncPlaidClient:
 
         For more information on testing Automated Micro-deposits in Sandbox, see [Auth full coverage testing](https://plaid.com/docs/auth/coverage/testing#).
 
-        See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxitemset_verification_status>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxitemset_verification_status>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "account_id": account_id,
             "verification_status": verification_status,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/sandbox/item/set_verification_status",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.SandboxItemSetVerificationStatusResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/sandbox/item/set_verification_status",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.SandboxItemSetVerificationStatusResponse.parse_obj(data)
 
     async def item_public_token_exchange(
         self, public_token: str
@@ -2230,26 +1818,17 @@ class AsyncPlaidClient:
 
         The response also includes an `item_id` that should be stored with the `access_token`. The `item_id` is used to identify an Item in a webhook. The `item_id` can also be retrieved by making an `/item/get` request.
 
-        See endpoint docs at <https://plaid.com/docs/api/tokens/#itempublic_tokenexchange>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/tokens/#itempublic_tokenexchange>."""
+        headers = {}
         params = {}
         data = {
             "public_token": public_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/item/public_token/exchange",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.ItemPublicTokenExchangeResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/item/public_token/exchange", headers, params, data
+        )
+        data = await res.json()
+        return model.ItemPublicTokenExchangeResponse.parse_obj(data)
 
     async def item_create_public_token(
         self, access_token: str
@@ -2264,26 +1843,17 @@ class AsyncPlaidClient:
 
         The `/item/public_token/create` endpoint is **not** used to create your initial `public_token`. If you have not already received an `access_token` for a specific Item, use Link to obtain your `public_token` instead. See the [Quickstart](https://plaid.com/docs/quickstart) for more information.
 
-        See endpoint docs at <https://plaid.com/docs/api/tokens/#itempublic_tokencreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/tokens/#itempublic_tokencreate>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/item/public_token/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.ItemPublicTokenCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/item/public_token/create", headers, params, data
+        )
+        data = await res.json()
+        return model.ItemPublicTokenCreateResponse.parse_obj(data)
 
     async def user_create(self, client_user_id: str) -> model.UserCreateResponse:
         """Create user
@@ -2292,26 +1862,17 @@ class AsyncPlaidClient:
 
         If you call the endpoint multiple times with the same `client_user_id`, the first creation call will succeed and the rest will fail with an error message indicating that the user has been created for the given `client_user_id`.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/income/#usercreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/income/#usercreate>."""
+        headers = {}
         params = {}
         data = {
             "client_user_id": client_user_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/user/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.UserCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/user/create", headers, params, data
+        )
+        data = await res.json()
+        return model.UserCreateResponse.parse_obj(data)
 
     async def payment_initiation_payment_get(
         self, payment_id: str
@@ -2320,26 +1881,21 @@ class AsyncPlaidClient:
 
         The `/payment_initiation/payment/get` endpoint can be used to check the status of a payment, as well as to receive basic information such as recipient and payment amount. In the case of standing orders, the `/payment_initiation/payment/get` endpoint will provide information about the status of the overall standing order itself; the API cannot be used to retrieve payment status for individual payments within a standing order.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationpaymentget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationpaymentget>."""
+        headers = {}
         params = {}
         data = {
             "payment_id": payment_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/payment_initiation/payment/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaymentInitiationPaymentGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/payment_initiation/payment/get",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PaymentInitiationPaymentGetResponse.parse_obj(data)
 
     async def payment_initiation_payment_list(
         self,
@@ -2351,28 +1907,23 @@ class AsyncPlaidClient:
 
         The `/payment_initiation/payment/list` endpoint can be used to retrieve all created payments. By default, the 10 most recent payments are returned. You can request more payments and paginate through the results using the optional `count` and `cursor` parameters.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationpaymentlist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/payment-initiation/#payment_initiationpaymentlist>."""
+        headers = {}
         params = {}
         data = {
             "count": count,
             "cursor": cursor,
             "consent_id": consent_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/payment_initiation/payment/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaymentInitiationPaymentListResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/payment_initiation/payment/list",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PaymentInitiationPaymentListResponse.parse_obj(data)
 
     async def asset_report_create(
         self,
@@ -2388,28 +1939,19 @@ class AsyncPlaidClient:
 
         The `/asset_report/create` endpoint creates an Asset Report at a moment in time. Asset Reports are immutable. To get an updated Asset Report, use the `/asset_report/refresh` endpoint.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportcreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportcreate>."""
+        headers = {}
         params = {}
         data = {
             "access_tokens": access_tokens,
             "days_requested": days_requested,
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/asset_report/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.AssetReportCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/asset_report/create", headers, params, data
+        )
+        data = await res.json()
+        return model.AssetReportCreateResponse.parse_obj(data)
 
     async def asset_report_refresh(
         self,
@@ -2423,28 +1965,19 @@ class AsyncPlaidClient:
 
         The new Asset Report will contain the same Items as the original Report, as well as the same filters applied by any call to `/asset_report/filter`. By default, the new Asset Report will also use the same parameters you submitted with your original `/asset_report/create` request, but the original `days_requested` value and the values of any parameters in the `options` object can be overridden with new values. To change these arguments, simply supply new values for them in your request to `/asset_report/refresh`. Submit an empty string ("") for any previously-populated fields you would like set as empty.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportrefresh>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportrefresh>."""
+        headers = {}
         params = {}
         data = {
             "asset_report_token": asset_report_token,
             "days_requested": days_requested,
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/asset_report/refresh",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.AssetReportRefreshResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/asset_report/refresh", headers, params, data
+        )
+        data = await res.json()
+        return model.AssetReportRefreshResponse.parse_obj(data)
 
     async def asset_report_relay_refresh(
         self, asset_relay_token: str, webhook: Optional[str] = None
@@ -2453,27 +1986,18 @@ class AsyncPlaidClient:
 
         The `/asset_report/relay/refresh` endpoint allows third parties to refresh an Asset Report that was relayed to them, using an `asset_relay_token` that was created by the report owner. A new Asset Report will be created based on the old one, but with the most recent data available.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/#asset_reportrelayrefresh>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/#asset_reportrelayrefresh>."""
+        headers = {}
         params = {}
         data = {
             "asset_relay_token": asset_relay_token,
             "webhook": webhook,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/asset_report/relay/refresh",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.AssetReportRelayRefreshResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/asset_report/relay/refresh", headers, params, data
+        )
+        data = await res.json()
+        return model.AssetReportRelayRefreshResponse.parse_obj(data)
 
     async def asset_report_remove(
         self, asset_report_token: str
@@ -2484,26 +2008,17 @@ class AsyncPlaidClient:
 
         The `/asset_report/remove` endpoint allows you to remove an Asset Report. Removing an Asset Report invalidates its `asset_report_token`, meaning you will no longer be able to use it to access Report data or create new Audit Copies. Removing an Asset Report does not affect the underlying Items, but does invalidate any `audit_copy_tokens` associated with the Asset Report.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportremove>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportremove>."""
+        headers = {}
         params = {}
         data = {
             "asset_report_token": asset_report_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/asset_report/remove",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.AssetReportRemoveResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/asset_report/remove", headers, params, data
+        )
+        data = await res.json()
+        return model.AssetReportRemoveResponse.parse_obj(data)
 
     async def asset_report_filter(
         self, asset_report_token: str, account_ids_to_exclude: List[str]
@@ -2518,27 +2033,18 @@ class AsyncPlaidClient:
 
         Plaid will fire a [`PRODUCT_READY`](https://plaid.com/docs/api/products/assets/#product_ready) webhook once generation of the filtered Asset Report has completed.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportfilter>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportfilter>."""
+        headers = {}
         params = {}
         data = {
             "asset_report_token": asset_report_token,
             "account_ids_to_exclude": account_ids_to_exclude,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/asset_report/filter",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.AssetReportFilterResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/asset_report/filter", headers, params, data
+        )
+        data = await res.json()
+        return model.AssetReportFilterResponse.parse_obj(data)
 
     async def asset_report_get(
         self,
@@ -2554,28 +2060,19 @@ class AsyncPlaidClient:
 
         To retrieve an Asset Report with Insights, call the `/asset_report/get` endpoint with `include_insights` set to `true`.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportget>."""
+        headers = {}
         params = {}
         data = {
             "asset_report_token": asset_report_token,
             "include_insights": include_insights,
             "fast_report": fast_report,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/asset_report/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.AssetReportGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/asset_report/get", headers, params, data
+        )
+        data = await res.json()
+        return model.AssetReportGetResponse.parse_obj(data)
 
     async def asset_report_pdf_get(self, asset_report_token: str) -> None:
         """Retrieve a PDF Asset Report
@@ -2586,24 +2083,15 @@ class AsyncPlaidClient:
 
         [View a sample PDF Asset Report](https://plaid.com/documents/sample-asset-report.pdf).
 
-        See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportpdfget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportpdfget>."""
+        headers = {}
         params = {}
         data = {
             "asset_report_token": asset_report_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/asset_report/pdf/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
+        res = await self.send(
+            "POST", self.base_url + "/asset_report/pdf/get", headers, params, data
+        )
 
     async def asset_report_audit_copy_create(
         self, asset_report_token: str, auditor_id: str
@@ -2614,27 +2102,22 @@ class AsyncPlaidClient:
 
         To grant access to an Audit Copy, use the `/asset_report/audit_copy/create` endpoint to create an `audit_copy_token` and then pass that token to the third party who needs access. Each third party has its own `auditor_id`, for example `fannie_mae`. You’ll need to create a separate Audit Copy for each third party to whom you want to grant access to the Report.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportaudit_copycreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportaudit_copycreate>."""
+        headers = {}
         params = {}
         data = {
             "asset_report_token": asset_report_token,
             "auditor_id": auditor_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/asset_report/audit_copy/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.AssetReportAuditCopyCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/asset_report/audit_copy/create",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.AssetReportAuditCopyCreateResponse.parse_obj(data)
 
     async def asset_report_audit_copy_remove(
         self, audit_copy_token: str
@@ -2643,26 +2126,21 @@ class AsyncPlaidClient:
 
         The `/asset_report/audit_copy/remove` endpoint allows you to remove an Audit Copy. Removing an Audit Copy invalidates the `audit_copy_token` associated with it, meaning both you and any third parties holding the token will no longer be able to use it to access Report data. Items associated with the Asset Report, the Asset Report itself and other Audit Copies of it are not affected and will remain accessible after removing the given Audit Copy.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportaudit_copyremove>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/assets/#asset_reportaudit_copyremove>."""
+        headers = {}
         params = {}
         data = {
             "audit_copy_token": audit_copy_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/asset_report/audit_copy/remove",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.AssetReportAuditCopyRemoveResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/asset_report/audit_copy/remove",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.AssetReportAuditCopyRemoveResponse.parse_obj(data)
 
     async def asset_report_relay_create(
         self,
@@ -2676,28 +2154,19 @@ class AsyncPlaidClient:
 
         To grant access to an Asset Report to a third party, use the `/asset_report/relay/create` endpoint to create an `asset_relay_token` and then pass that token to the third party who needs access. Each third party has its own `secondary_client_id`, for example `ce5bd328dcd34123456`. You'll need to create a separate `asset_relay_token` for each third party to whom you want to grant access to the Report.
 
-        See endpoint docs at <https://plaid.com/docs/none/>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/none/>."""
+        headers = {}
         params = {}
         data = {
             "asset_report_token": asset_report_token,
             "secondary_client_id": secondary_client_id,
             "webhook": webhook,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/asset_report/relay/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.AssetReportRelayCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/asset_report/relay/create", headers, params, data
+        )
+        data = await res.json()
+        return model.AssetReportRelayCreateResponse.parse_obj(data)
 
     async def asset_report_relay_get(
         self, asset_relay_token: str
@@ -2706,26 +2175,17 @@ class AsyncPlaidClient:
 
         `/asset_report/relay/get` allows third parties to get an Asset Report that was shared with them, using an `asset_relay_token` that was created by the report owner.
 
-        See endpoint docs at <https://plaid.com/docs/none/>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/none/>."""
+        headers = {}
         params = {}
         data = {
             "asset_relay_token": asset_relay_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/asset_report/relay/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.AssetReportGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/asset_report/relay/get", headers, params, data
+        )
+        data = await res.json()
+        return model.AssetReportGetResponse.parse_obj(data)
 
     async def asset_report_relay_remove(
         self, asset_relay_token: str
@@ -2734,26 +2194,17 @@ class AsyncPlaidClient:
 
         The `/asset_report/relay/remove` endpoint allows you to invalidate an `asset_relay_token`, meaning the third party holding the token will no longer be able to use it to access the Asset Report to which the `asset_relay_token` gives access to. The Asset Report, Items associated with it, and other Asset Relay Tokens that provide access to the same Asset Report are not affected and will remain accessible after removing the given `asset_relay_token.
 
-        See endpoint docs at <https://plaid.com/docs/none/>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/none/>."""
+        headers = {}
         params = {}
         data = {
             "asset_relay_token": asset_relay_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/asset_report/relay/remove",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.AssetReportRelayRemoveResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/asset_report/relay/remove", headers, params, data
+        )
+        data = await res.json()
+        return model.AssetReportRelayRemoveResponse.parse_obj(data)
 
     async def investments_holdings_get(
         self,
@@ -2764,27 +2215,18 @@ class AsyncPlaidClient:
 
         The `/investments/holdings/get` endpoint allows developers to receive user-authorized stock position data for `investment`-type accounts.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/investments/#investmentsholdingsget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/investments/#investmentsholdingsget>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/investments/holdings/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.InvestmentsHoldingsGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/investments/holdings/get", headers, params, data
+        )
+        data = await res.json()
+        return model.InvestmentsHoldingsGetResponse.parse_obj(data)
 
     async def investments_transactions_get(
         self,
@@ -2801,12 +2243,8 @@ class AsyncPlaidClient:
 
         Due to the potentially large number of investment transactions associated with an Item, results are paginated. Manipulate the count and offset parameters in conjunction with the `total_investment_transactions` response body field to fetch all available investment transactions.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/investments/#investmentstransactionsget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/investments/#investmentstransactionsget>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
@@ -2814,16 +2252,15 @@ class AsyncPlaidClient:
             "end_date": end_date,
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/investments/transactions/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.InvestmentsTransactionsGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/investments/transactions/get",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.InvestmentsTransactionsGetResponse.parse_obj(data)
 
     async def processor_token_create(
         self, access_token: str, account_id: str, processor: str
@@ -2832,28 +2269,19 @@ class AsyncPlaidClient:
 
         Used to create a token suitable for sending to one of Plaid's partners to enable integrations. Note that Stripe partnerships use bank account tokens instead; see `/processor/stripe/bank_account_token/create` for creating tokens for use with Stripe integrations. Processor tokens can also be revoked, using `/item/remove`.
 
-        See endpoint docs at <https://plaid.com/docs/api/processors/#processortokencreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/processors/#processortokencreate>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "account_id": account_id,
             "processor": processor,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/processor/token/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.ProcessorTokenCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/processor/token/create", headers, params, data
+        )
+        data = await res.json()
+        return model.ProcessorTokenCreateResponse.parse_obj(data)
 
     async def processor_stripe_bank_account_token_create(
         self, access_token: str, account_id: str
@@ -2862,29 +2290,22 @@ class AsyncPlaidClient:
 
         Used to create a token suitable for sending to Stripe to enable Plaid-Stripe integrations. For a detailed guide on integrating Stripe, see [Add Stripe to your app](https://plaid.com/docs/auth/partnerships/stripe/). Bank account tokens can also be revoked, using `/item/remove`.
 
-        See endpoint docs at <https://plaid.com/docs/api/processors/#processorstripebank_account_tokencreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/processors/#processorstripebank_account_tokencreate>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "account_id": account_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/processor/stripe/bank_account_token/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.ProcessorStripeBankAccountTokenCreateResponse.parse_obj(
-                    data
-                )
+        res = await self.send(
+            "POST",
+            self.base_url + "/processor/stripe/bank_account_token/create",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.ProcessorStripeBankAccountTokenCreateResponse.parse_obj(data)
 
     async def processor_apex_processor_token_create(
         self, access_token: str, account_id: str
@@ -2893,27 +2314,22 @@ class AsyncPlaidClient:
 
         Used to create a token suitable for sending to Apex to enable Plaid-Apex integrations.
 
-        See endpoint docs at <https://plaid.com/docs/none/>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/none/>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "account_id": account_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/processor/apex/processor_token/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.ProcessorTokenCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/processor/apex/processor_token/create",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.ProcessorTokenCreateResponse.parse_obj(data)
 
     async def deposit_switch_create(
         self,
@@ -2926,12 +2342,8 @@ class AsyncPlaidClient:
 
         This endpoint creates a deposit switch entity that will be persisted throughout the lifecycle of the switch.
 
-        See endpoint docs at <https://plaid.com/docs/deposit-switch/reference#deposit_switchcreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/deposit-switch/reference#deposit_switchcreate>."""
+        headers = {}
         params = {}
         data = {
             "target_access_token": target_access_token,
@@ -2939,16 +2351,11 @@ class AsyncPlaidClient:
             "country_code": country_code,
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/deposit_switch/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.DepositSwitchCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/deposit_switch/create", headers, params, data
+        )
+        data = await res.json()
+        return model.DepositSwitchCreateResponse.parse_obj(data)
 
     async def item_import(
         self,
@@ -2960,28 +2367,19 @@ class AsyncPlaidClient:
 
         `/item/import` creates an Item via your Plaid Exchange Integration and returns an `access_token`. As part of an `/item/import` request, you will include a User ID (`user_auth.user_id`) and Authentication Token (`user_auth.auth_token`) that enable data aggregation through your Plaid Exchange API endpoints. These authentication principals are to be chosen by you.
 
-        Upon creating an Item via `/item/import`, Plaid will automatically begin an extraction of that Item through the Plaid Exchange infrastructure you have already integrated. This will automatically generate the Plaid native account ID for the account the user will switch their direct deposit to (`target_account_id`).
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        Upon creating an Item via `/item/import`, Plaid will automatically begin an extraction of that Item through the Plaid Exchange infrastructure you have already integrated. This will automatically generate the Plaid native account ID for the account the user will switch their direct deposit to (`target_account_id`)."""
+        headers = {}
         params = {}
         data = {
             "products": products,
             "user_auth": None if user_auth is None else user_auth.dict(),
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/item/import",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.ItemImportResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/item/import", headers, params, data
+        )
+        data = await res.json()
+        return model.ItemImportResponse.parse_obj(data)
 
     async def deposit_switch_token_create(
         self, deposit_switch_id: str
@@ -2991,26 +2389,21 @@ class AsyncPlaidClient:
         In order for the end user to take action, you will need to create a public token representing the deposit switch. This token is used to initialize Link. It can be used one time and expires after 30 minutes.
 
 
-        See endpoint docs at <https://plaid.com/docs/deposit-switch/reference#deposit_switchtokencreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/deposit-switch/reference#deposit_switchtokencreate>."""
+        headers = {}
         params = {}
         data = {
             "deposit_switch_id": deposit_switch_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/deposit_switch/token/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.DepositSwitchTokenCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/deposit_switch/token/create",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.DepositSwitchTokenCreateResponse.parse_obj(data)
 
     async def link_token_create(
         self,
@@ -3050,12 +2443,8 @@ class AsyncPlaidClient:
 
         A `link_token` generated by `/link/token/create` is also used to initialize other Link flows, such as the update mode flow for tokens with expired credentials, or the Payment Initiation (Europe) flow.
 
-        See endpoint docs at <https://plaid.com/docs/api/tokens/#linktokencreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/tokens/#linktokencreate>."""
+        headers = {}
         params = {}
         data = {
             "client_name": client_name,
@@ -3092,16 +2481,11 @@ class AsyncPlaidClient:
             else identity_verification.dict(),
             "user_token": user_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/link/token/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.LinkTokenCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/link/token/create", headers, params, data
+        )
+        data = await res.json()
+        return model.LinkTokenCreateResponse.parse_obj(data)
 
     async def link_token_get(self, link_token: str) -> model.LinkTokenGetResponse:
         """Get Link Token
@@ -3109,26 +2493,17 @@ class AsyncPlaidClient:
         The `/link/token/get` endpoint gets information about a previously-created `link_token` using the
         `/link/token/create` endpoint. It can be useful for debugging purposes.
 
-        See endpoint docs at <https://plaid.com/docs/api/tokens/#linktokenget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/tokens/#linktokenget>."""
+        headers = {}
         params = {}
         data = {
             "link_token": link_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/link/token/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.LinkTokenGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/link/token/get", headers, params, data
+        )
+        data = await res.json()
+        return model.LinkTokenGetResponse.parse_obj(data)
 
     async def asset_report_audit_copy_get(
         self, audit_copy_token: str
@@ -3137,26 +2512,21 @@ class AsyncPlaidClient:
 
         `/asset_report/audit_copy/get` allows auditors to get a copy of an Asset Report that was previously shared via the `/asset_report/audit_copy/create` endpoint.  The caller of `/asset_report/audit_copy/create` must provide the `audit_copy_token` to the auditor.  This token can then be used to call `/asset_report/audit_copy/create`.
 
-        See endpoint docs at <https://plaid.com/docs/none/>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/none/>."""
+        headers = {}
         params = {}
         data = {
             "audit_copy_token": audit_copy_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/asset_report/audit_copy/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.AssetReportGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/asset_report/audit_copy/get",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.AssetReportGetResponse.parse_obj(data)
 
     async def deposit_switch_get(
         self, deposit_switch_id: str
@@ -3165,52 +2535,34 @@ class AsyncPlaidClient:
 
         This endpoint returns information related to how the user has configured their payroll allocation and the state of the switch. You can use this information to build logic related to the user's direct deposit allocation preferences.
 
-        See endpoint docs at <https://plaid.com/docs/deposit-switch/reference#deposit_switchget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/deposit-switch/reference#deposit_switchget>."""
+        headers = {}
         params = {}
         data = {
             "deposit_switch_id": deposit_switch_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/deposit_switch/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.DepositSwitchGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/deposit_switch/get", headers, params, data
+        )
+        data = await res.json()
+        return model.DepositSwitchGetResponse.parse_obj(data)
 
     async def transfer_get(self, transfer_id: str) -> model.TransferGetResponse:
         """Retrieve a transfer
 
         The `/transfer/get` fetches information about the transfer corresponding to the given `transfer_id`.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferget>."""
+        headers = {}
         params = {}
         data = {
             "transfer_id": transfer_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/transfer/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.TransferGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/transfer/get", headers, params, data
+        )
+        data = await res.json()
+        return model.TransferGetResponse.parse_obj(data)
 
     async def bank_transfer_get(
         self, bank_transfer_id: str
@@ -3219,26 +2571,17 @@ class AsyncPlaidClient:
 
         The `/bank_transfer/get` fetches information about the bank transfer corresponding to the given `bank_transfer_id`.
 
-        See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transferget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transferget>."""
+        headers = {}
         params = {}
         data = {
             "bank_transfer_id": bank_transfer_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/bank_transfer/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.BankTransferGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/bank_transfer/get", headers, params, data
+        )
+        data = await res.json()
+        return model.BankTransferGetResponse.parse_obj(data)
 
     async def transfer_authorization_create(
         self,
@@ -3273,12 +2616,8 @@ class AsyncPlaidClient:
 
         For guaranteed ACH customers, the following fields are required : `user.phone_number` (optional if `email_address` provided), `user.email_address` (optional if `phone_number` provided), `device.ip_address`, `device.user_agent`, and `user_present`.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferauthorizationcreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferauthorizationcreate>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
@@ -3294,16 +2633,15 @@ class AsyncPlaidClient:
             "user_present": user_present,
             "payment_profile_id": payment_profile_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/transfer/authorization/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.TransferAuthorizationCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/transfer/authorization/create",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.TransferAuthorizationCreateResponse.parse_obj(data)
 
     async def transfer_create(
         self,
@@ -3326,12 +2664,8 @@ class AsyncPlaidClient:
 
         Use the `/transfer/create` endpoint to initiate a new transfer.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfercreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfercreate>."""
+        headers = {}
         params = {}
         data = {
             "idempotency_key": idempotency_key,
@@ -3349,16 +2683,11 @@ class AsyncPlaidClient:
             "iso_currency_code": iso_currency_code,
             "payment_profile_id": payment_profile_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/transfer/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.TransferCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/transfer/create", headers, params, data
+        )
+        data = await res.json()
+        return model.TransferCreateResponse.parse_obj(data)
 
     async def bank_transfer_create(
         self,
@@ -3380,12 +2709,8 @@ class AsyncPlaidClient:
 
         Use the `/bank_transfer/create` endpoint to initiate a new bank transfer.
 
-        See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfercreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfercreate>."""
+        headers = {}
         params = {}
         data = {
             "idempotency_key": idempotency_key,
@@ -3402,16 +2727,11 @@ class AsyncPlaidClient:
             "metadata": None if metadata is None else metadata.dict(),
             "origination_account_id": origination_account_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/bank_transfer/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.BankTransferCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/bank_transfer/create", headers, params, data
+        )
+        data = await res.json()
+        return model.BankTransferCreateResponse.parse_obj(data)
 
     async def transfer_list(
         self,
@@ -3426,12 +2746,8 @@ class AsyncPlaidClient:
         Use the `/transfer/list` endpoint to see a list of all your transfers and their statuses. Results are paginated; use the `count` and `offset` query parameters to retrieve the desired transfers.
 
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferlist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferlist>."""
+        headers = {}
         params = {}
         data = {
             "start_date": start_date,
@@ -3440,16 +2756,11 @@ class AsyncPlaidClient:
             "offset": offset,
             "origination_account_id": origination_account_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/transfer/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.TransferListResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/transfer/list", headers, params, data
+        )
+        data = await res.json()
+        return model.TransferListResponse.parse_obj(data)
 
     async def bank_transfer_list(
         self,
@@ -3465,12 +2776,8 @@ class AsyncPlaidClient:
         Use the `/bank_transfer/list` endpoint to see a list of all your bank transfers and their statuses. Results are paginated; use the `count` and `offset` query parameters to retrieve the desired bank transfers.
 
 
-        See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transferlist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transferlist>."""
+        headers = {}
         params = {}
         data = {
             "start_date": start_date,
@@ -3480,42 +2787,28 @@ class AsyncPlaidClient:
             "origination_account_id": origination_account_id,
             "direction": direction,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/bank_transfer/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.BankTransferListResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/bank_transfer/list", headers, params, data
+        )
+        data = await res.json()
+        return model.BankTransferListResponse.parse_obj(data)
 
     async def transfer_cancel(self, transfer_id: str) -> model.TransferCancelResponse:
         """Cancel a transfer
 
         Use the `/transfer/cancel` endpoint to cancel a transfer.  A transfer is eligible for cancelation if the `cancellable` property returned by `/transfer/get` is `true`.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfercancel>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfercancel>."""
+        headers = {}
         params = {}
         data = {
             "transfer_id": transfer_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/transfer/cancel",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.TransferCancelResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/transfer/cancel", headers, params, data
+        )
+        data = await res.json()
+        return model.TransferCancelResponse.parse_obj(data)
 
     async def bank_transfer_cancel(
         self, bank_transfer_id: str
@@ -3524,26 +2817,17 @@ class AsyncPlaidClient:
 
         Use the `/bank_transfer/cancel` endpoint to cancel a bank transfer.  A transfer is eligible for cancelation if the `cancellable` property returned by `/bank_transfer/get` is `true`.
 
-        See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfercancel>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfercancel>."""
+        headers = {}
         params = {}
         data = {
             "bank_transfer_id": bank_transfer_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/bank_transfer/cancel",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.BankTransferCancelResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/bank_transfer/cancel", headers, params, data
+        )
+        data = await res.json()
+        return model.BankTransferCancelResponse.parse_obj(data)
 
     async def transfer_event_list(
         self,
@@ -3562,12 +2846,8 @@ class AsyncPlaidClient:
 
         Use the `/transfer/event/list` endpoint to get a list of transfer events based on specified filter criteria.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfereventlist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfereventlist>."""
+        headers = {}
         params = {}
         data = {
             "start_date": start_date,
@@ -3581,16 +2861,11 @@ class AsyncPlaidClient:
             "offset": offset,
             "origination_account_id": origination_account_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/transfer/event/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.TransferEventListResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/transfer/event/list", headers, params, data
+        )
+        data = await res.json()
+        return model.TransferEventListResponse.parse_obj(data)
 
     async def bank_transfer_event_list(
         self,
@@ -3609,12 +2884,8 @@ class AsyncPlaidClient:
 
         Use the `/bank_transfer/event/list` endpoint to get a list of bank transfer events based on specified filter criteria.
 
-        See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfereventlist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfereventlist>."""
+        headers = {}
         params = {}
         data = {
             "start_date": start_date,
@@ -3628,16 +2899,11 @@ class AsyncPlaidClient:
             "origination_account_id": origination_account_id,
             "direction": direction,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/bank_transfer/event/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.BankTransferEventListResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/bank_transfer/event/list", headers, params, data
+        )
+        data = await res.json()
+        return model.BankTransferEventListResponse.parse_obj(data)
 
     async def transfer_event_sync(
         self, after_id: int, count: Optional[int] = None
@@ -3646,27 +2912,18 @@ class AsyncPlaidClient:
 
         `/transfer/event/sync` allows you to request up to the next 25 transfer events that happened after a specific `event_id`. Use the `/transfer/event/sync` endpoint to guarantee you have seen all transfer events.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfereventsync>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfereventsync>."""
+        headers = {}
         params = {}
         data = {
             "after_id": after_id,
             "count": count,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/transfer/event/sync",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.TransferEventSyncResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/transfer/event/sync", headers, params, data
+        )
+        data = await res.json()
+        return model.TransferEventSyncResponse.parse_obj(data)
 
     async def bank_transfer_event_sync(
         self, after_id: int, count: Optional[int] = None
@@ -3675,53 +2932,35 @@ class AsyncPlaidClient:
 
         `/bank_transfer/event/sync` allows you to request up to the next 25 bank transfer events that happened after a specific `event_id`. Use the `/bank_transfer/event/sync` endpoint to guarantee you have seen all bank transfer events.
 
-        See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfereventsync>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfereventsync>."""
+        headers = {}
         params = {}
         data = {
             "after_id": after_id,
             "count": count,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/bank_transfer/event/sync",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.BankTransferEventSyncResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/bank_transfer/event/sync", headers, params, data
+        )
+        data = await res.json()
+        return model.BankTransferEventSyncResponse.parse_obj(data)
 
     async def transfer_sweep_get(self, sweep_id: str) -> model.TransferSweepGetResponse:
         """Retrieve a sweep
 
         The `/transfer/sweep/get` endpoint fetches a sweep corresponding to the given `sweep_id`.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfersweepget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfersweepget>."""
+        headers = {}
         params = {}
         data = {
             "sweep_id": sweep_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/transfer/sweep/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.TransferSweepGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/transfer/sweep/get", headers, params, data
+        )
+        data = await res.json()
+        return model.TransferSweepGetResponse.parse_obj(data)
 
     async def bank_transfer_sweep_get(
         self, sweep_id: str
@@ -3730,26 +2969,17 @@ class AsyncPlaidClient:
 
         The `/bank_transfer/sweep/get` endpoint fetches information about the sweep corresponding to the given `sweep_id`.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#bank_transfersweepget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#bank_transfersweepget>."""
+        headers = {}
         params = {}
         data = {
             "sweep_id": sweep_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/bank_transfer/sweep/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.BankTransferSweepGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/bank_transfer/sweep/get", headers, params, data
+        )
+        data = await res.json()
+        return model.BankTransferSweepGetResponse.parse_obj(data)
 
     async def transfer_sweep_list(
         self,
@@ -3762,12 +2992,8 @@ class AsyncPlaidClient:
 
         The `/transfer/sweep/list` endpoint fetches sweeps matching the given filters.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfersweeplist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfersweeplist>."""
+        headers = {}
         params = {}
         data = {
             "start_date": start_date,
@@ -3775,16 +3001,11 @@ class AsyncPlaidClient:
             "count": count,
             "offset": offset,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/transfer/sweep/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.TransferSweepListResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/transfer/sweep/list", headers, params, data
+        )
+        data = await res.json()
+        return model.TransferSweepListResponse.parse_obj(data)
 
     async def bank_transfer_sweep_list(
         self,
@@ -3797,12 +3018,8 @@ class AsyncPlaidClient:
 
         The `/bank_transfer/sweep/list` endpoint fetches information about the sweeps matching the given filters.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#bank_transfersweeplist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#bank_transfersweeplist>."""
+        headers = {}
         params = {}
         data = {
             "origination_account_id": origination_account_id,
@@ -3810,16 +3027,11 @@ class AsyncPlaidClient:
             "end_time": end_time,
             "count": count,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/bank_transfer/sweep/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.BankTransferSweepListResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/bank_transfer/sweep/list", headers, params, data
+        )
+        data = await res.json()
+        return model.BankTransferSweepListResponse.parse_obj(data)
 
     async def bank_transfer_balance_get(
         self, origination_account_id: Optional[str] = None
@@ -3832,26 +3044,17 @@ class AsyncPlaidClient:
 
         Note that this endpoint can only be used with FBO accounts, when using Bank Transfers in the Full Service configuration. It cannot be used on your own account when using Bank Transfers in the BTS Platform configuration.
 
-        See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transferbalanceget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transferbalanceget>."""
+        headers = {}
         params = {}
         data = {
             "origination_account_id": origination_account_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/bank_transfer/balance/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.BankTransferBalanceGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/bank_transfer/balance/get", headers, params, data
+        )
+        data = await res.json()
+        return model.BankTransferBalanceGetResponse.parse_obj(data)
 
     async def bank_transfer_migrate_account(
         self,
@@ -3864,12 +3067,8 @@ class AsyncPlaidClient:
 
         As an alternative to adding Items via Link, you can also use the `/bank_transfer/migrate_account` endpoint to migrate known account and routing numbers to Plaid Items.  Note that Items created in this way are not compatible with endpoints for other products, such as `/accounts/balance/get`, and can only be used with Bank Transfer endpoints.  If you require access to other endpoints, create the Item through Link instead.  Access to `/bank_transfer/migrate_account` is not enabled by default; to obtain access, contact your Plaid Account Manager.
 
-        See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfermigrate_account>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/bank-transfers/reference#bank_transfermigrate_account>."""
+        headers = {}
         params = {}
         data = {
             "account_number": account_number,
@@ -3877,16 +3076,15 @@ class AsyncPlaidClient:
             "wire_routing_number": wire_routing_number,
             "account_type": account_type,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/bank_transfer/migrate_account",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.BankTransferMigrateAccountResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/bank_transfer/migrate_account",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.BankTransferMigrateAccountResponse.parse_obj(data)
 
     async def transfer_migrate_account(
         self,
@@ -3899,12 +3097,8 @@ class AsyncPlaidClient:
 
         As an alternative to adding Items via Link, you can also use the `/transfer/migrate_account` endpoint to migrate known account and routing numbers to Plaid Items.  Note that Items created in this way are not compatible with endpoints for other products, such as `/accounts/balance/get`, and can only be used with Transfer endpoints.  If you require access to other endpoints, create the Item through Link instead.  Access to `/transfer/migrate_account` is not enabled by default; to obtain access, contact your Plaid Account Manager.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfermigrate_account>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transfermigrate_account>."""
+        headers = {}
         params = {}
         data = {
             "account_number": account_number,
@@ -3912,16 +3106,11 @@ class AsyncPlaidClient:
             "wire_routing_number": wire_routing_number,
             "account_type": account_type,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/transfer/migrate_account",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.TransferMigrateAccountResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/transfer/migrate_account", headers, params, data
+        )
+        data = await res.json()
+        return model.TransferMigrateAccountResponse.parse_obj(data)
 
     async def transfer_intent_create(
         self,
@@ -3940,12 +3129,8 @@ class AsyncPlaidClient:
 
         Use the `/transfer/intent/create` endpoint to generate a transfer intent object and invoke the Transfer UI.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferintentcreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferintentcreate>."""
+        headers = {}
         params = {}
         data = {
             "account_id": account_id,
@@ -3959,16 +3144,11 @@ class AsyncPlaidClient:
             "iso_currency_code": iso_currency_code,
             "require_guarantee": require_guarantee,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/transfer/intent/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.TransferIntentCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/transfer/intent/create", headers, params, data
+        )
+        data = await res.json()
+        return model.TransferIntentCreateResponse.parse_obj(data)
 
     async def transfer_intent_get(
         self, transfer_intent_id: str
@@ -3977,26 +3157,17 @@ class AsyncPlaidClient:
 
         Use the `/transfer/intent/get` endpoint to retrieve more information about a transfer intent.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferintentget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferintentget>."""
+        headers = {}
         params = {}
         data = {
             "transfer_intent_id": transfer_intent_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/transfer/intent/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.TransferIntentGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/transfer/intent/get", headers, params, data
+        )
+        data = await res.json()
+        return model.TransferIntentGetResponse.parse_obj(data)
 
     async def transfer_repayment_list(
         self,
@@ -4009,12 +3180,8 @@ class AsyncPlaidClient:
 
         The `/transfer/repayment/list` endpoint fetches repayments matching the given filters. Repayments are returned in reverse-chronological order (most recent first) starting at the given `start_time`.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferrepaymentlist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferrepaymentlist>."""
+        headers = {}
         params = {}
         data = {
             "start_date": start_date,
@@ -4022,16 +3189,11 @@ class AsyncPlaidClient:
             "count": count,
             "offset": offset,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/transfer/repayment/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.TransferRepaymentListResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/transfer/repayment/list", headers, params, data
+        )
+        data = await res.json()
+        return model.TransferRepaymentListResponse.parse_obj(data)
 
     async def transfer_repayment_return_list(
         self,
@@ -4043,28 +3205,23 @@ class AsyncPlaidClient:
 
         The `/transfer/repayment/return/list` endpoint retrieves the set of returns that were batched together into the specified repayment. The sum of amounts of returns retrieved by this request equals the amount of the repayment.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferrepaymentreturnlist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#transferrepaymentreturnlist>."""
+        headers = {}
         params = {}
         data = {
             "repayment_id": repayment_id,
             "count": count,
             "offset": offset,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/transfer/repayment/return/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.TransferRepaymentReturnListResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/transfer/repayment/return/list",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.TransferRepaymentReturnListResponse.parse_obj(data)
 
     async def sandbox_bank_transfer_simulate(
         self,
@@ -4076,28 +3233,23 @@ class AsyncPlaidClient:
 
         Use the `/sandbox/bank_transfer/simulate` endpoint to simulate a bank transfer event in the Sandbox environment.  Note that while an event will be simulated and will appear when using endpoints such as `/bank_transfer/event/sync` or `/bank_transfer/event/list`, no transactions will actually take place and funds will not move between accounts, even within the Sandbox.
 
-        See endpoint docs at <https://plaid.com/docs/bank-transfers/reference/#sandboxbank_transfersimulate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/bank-transfers/reference/#sandboxbank_transfersimulate>."""
+        headers = {}
         params = {}
         data = {
             "bank_transfer_id": bank_transfer_id,
             "event_type": event_type,
             "failure_reason": None if failure_reason is None else failure_reason.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/sandbox/bank_transfer/simulate",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.SandboxBankTransferSimulateResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/sandbox/bank_transfer/simulate",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.SandboxBankTransferSimulateResponse.parse_obj(data)
 
     async def sandbox_transfer_sweep_simulate(
         self,
@@ -4106,24 +3258,19 @@ class AsyncPlaidClient:
 
         Use the `/sandbox/transfer/sweep/simulate` endpoint to create a sweep and associated events in the Sandbox environment. Upon calling this endpoint, all `posted` or `pending` transfers with a sweep status of `unswept` will become `swept`, and all `returned` transfers with a sweep status of `swept` will become `return_swept`.
 
-        See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxtransfersweepsimulate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxtransfersweepsimulate>."""
+        headers = {}
         params = {}
         data = {}
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/sandbox/transfer/sweep/simulate",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.SandboxTransferSweepSimulateResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/sandbox/transfer/sweep/simulate",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.SandboxTransferSweepSimulateResponse.parse_obj(data)
 
     async def sandbox_transfer_simulate(
         self,
@@ -4135,28 +3282,19 @@ class AsyncPlaidClient:
 
         Use the `/sandbox/transfer/simulate` endpoint to simulate a transfer event in the Sandbox environment.  Note that while an event will be simulated and will appear when using endpoints such as `/transfer/event/sync` or `/transfer/event/list`, no transactions will actually take place and funds will not move between accounts, even within the Sandbox.
 
-        See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxtransfersimulate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxtransfersimulate>."""
+        headers = {}
         params = {}
         data = {
             "transfer_id": transfer_id,
             "event_type": event_type,
             "failure_reason": None if failure_reason is None else failure_reason.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/sandbox/transfer/simulate",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.SandboxTransferSimulateResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/sandbox/transfer/simulate", headers, params, data
+        )
+        data = await res.json()
+        return model.SandboxTransferSimulateResponse.parse_obj(data)
 
     async def sandbox_transfer_repayment_simulate(
         self,
@@ -4165,24 +3303,19 @@ class AsyncPlaidClient:
 
         Use the `/sandbox/transfer/repayment/simulate` endpoint to trigger the creation of a repayment. As a side effect of calling this route, a repayment is created that includes all unreimbursed returns of guaranteed transfers. If there are no such returns, an 400 error is returned.
 
-        See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxtransferrepaymentsimulate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxtransferrepaymentsimulate>."""
+        headers = {}
         params = {}
         data = {}
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/sandbox/transfer/repayment/simulate",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.SandboxTransferRepaymentSimulateResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/sandbox/transfer/repayment/simulate",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.SandboxTransferRepaymentSimulateResponse.parse_obj(data)
 
     async def sandbox_transfer_fire_webhook(
         self, webhook: str
@@ -4191,26 +3324,21 @@ class AsyncPlaidClient:
 
         Use the `/sandbox/transfer/fire_webhook` endpoint to manually trigger a Transfer webhook in the Sandbox environment.
 
-        See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxtransferfire_webhook>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxtransferfire_webhook>."""
+        headers = {}
         params = {}
         data = {
             "webhook": webhook,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/sandbox/transfer/fire_webhook",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.SandboxTransferFireWebhookResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/sandbox/transfer/fire_webhook",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.SandboxTransferFireWebhookResponse.parse_obj(data)
 
     async def employers_search(
         self, query: str, products: List[str]
@@ -4221,27 +3349,18 @@ class AsyncPlaidClient:
 
         The data in the employer database is currently limited. As the Deposit Switch and Income products progress through their respective beta periods, more employers are being regularly added. Because the employer database is frequently updated, we recommend that you do not cache or store data from this endpoint for more than a day.
 
-        See endpoint docs at <https://plaid.com/docs/api/employers/#employerssearch>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/employers/#employerssearch>."""
+        headers = {}
         params = {}
         data = {
             "query": query,
             "products": products,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/employers/search",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.EmployersSearchResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/employers/search", headers, params, data
+        )
+        data = await res.json()
+        return model.EmployersSearchResponse.parse_obj(data)
 
     async def income_verification_create(
         self,
@@ -4253,28 +3372,19 @@ class AsyncPlaidClient:
 
         `/income/verification/create` begins the income verification process by returning an `income_verification_id`. You can then provide the `income_verification_id` to `/link/token/create` under the `income_verification` parameter in order to create a Link instance that will prompt the user to go through the income verification flow. Plaid will fire an `INCOME` webhook once the user completes the Payroll Income flow, or when the uploaded documents in the Document Income flow have finished processing.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationcreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationcreate>."""
+        headers = {}
         params = {}
         data = {
             "webhook": webhook,
             "precheck_id": precheck_id,
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/income/verification/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.IncomeVerificationCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/income/verification/create", headers, params, data
+        )
+        data = await res.json()
+        return model.IncomeVerificationCreateResponse.parse_obj(data)
 
     async def income_verification_paystubs_get(
         self,
@@ -4287,27 +3397,22 @@ class AsyncPlaidClient:
 
         This endpoint has been deprecated; new integrations should use `/credit/payroll_income/get` instead.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationpaystubsget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationpaystubsget>."""
+        headers = {}
         params = {}
         data = {
             "income_verification_id": income_verification_id,
             "access_token": access_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/income/verification/paystubs/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.IncomeVerificationPaystubsGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/income/verification/paystubs/get",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.IncomeVerificationPaystubsGetResponse.parse_obj(data)
 
     async def income_verification_documents_download(
         self,
@@ -4327,26 +3432,21 @@ class AsyncPlaidClient:
 
         The `request_id` is returned in the `Plaid-Request-ID` header.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationdocumentsdownload>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationdocumentsdownload>."""
+        headers = {}
         params = {}
         data = {
             "income_verification_id": income_verification_id,
             "access_token": access_token,
             "document_id": document_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/income/verification/documents/download",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
+        res = await self.send(
+            "POST",
+            self.base_url + "/income/verification/documents/download",
+            headers,
+            params,
+            data,
+        )
 
     async def income_verification_refresh(
         self,
@@ -4357,27 +3457,22 @@ class AsyncPlaidClient:
 
         `/income/verification/refresh` refreshes a given income verification.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationrefresh>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationrefresh>."""
+        headers = {}
         params = {}
         data = {
             "income_verification_id": income_verification_id,
             "access_token": access_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/income/verification/refresh",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.IncomeVerificationRefreshResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/income/verification/refresh",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.IncomeVerificationRefreshResponse.parse_obj(data)
 
     async def income_verification_taxforms_get(
         self,
@@ -4390,27 +3485,22 @@ class AsyncPlaidClient:
 
         This endpoint has been deprecated; new integrations should use `/credit/payroll_income/get` instead.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationtaxformsget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationtaxformsget>."""
+        headers = {}
         params = {}
         data = {
             "income_verification_id": income_verification_id,
             "access_token": access_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/income/verification/taxforms/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.IncomeVerificationTaxformsGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/income/verification/taxforms/get",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.IncomeVerificationTaxformsGetResponse.parse_obj(data)
 
     async def income_verification_precheck(
         self,
@@ -4428,12 +3518,8 @@ class AsyncPlaidClient:
 
         This endpoint has been deprecated; new integrations should use `/credit/payroll_income/precheck` instead.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationprecheck>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/income/#incomeverificationprecheck>."""
+        headers = {}
         params = {}
         data = {
             "user": None if user is None else user.dict(),
@@ -4444,16 +3530,15 @@ class AsyncPlaidClient:
             if us_military_info is None
             else us_military_info.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/income/verification/precheck",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.IncomeVerificationPrecheckResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/income/verification/precheck",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.IncomeVerificationPrecheckResponse.parse_obj(data)
 
     async def employment_verification_get(
         self, access_token: str
@@ -4464,26 +3549,21 @@ class AsyncPlaidClient:
 
         This endpoint has been deprecated; new integrations should use `/credit/employment/get` instead.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/income/#employmentverificationget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/income/#employmentverificationget>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/employment/verification/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.EmploymentVerificationGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/employment/verification/get",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.EmploymentVerificationGetResponse.parse_obj(data)
 
     async def deposit_switch_alt_create(
         self,
@@ -4496,12 +3576,8 @@ class AsyncPlaidClient:
 
         This endpoint provides an alternative to `/deposit_switch/create` for customers who have not yet fully integrated with Plaid Exchange. Like `/deposit_switch/create`, it creates a deposit switch entity that will be persisted throughout the lifecycle of the switch.
 
-        See endpoint docs at <https://plaid.com/docs/deposit-switch/reference#deposit_switchaltcreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/deposit-switch/reference#deposit_switchaltcreate>."""
+        headers = {}
         params = {}
         data = {
             "target_account": None if target_account is None else target_account.dict(),
@@ -4509,16 +3585,11 @@ class AsyncPlaidClient:
             "options": None if options is None else options.dict(),
             "country_code": country_code,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/deposit_switch/alt/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.DepositSwitchAltCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/deposit_switch/alt/create", headers, params, data
+        )
+        data = await res.json()
+        return model.DepositSwitchAltCreateResponse.parse_obj(data)
 
     async def credit_audit_copy_token_create(
         self, report_tokens: List[model.ReportToken], auditor_id: str
@@ -4529,27 +3600,22 @@ class AsyncPlaidClient:
 
         To grant access to an Audit Copy token, use the `/credit/audit_copy_token/create` endpoint to create an `audit_copy_token` and then pass that token to the third party who needs access. Each third party has its own `auditor_id`, for example `fannie_mae`. You’ll need to create a separate Audit Copy for each third party to whom you want to grant access to the Report.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/income/#creditaudit_copy_tokencreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/income/#creditaudit_copy_tokencreate>."""
+        headers = {}
         params = {}
         data = {
             "report_tokens": None if report_tokens is None else report_tokens.dict(),
             "auditor_id": auditor_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/credit/audit_copy_token/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.CreditAuditCopyTokenCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/credit/audit_copy_token/create",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.CreditAuditCopyTokenCreateResponse.parse_obj(data)
 
     async def credit_report_audit_copy_remove(
         self, audit_copy_token: str
@@ -4558,26 +3624,21 @@ class AsyncPlaidClient:
 
         The `/credit/audit_copy_token/remove` endpoint allows you to remove an Audit Copy. Removing an Audit Copy invalidates the `audit_copy_token` associated with it, meaning both you and any third parties holding the token will no longer be able to use it to access Report data. Items associated with the Report data and other Audit Copies of it are not affected and will remain accessible after removing the given Audit Copy.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/income/#creditaudit_copy_tokenremove>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/income/#creditaudit_copy_tokenremove>."""
+        headers = {}
         params = {}
         data = {
             "audit_copy_token": audit_copy_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/credit/audit_copy_token/remove",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.CreditAuditCopyTokenRemoveResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/credit/audit_copy_token/remove",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.CreditAuditCopyTokenRemoveResponse.parse_obj(data)
 
     async def credit_bank_income_get(
         self,
@@ -4588,51 +3649,33 @@ class AsyncPlaidClient:
 
         `/credit/bank_income/get` returns the bank income report(s) for a specified user.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/income/#creditbank_incomeget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/income/#creditbank_incomeget>."""
+        headers = {}
         params = {}
         data = {
             "user_token": user_token,
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/credit/bank_income/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.CreditBankIncomeGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/credit/bank_income/get", headers, params, data
+        )
+        data = await res.json()
+        return model.CreditBankIncomeGetResponse.parse_obj(data)
 
     async def credit_bank_income_pdf_get(self, user_token: str) -> None:
         """Retrieve information from the bank accounts used for income verification in PDF format
 
         `/credit/bank_income/pdf/get` returns the most recent bank income report for a specified user in PDF format.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/income/#creditbank_incomepdfget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/income/#creditbank_incomepdfget>."""
+        headers = {}
         params = {}
         data = {
             "user_token": user_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/credit/bank_income/pdf/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
+        res = await self.send(
+            "POST", self.base_url + "/credit/bank_income/pdf/get", headers, params, data
+        )
 
     async def credit_bank_income_refresh(
         self,
@@ -4643,27 +3686,18 @@ class AsyncPlaidClient:
 
         `/credit/bank_income/refresh` refreshes the bank income report data for a specific user.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/income/#creditbank_incomerefresh>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/income/#creditbank_incomerefresh>."""
+        headers = {}
         params = {}
         data = {
             "user_token": user_token,
             "options": None if options is None else options.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/credit/bank_income/refresh",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.CreditBankIncomeRefreshResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/credit/bank_income/refresh", headers, params, data
+        )
+        data = await res.json()
+        return model.CreditBankIncomeRefreshResponse.parse_obj(data)
 
     async def credit_payroll_income_get(
         self, user_token: Optional[str] = None
@@ -4672,26 +3706,17 @@ class AsyncPlaidClient:
 
         This endpoint gets payroll income information for a specific user, either as a result of the user connecting to their payroll provider or uploading a pay related document.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/income/#creditpayroll_incomeget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/income/#creditpayroll_incomeget>."""
+        headers = {}
         params = {}
         data = {
             "user_token": user_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/credit/payroll_income/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.CreditPayrollIncomeGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/credit/payroll_income/get", headers, params, data
+        )
+        data = await res.json()
+        return model.CreditPayrollIncomeGetResponse.parse_obj(data)
 
     async def credit_payroll_income_precheck(
         self,
@@ -4706,12 +3731,8 @@ class AsyncPlaidClient:
 
         While all request fields are optional, providing `employer` data will increase the chance of receiving a useful result.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/income/#creditpayroll_incomeprecheck>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/income/#creditpayroll_incomeprecheck>."""
+        headers = {}
         params = {}
         data = {
             "user_token": user_token,
@@ -4721,16 +3742,15 @@ class AsyncPlaidClient:
             if us_military_info is None
             else us_military_info.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/credit/payroll_income/precheck",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.CreditPayrollIncomePrecheckResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/credit/payroll_income/precheck",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.CreditPayrollIncomePrecheckResponse.parse_obj(data)
 
     async def credit_employment_get(
         self, user_token: str
@@ -4739,26 +3759,17 @@ class AsyncPlaidClient:
 
         `/credit/employment/get` returns a list of items with employment information from a user's payroll provider that was verified by an end user.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/income/#creditemploymentget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/income/#creditemploymentget>."""
+        headers = {}
         params = {}
         data = {
             "user_token": user_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/credit/employment/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.CreditEmploymentGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/credit/employment/get", headers, params, data
+        )
+        data = await res.json()
+        return model.CreditEmploymentGetResponse.parse_obj(data)
 
     async def credit_payroll_income_refresh(
         self, user_token: Optional[str] = None
@@ -4767,26 +3778,21 @@ class AsyncPlaidClient:
 
         `/credit/payroll_income/refresh` refreshes a given digital payroll income verification.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/income/#creditpayroll_incomerefresh>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/income/#creditpayroll_incomerefresh>."""
+        headers = {}
         params = {}
         data = {
             "user_token": user_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/credit/payroll_income/refresh",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.CreditPayrollIncomeRefreshResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/credit/payroll_income/refresh",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.CreditPayrollIncomeRefreshResponse.parse_obj(data)
 
     async def credit_relay_create(
         self,
@@ -4800,28 +3806,19 @@ class AsyncPlaidClient:
 
         To grant access to an Asset Report to a third party, use the `/credit/relay/create` endpoint to create a `relay_token` and then pass that token to the third party who needs access. Each third party has its own `secondary_client_id`, for example `ce5bd328dcd34123456`. You'll need to create a separate `relay_token` for each third party to whom you want to grant access to the Report.
 
-        See endpoint docs at <https://plaid.com/docs/none/>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/none/>."""
+        headers = {}
         params = {}
         data = {
             "report_tokens": None if report_tokens is None else report_tokens.dict(),
             "secondary_client_id": secondary_client_id,
             "webhook": webhook,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/credit/relay/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.CreditRelayCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/credit/relay/create", headers, params, data
+        )
+        data = await res.json()
+        return model.CreditRelayCreateResponse.parse_obj(data)
 
     async def credit_relay_get(
         self, relay_token: str, report_type: str
@@ -4830,27 +3827,18 @@ class AsyncPlaidClient:
 
         `/credit/relay/get` allows third parties to get a report that was shared with them, using an `relay_token` that was created by the report owner.
 
-        See endpoint docs at <https://plaid.com/docs/none/>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/none/>."""
+        headers = {}
         params = {}
         data = {
             "relay_token": relay_token,
             "report_type": report_type,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/credit/relay/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.AssetReportGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/credit/relay/get", headers, params, data
+        )
+        data = await res.json()
+        return model.AssetReportGetResponse.parse_obj(data)
 
     async def credit_relay_refresh(
         self, relay_token: str, report_type: str, webhook: Optional[str] = None
@@ -4859,28 +3847,19 @@ class AsyncPlaidClient:
 
         The `/credit/relay/refresh` endpoint allows third parties to refresh an report that was relayed to them, using a `relay_token` that was created by the report owner. A new report will be created based on the old one, but with the most recent data available.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/#creditrelayrefresh>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/#creditrelayrefresh>."""
+        headers = {}
         params = {}
         data = {
             "relay_token": relay_token,
             "report_type": report_type,
             "webhook": webhook,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/credit/relay/refresh",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.CreditRelayRefreshResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/credit/relay/refresh", headers, params, data
+        )
+        data = await res.json()
+        return model.CreditRelayRefreshResponse.parse_obj(data)
 
     async def credit_relay_remove(
         self, relay_token: str
@@ -4889,26 +3868,17 @@ class AsyncPlaidClient:
 
         The `/credit/relay/remove` endpoint allows you to invalidate a `relay_token`, meaning the third party holding the token will no longer be able to use it to access the reports to which the `relay_token` gives access to. The report, items associated with it, and other Relay tokens that provide access to the same report are not affected and will remain accessible after removing the given `relay_token.
 
-        See endpoint docs at <https://plaid.com/docs/none/>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/none/>."""
+        headers = {}
         params = {}
         data = {
             "relay_token": relay_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/credit/relay/remove",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.CreditRelayRemoveResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/credit/relay/remove", headers, params, data
+        )
+        data = await res.json()
+        return model.CreditRelayRemoveResponse.parse_obj(data)
 
     async def sandbox_bank_transfer_fire_webhook(
         self, webhook: str
@@ -4917,26 +3887,21 @@ class AsyncPlaidClient:
 
         Use the `/sandbox/bank_transfer/fire_webhook` endpoint to manually trigger a Bank Transfers webhook in the Sandbox environment.
 
-        See endpoint docs at <https://plaid.com/docs/bank-transfers/reference/#sandboxbank_transferfire_webhook>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/bank-transfers/reference/#sandboxbank_transferfire_webhook>."""
+        headers = {}
         params = {}
         data = {
             "webhook": webhook,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/sandbox/bank_transfer/fire_webhook",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.SandboxBankTransferFireWebhookResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/sandbox/bank_transfer/fire_webhook",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.SandboxBankTransferFireWebhookResponse.parse_obj(data)
 
     async def sandbox_income_fire_webhook(
         self,
@@ -4949,12 +3914,8 @@ class AsyncPlaidClient:
 
         Use the `/sandbox/income/fire_webhook` endpoint to manually trigger an Income webhook in the Sandbox environment.
 
-        See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxincomefire_webhook>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/sandbox/#sandboxincomefire_webhook>."""
+        headers = {}
         params = {}
         data = {
             "item_id": item_id,
@@ -4962,41 +3923,35 @@ class AsyncPlaidClient:
             "webhook": webhook,
             "verification_status": verification_status,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/sandbox/income/fire_webhook",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.SandboxIncomeFireWebhookResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/sandbox/income/fire_webhook",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.SandboxIncomeFireWebhookResponse.parse_obj(data)
 
     async def sandbox_oauth_select_accounts(
         self, oauth_state_id: str, accounts: List[str]
     ) -> model.SandboxOauthSelectAccountsResponse:
-        """Save the selected accounts when connecting to the Platypus Oauth institution
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        """Save the selected accounts when connecting to the Platypus Oauth institution"""
+        headers = {}
         params = {}
         data = {
             "oauth_state_id": oauth_state_id,
             "accounts": accounts,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/sandbox/oauth/select_accounts",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.SandboxOauthSelectAccountsResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/sandbox/oauth/select_accounts",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.SandboxOauthSelectAccountsResponse.parse_obj(data)
 
     async def signal_evaluate(
         self,
@@ -5015,12 +3970,8 @@ class AsyncPlaidClient:
 
         In order to obtain a valid score for an ACH transaction, Plaid must have an access token for the account, and the Item must be healthy (receiving product updates) or have recently been in a healthy state. If the transaction does not meet eligibility requirements, an error will be returned corresponding to the underlying cause. If `/signal/evaluate` is called on the same transaction multiple times within a 24-hour period, cached results may be returned.
 
-        See endpoint docs at <https://plaid.com/docs/signal/reference#signalevaluate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/signal/reference#signalevaluate>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
@@ -5032,16 +3983,11 @@ class AsyncPlaidClient:
             "user": None if user is None else user.dict(),
             "device": None if device is None else device.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/signal/evaluate",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.SignalEvaluateResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/signal/evaluate", headers, params, data
+        )
+        data = await res.json()
+        return model.SignalEvaluateResponse.parse_obj(data)
 
     async def signal_decision_report(
         self,
@@ -5053,28 +3999,19 @@ class AsyncPlaidClient:
 
         After calling `/signal/evaluate`, call `/signal/decision/report` to report whether the transaction was initiated. This endpoint will return an `INVALID_REQUEST` error if called a second time with a different value for `initiated`.
 
-        See endpoint docs at <https://plaid.com/docs/signal/reference#signaldecisionreport>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/signal/reference#signaldecisionreport>."""
+        headers = {}
         params = {}
         data = {
             "client_transaction_id": client_transaction_id,
             "initiated": initiated,
             "days_funds_on_hold": days_funds_on_hold,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/signal/decision/report",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.SignalDecisionReportResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/signal/decision/report", headers, params, data
+        )
+        data = await res.json()
+        return model.SignalDecisionReportResponse.parse_obj(data)
 
     async def signal_return_report(
         self, client_transaction_id: str, return_code: str
@@ -5083,102 +4020,69 @@ class AsyncPlaidClient:
 
         Call the `/signal/return/report` endpoint to report a returned transaction that was previously sent to the `/signal/evaluate` endpoint. Your feedback will be used by the model to incorporate the latest risk trend in your portfolio.
 
-        See endpoint docs at <https://plaid.com/docs/signal/reference#signalreturnreport>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/signal/reference#signalreturnreport>."""
+        headers = {}
         params = {}
         data = {
             "client_transaction_id": client_transaction_id,
             "return_code": return_code,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/signal/return/report",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.SignalReturnReportResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/signal/return/report", headers, params, data
+        )
+        data = await res.json()
+        return model.SignalReturnReportResponse.parse_obj(data)
 
     async def signal_prepare(self, access_token: str) -> model.SignalPrepareResponse:
         """Prepare the Signal product before calling `/signal/evaluate`
 
         Call `/signal/prepare` with Plaid-linked bank account information at least 10 seconds before calling `/signal/evaluate` or as soon as an end-user enters the ACH deposit flow in your application.
 
-        See endpoint docs at <https://plaid.com/docs/signal/reference#signalprepare>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/signal/reference#signalprepare>."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/signal/prepare",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.SignalPrepareResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/signal/prepare", headers, params, data
+        )
+        data = await res.json()
+        return model.SignalPrepareResponse.parse_obj(data)
 
     async def wallet_create(self, iso_currency_code: str) -> model.WalletCreateResponse:
         """Create an e-wallet
 
         Create an e-wallet. The response is the newly created e-wallet object.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/#walletcreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/#walletcreate>."""
+        headers = {}
         params = {}
         data = {
             "iso_currency_code": iso_currency_code,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/wallet/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.WalletCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/wallet/create", headers, params, data
+        )
+        data = await res.json()
+        return model.WalletCreateResponse.parse_obj(data)
 
     async def wallet_get(self, wallet_id: str) -> model.WalletGetResponse:
         """Fetch an e-wallet
 
         Fetch an e-wallet. The response includes the current balance.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/#walletget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/#walletget>."""
+        headers = {}
         params = {}
         data = {
             "wallet_id": wallet_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/wallet/get", params=params, headers=headers, data=data
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.WalletGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/wallet/get", headers, params, data
+        )
+        data = await res.json()
+        return model.WalletGetResponse.parse_obj(data)
 
     async def wallet_list(
         self,
@@ -5190,28 +4094,19 @@ class AsyncPlaidClient:
 
         This endpoint lists all e-wallets in descending order of creation.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/#walletlist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/#walletlist>."""
+        headers = {}
         params = {}
         data = {
             "iso_currency_code": iso_currency_code,
             "cursor": cursor,
             "count": count,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/wallet/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.WalletListResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/wallet/list", headers, params, data
+        )
+        data = await res.json()
+        return model.WalletListResponse.parse_obj(data)
 
     async def wallet_transaction_execute(
         self,
@@ -5227,12 +4122,8 @@ class AsyncPlaidClient:
         Specify the e-wallet to debit from, the counterparty to credit to, the idempotency key to prevent duplicate payouts, the amount and reference for the payout.
         The payouts are executed over the Faster Payment rails, where settlement usually only takes a few seconds.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/#wallettransactionexecute>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/#wallettransactionexecute>."""
+        headers = {}
         params = {}
         data = {
             "idempotency_key": idempotency_key,
@@ -5241,42 +4132,28 @@ class AsyncPlaidClient:
             "amount": None if amount is None else amount.dict(),
             "reference": reference,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/wallet/transaction/execute",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.WalletTransactionExecuteResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/wallet/transaction/execute", headers, params, data
+        )
+        data = await res.json()
+        return model.WalletTransactionExecuteResponse.parse_obj(data)
 
     async def wallet_transaction_get(
         self, transaction_id: str
     ) -> model.WalletTransactionGetResponse:
         """Fetch a specific e-wallet transaction
 
-        See endpoint docs at <https://plaid.com/docs/api/products/#wallettransactionget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/#wallettransactionget>."""
+        headers = {}
         params = {}
         data = {
             "transaction_id": transaction_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/wallet/transaction/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.WalletTransactionGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/wallet/transaction/get", headers, params, data
+        )
+        data = await res.json()
+        return model.WalletTransactionGetResponse.parse_obj(data)
 
     async def wallet_transactions_list(
         self, wallet_id: str, cursor: Optional[str] = None, count: Optional[int] = None
@@ -5285,28 +4162,19 @@ class AsyncPlaidClient:
 
         This endpoint lists the latest transactions of the specified e-wallet. Transactions are returned in descending order by the `created_at` time.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/#wallettransactionslist>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/#wallettransactionslist>."""
+        headers = {}
         params = {}
         data = {
             "wallet_id": wallet_id,
             "cursor": cursor,
             "count": count,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/wallet/transactions/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.WalletTransactionsListResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/wallet/transactions/list", headers, params, data
+        )
+        data = await res.json()
+        return model.WalletTransactionsListResponse.parse_obj(data)
 
     async def transactions_enhance(
         self, account_type: str, transactions: List[model.ClientProvidedRawTransaction]
@@ -5315,27 +4183,22 @@ class AsyncPlaidClient:
 
         The '/beta/transactions/v1/enhance' endpoint enriches raw transaction data provided directly by clients.
 
-        The product is currently in beta.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        The product is currently in beta."""
+        headers = {}
         params = {}
         data = {
             "account_type": account_type,
             "transactions": None if transactions is None else transactions.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/beta/transactions/v1/enhance",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.TransactionsEnhanceGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/beta/transactions/v1/enhance",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.TransactionsEnhanceGetResponse.parse_obj(data)
 
     async def transactions_rules_create(
         self,
@@ -5349,105 +4212,81 @@ class AsyncPlaidClient:
 
         Rules will be applied on the Item's transactions returned in `/transactions/get` response.
 
-        The product is currently in beta. To request access, contact transactions-feedback@plaid.com.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        The product is currently in beta. To request access, contact transactions-feedback@plaid.com."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "personal_finance_category": personal_finance_category,
             "rule_details": None if rule_details is None else rule_details.dict(),
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/beta/transactions/rules/v1/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.TransactionsRulesCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/beta/transactions/rules/v1/create",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.TransactionsRulesCreateResponse.parse_obj(data)
 
     async def transactions_rules_list(
         self, access_token: str
     ) -> model.TransactionsRulesListResponse:
         """Return a list of rules created for the Item associated with the access token.
 
-        The `/transactions/rules/v1/list` returns a list of transaction rules created for the Item associated with the access token.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        The `/transactions/rules/v1/list` returns a list of transaction rules created for the Item associated with the access token."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/beta/transactions/rules/v1/list",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.TransactionsRulesListResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/beta/transactions/rules/v1/list",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.TransactionsRulesListResponse.parse_obj(data)
 
     async def transactions_rules_remove(
         self, access_token: str, rule_id: str
     ) -> model.TransactionsRulesRemoveResponse:
         """Remove transaction rule
 
-        The `/transactions/rules/v1/remove` endpoint is used to remove a transaction rule.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        The `/transactions/rules/v1/remove` endpoint is used to remove a transaction rule."""
+        headers = {}
         params = {}
         data = {
             "access_token": access_token,
             "rule_id": rule_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/beta/transactions/rules/v1/remove",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.TransactionsRulesRemoveResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/beta/transactions/rules/v1/remove",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.TransactionsRulesRemoveResponse.parse_obj(data)
 
     async def payment_profile_create(self) -> model.PaymentProfileCreateResponse:
         """Create payment profile
 
         Use `/payment_profile/create` endpoint to create a new payment profile, the return value is a Payment Profile ID. Attach it to the link token create request and the link workflow will then "activate" this Payment Profile if the linkage is successful. It can then be used to create Transfers using `/transfer/authorization/create` and /transfer/create`.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#payment_profilecreate>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#payment_profilecreate>."""
+        headers = {}
         params = {}
         data = {}
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/payment_profile/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaymentProfileCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/payment_profile/create", headers, params, data
+        )
+        data = await res.json()
+        return model.PaymentProfileCreateResponse.parse_obj(data)
 
     async def payment_profile_get(
         self, payment_profile_id: str
@@ -5456,26 +4295,17 @@ class AsyncPlaidClient:
 
         Use the `/payment_profile/get` endpoint to get the status of a given Payment Profile.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#payment_profileget>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#payment_profileget>."""
+        headers = {}
         params = {}
         data = {
             "payment_profile_id": payment_profile_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/payment_profile/get",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaymentProfileGetResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/payment_profile/get", headers, params, data
+        )
+        data = await res.json()
+        return model.PaymentProfileGetResponse.parse_obj(data)
 
     async def payment_profile_remove(
         self, payment_profile_id: str
@@ -5484,26 +4314,17 @@ class AsyncPlaidClient:
 
         Use the `/payment_profile/remove` endpoint to remove a given Payment Profile. Once it’s removed, it can no longer be used to create transfers.
 
-        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#payment_profileremove>.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        See endpoint docs at <https://plaid.com/docs/api/products/transfer/#payment_profileremove>."""
+        headers = {}
         params = {}
         data = {
             "payment_profile_id": payment_profile_id,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/payment_profile/remove",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PaymentProfileRemoveResponse.parse_obj(data)
+        res = await self.send(
+            "POST", self.base_url + "/payment_profile/remove", headers, params, data
+        )
+        data = await res.json()
+        return model.PaymentProfileRemoveResponse.parse_obj(data)
 
     async def partner_customers_create(
         self,
@@ -5514,12 +4335,8 @@ class AsyncPlaidClient:
     ) -> model.PartnerCustomersCreateResponse:
         """Creates a new client for a reseller partner end customer.
 
-        The `/partner/v1/customers/create` endpoint is used by reseller partners to create an end customer client.
-
-        :raises requests.exceptions.HTTPError: if a non-200 status code is returned"""
-        headers = {
-            "Content-Type": "application/json",
-        }
+        The `/partner/v1/customers/create` endpoint is used by reseller partners to create an end customer client."""
+        headers = {}
         params = {}
         data = {
             "company_name": company_name,
@@ -5527,17 +4344,28 @@ class AsyncPlaidClient:
             "products": products,
             "create_link_customization": create_link_customization,
         }
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                self.base_url + "/beta/partner/v1/customers/create",
-                params=params,
-                headers=headers,
-                data=data,
-            ) as r:
-                self._raise_for_status(r)
-                data = await r.json()
-                return model.PartnerCustomersCreateResponse.parse_obj(data)
+        res = await self.send(
+            "POST",
+            self.base_url + "/beta/partner/v1/customers/create",
+            headers,
+            params,
+            data,
+        )
+        data = await res.json()
+        return model.PartnerCustomersCreateResponse.parse_obj(data)
+
+    def __del__(self):
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                loop.create_task(self.session.close())
+            else:
+                loop.run_until_complete(self.session.close())
+        except Exception:
+            pass
 
     @classmethod
     def from_env(cls) -> "AsyncPlaidClient":
-        return cls(os.environ["PLAID_URL"])
+        env = os.environ["PLAID_ENV"]
+        url = f"https://{env}.plaid.com"
+        return cls(base_url=url, authenticator=PlaidAuthenticator.from_env())
