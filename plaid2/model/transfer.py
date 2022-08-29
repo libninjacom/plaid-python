@@ -1,11 +1,11 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .transfer_user_in_response import TransferUserInResponse
-from .transfer_failure import TransferFailure
-from .transfer_metadata import TransferMetadata
 from .transfer_authorization_guarantee_decision_rationale import (
     TransferAuthorizationGuaranteeDecisionRationale,
 )
+from .transfer_failure import TransferFailure
+from .transfer_metadata import TransferMetadata
+from .transfer_user_in_response import TransferUserInResponse
 
 
 class Transfer(BaseModel):

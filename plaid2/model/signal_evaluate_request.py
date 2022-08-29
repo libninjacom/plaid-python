@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .signal_user import SignalUser
 from .signal_device import SignalDevice
+from .signal_user import SignalUser
 
 
 class SignalEvaluateRequest(BaseModel):

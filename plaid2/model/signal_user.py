@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .signal_person_name import SignalPersonName
 from .signal_address_data import SignalAddressData
+from .signal_person_name import SignalPersonName
 
 
 class SignalUser(BaseModel):

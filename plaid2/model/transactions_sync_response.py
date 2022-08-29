@@ -1,8 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .transaction import Transaction
-from .transaction import Transaction
 from .removed_transaction import RemovedTransaction
+from .transaction import Transaction
 
 
 class TransactionsSyncResponse(BaseModel):

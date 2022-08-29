@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .single_document_risk_signal import SingleDocumentRiskSignal
 from .multi_document_risk_signal import MultiDocumentRiskSignal
+from .single_document_risk_signal import SingleDocumentRiskSignal
 
 
 class DocumentRiskSignalsObject(BaseModel):

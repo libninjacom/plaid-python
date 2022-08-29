@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .bank_transfer_user import BankTransferUser
 from .bank_transfer_metadata import BankTransferMetadata
+from .bank_transfer_user import BankTransferUser
 
 
 class ProcessorBankTransferCreateRequest(BaseModel):

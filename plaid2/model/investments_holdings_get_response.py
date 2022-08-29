@@ -2,8 +2,8 @@ from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
 from .account_base import AccountBase
 from .holding import Holding
-from .security import Security
 from .item import Item
+from .security import Security
 
 
 class InvestmentsHoldingsGetResponse(BaseModel):

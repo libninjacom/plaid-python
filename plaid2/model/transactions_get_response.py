@@ -1,8 +1,8 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
 from .account_base import AccountBase
-from .transaction import Transaction
 from .item import Item
+from .transaction import Transaction
 
 
 class TransactionsGetResponse(BaseModel):

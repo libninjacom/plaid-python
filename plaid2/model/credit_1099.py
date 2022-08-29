@@ -1,9 +1,9 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .credit_document_metadata import CreditDocumentMetadata
-from .credit_1099_recipient import Credit1099Recipient
-from .credit_1099_payer import Credit1099Payer
 from .credit_1099_filer import Credit1099Filer
+from .credit_1099_payer import Credit1099Payer
+from .credit_1099_recipient import Credit1099Recipient
+from .credit_document_metadata import CreditDocumentMetadata
 
 
 class Credit1099(BaseModel):

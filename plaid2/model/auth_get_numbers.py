@@ -1,9 +1,9 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
 from .numbers_ach import NumbersAch
+from .numbers_bacs import NumbersBacs
 from .numbers_eft import NumbersEft
 from .numbers_international import NumbersInternational
-from .numbers_bacs import NumbersBacs
 
 
 class AuthGetNumbers(BaseModel):

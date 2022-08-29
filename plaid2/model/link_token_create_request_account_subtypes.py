@@ -1,9 +1,9 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .link_token_create_depository_filter import LinkTokenCreateDepositoryFilter
 from .link_token_create_credit_filter import LinkTokenCreateCreditFilter
-from .link_token_create_loan_filter import LinkTokenCreateLoanFilter
+from .link_token_create_depository_filter import LinkTokenCreateDepositoryFilter
 from .link_token_create_investment_filter import LinkTokenCreateInvestmentFilter
+from .link_token_create_loan_filter import LinkTokenCreateLoanFilter
 
 
 class LinkTokenCreateRequestAccountSubtypes(BaseModel):

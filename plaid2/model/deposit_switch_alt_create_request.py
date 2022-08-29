@@ -1,8 +1,8 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
+from .deposit_switch_create_request_options import DepositSwitchCreateRequestOptions
 from .deposit_switch_target_account import DepositSwitchTargetAccount
 from .deposit_switch_target_user import DepositSwitchTargetUser
-from .deposit_switch_create_request_options import DepositSwitchCreateRequestOptions
 
 
 class DepositSwitchAltCreateRequest(BaseModel):

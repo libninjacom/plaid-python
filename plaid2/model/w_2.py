@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .paystub_employer import PaystubEmployer
 from .employee import Employee
+from .paystub_employer import PaystubEmployer
 from .w_2_box_12 import W2Box12
 from .w_2_state_and_local_wages import W2StateAndLocalWages
 

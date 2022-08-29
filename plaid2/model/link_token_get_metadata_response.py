@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .link_token_create_institution_data import LinkTokenCreateInstitutionData
 from .account_filters_response import AccountFiltersResponse
+from .link_token_create_institution_data import LinkTokenCreateInstitutionData
 
 
 class LinkTokenGetMetadataResponse(BaseModel):

@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .match_summary import MatchSummary
 from .entity_screening_hit_phone_numbers import EntityScreeningHitPhoneNumbers
+from .match_summary import MatchSummary
 
 
 class EntityScreeningHitsPhoneNumberItems(BaseModel):

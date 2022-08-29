@@ -1,8 +1,8 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
 from .credit_document_metadata import CreditDocumentMetadata
-from .credit_pay_stub_employer import CreditPayStubEmployer
 from .credit_pay_stub_employee import CreditPayStubEmployee
+from .credit_pay_stub_employer import CreditPayStubEmployer
 from .w_2_box_12 import W2Box12
 from .w_2_state_and_local_wages import W2StateAndLocalWages
 

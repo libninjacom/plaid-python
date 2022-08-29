@@ -1,8 +1,8 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .payment_amount import PaymentAmount
-from .external_payment_schedule_get import ExternalPaymentScheduleGet
 from .external_payment_refund_details import ExternalPaymentRefundDetails
+from .external_payment_schedule_get import ExternalPaymentScheduleGet
+from .payment_amount import PaymentAmount
 from .sender_bacs_nullable import SenderBacsNullable
 
 

@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .identity_match_user import IdentityMatchUser
 from .identity_match_request_options import IdentityMatchRequestOptions
+from .identity_match_user import IdentityMatchUser
 
 
 class IdentityMatchRequest(BaseModel):

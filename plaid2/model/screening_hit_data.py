@@ -1,8 +1,8 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
+from .generic_screening_hit_location_items import GenericScreeningHitLocationItems
 from .screening_hit_date_of_birth_item import ScreeningHitDateOfBirthItem
 from .screening_hit_documents_items import ScreeningHitDocumentsItems
-from .generic_screening_hit_location_items import GenericScreeningHitLocationItems
 from .screening_hit_names_items import ScreeningHitNamesItems
 
 

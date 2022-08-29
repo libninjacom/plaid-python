@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .customer_initiated_return_risk import CustomerInitiatedReturnRisk
 from .bank_initiated_return_risk import BankInitiatedReturnRisk
+from .customer_initiated_return_risk import CustomerInitiatedReturnRisk
 
 
 class SignalScores(BaseModel):

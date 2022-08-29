@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .match_summary import MatchSummary
 from .date_range import DateRange
+from .match_summary import MatchSummary
 
 
 class ScreeningHitDateOfBirthItem(BaseModel):

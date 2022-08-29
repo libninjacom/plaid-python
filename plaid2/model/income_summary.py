@@ -1,12 +1,12 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .employer_income_summary_field_string import EmployerIncomeSummaryFieldString
 from .employee_income_summary_field_string import EmployeeIncomeSummaryFieldString
-from .ytd_gross_income_summary_field_number import YtdGrossIncomeSummaryFieldNumber
-from .ytd_net_income_summary_field_number import YtdNetIncomeSummaryFieldNumber
+from .employer_income_summary_field_string import EmployerIncomeSummaryFieldString
 from .pay_frequency import PayFrequency
 from .projected_income_summary_field_number import ProjectedIncomeSummaryFieldNumber
 from .transaction_data import TransactionData
+from .ytd_gross_income_summary_field_number import YtdGrossIncomeSummaryFieldNumber
+from .ytd_net_income_summary_field_number import YtdNetIncomeSummaryFieldNumber
 
 
 class IncomeSummary(BaseModel):

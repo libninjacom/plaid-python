@@ -1,9 +1,8 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .total import Total
 from .deductions_breakdown import DeductionsBreakdown
-from .total import Total
 from .deductions_total import DeductionsTotal
+from .total import Total
 
 
 class Deductions(BaseModel):

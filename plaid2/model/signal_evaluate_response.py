@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .signal_scores import SignalScores
 from .signal_evaluate_core_attributes import SignalEvaluateCoreAttributes
+from .signal_scores import SignalScores
 
 
 class SignalEvaluateResponse(BaseModel):

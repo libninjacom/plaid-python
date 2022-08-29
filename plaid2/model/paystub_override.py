@@ -1,9 +1,9 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .paystub_override_employer import PaystubOverrideEmployer
-from .paystub_override_employee import PaystubOverrideEmployee
 from .income_breakdown import IncomeBreakdown
 from .pay_period_details import PayPeriodDetails
+from .paystub_override_employee import PaystubOverrideEmployee
+from .paystub_override_employer import PaystubOverrideEmployer
 
 
 class PaystubOverride(BaseModel):

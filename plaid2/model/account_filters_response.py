@@ -1,9 +1,9 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .depository_filter import DepositoryFilter
 from .credit_filter import CreditFilter
-from .loan_filter import LoanFilter
+from .depository_filter import DepositoryFilter
 from .investment_filter import InvestmentFilter
+from .loan_filter import LoanFilter
 
 
 class AccountFiltersResponse(BaseModel):

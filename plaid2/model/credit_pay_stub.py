@@ -1,13 +1,13 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .credit_pay_stub_deductions import CreditPayStubDeductions
 from .credit_document_metadata import CreditDocumentMetadata
+from .credit_pay_stub_deductions import CreditPayStubDeductions
 from .credit_pay_stub_earnings import CreditPayStubEarnings
 from .credit_pay_stub_employee import CreditPayStubEmployee
 from .credit_pay_stub_employer import CreditPayStubEmployer
 from .credit_pay_stub_net_pay import CreditPayStubNetPay
-from .pay_stub_pay_period_details import PayStubPayPeriodDetails
 from .credit_pay_stub_verification import CreditPayStubVerification
+from .pay_stub_pay_period_details import PayStubPayPeriodDetails
 
 
 class CreditPayStub(BaseModel):

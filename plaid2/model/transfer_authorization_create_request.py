@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .transfer_authorization_user_in_request import TransferAuthorizationUserInRequest
 from .transfer_authorization_device import TransferAuthorizationDevice
+from .transfer_authorization_user_in_request import TransferAuthorizationUserInRequest
 
 
 class TransferAuthorizationCreateRequest(BaseModel):

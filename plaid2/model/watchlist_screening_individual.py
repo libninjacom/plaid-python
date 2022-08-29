@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .watchlist_screening_search_terms import WatchlistScreeningSearchTerms
 from .watchlist_screening_audit_trail import WatchlistScreeningAuditTrail
+from .watchlist_screening_search_terms import WatchlistScreeningSearchTerms
 
 
 class WatchlistScreeningIndividual(BaseModel):

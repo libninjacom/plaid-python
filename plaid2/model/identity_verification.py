@@ -1,11 +1,11 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
+from .documentary_verification import DocumentaryVerification
+from .identity_verification_step_summary import IdentityVerificationStepSummary
 from .identity_verification_template_reference import (
     IdentityVerificationTemplateReference,
 )
 from .identity_verification_user_data import IdentityVerificationUserData
-from .identity_verification_step_summary import IdentityVerificationStepSummary
-from .documentary_verification import DocumentaryVerification
 from .kyc_check_details import KycCheckDetails
 
 

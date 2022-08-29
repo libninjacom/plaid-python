@@ -1,8 +1,8 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
 from .document_metadata import DocumentMetadata
-from .taxform import Taxform
 from .plaid_error import PlaidError
+from .taxform import Taxform
 
 
 class IncomeVerificationTaxformsGetResponse(BaseModel):

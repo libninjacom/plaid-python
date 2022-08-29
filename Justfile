@@ -21,8 +21,8 @@ test:
     pdm run pytest
 
 lint:
-    flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude=__pypackages__
-    flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --exclude=__pypackages__
+    flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude=__pypackages__,.venv
+    flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --ignore=F401,E501,F841 --exclude=__pypackages__,.venv
 
 
 run *ARGS:

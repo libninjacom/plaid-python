@@ -1,8 +1,8 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
 from .item_status_investments import ItemStatusInvestments
-from .item_status_transactions import ItemStatusTransactions
 from .item_status_last_webhook import ItemStatusLastWebhook
+from .item_status_transactions import ItemStatusTransactions
 
 
 class ItemStatus(BaseModel):

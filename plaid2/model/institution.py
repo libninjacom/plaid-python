@@ -1,8 +1,8 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
+from .auth_metadata import AuthMetadata
 from .institution_status import InstitutionStatus
 from .payment_initiation_metadata import PaymentInitiationMetadata
-from .auth_metadata import AuthMetadata
 
 
 class Institution(BaseModel):

@@ -1,8 +1,8 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
+from .credit_1099 import Credit1099
 from .credit_pay_stub import CreditPayStub
 from .credit_w_2 import CreditW2
-from .credit_1099 import Credit1099
 
 
 class PayrollIncomeObject(BaseModel):

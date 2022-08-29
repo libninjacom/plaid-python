@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .wallet_transaction_counterparty import WalletTransactionCounterparty
 from .wallet_transaction_amount import WalletTransactionAmount
+from .wallet_transaction_counterparty import WalletTransactionCounterparty
 
 
 class WalletTransactionExecuteRequest(BaseModel):

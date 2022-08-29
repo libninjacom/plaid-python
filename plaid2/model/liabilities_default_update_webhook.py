@@ -1,9 +1,9 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .plaid_error import PlaidError
 from .liabilities_account_ids_with_updated_liabilities import (
     LiabilitiesAccountIdsWithUpdatedLiabilities,
 )
+from .plaid_error import PlaidError
 
 
 class LiabilitiesDefaultUpdateWebhook(BaseModel):

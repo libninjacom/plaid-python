@@ -1,14 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .product_status import ProductStatus
-from .product_status import ProductStatus
-from .product_status import ProductStatus
-from .product_status import ProductStatus
-from .product_status import ProductStatus
-from .product_status import ProductStatus
-from .product_status import ProductStatus
-from .product_status import ProductStatus
 from .health_incident import HealthIncident
+from .product_status import ProductStatus
 
 
 class InstitutionStatus(BaseModel):

@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .item_import_request_user_auth import ItemImportRequestUserAuth
 from .item_import_request_options import ItemImportRequestOptions
+from .item_import_request_user_auth import ItemImportRequestUserAuth
 
 
 class ItemImportRequest(BaseModel):

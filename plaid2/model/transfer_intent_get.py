@@ -1,14 +1,14 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .transfer_intent_get_failure_reason import TransferIntentGetFailureReason
 from .transfer_authorization_decision_rationale import (
     TransferAuthorizationDecisionRationale,
 )
-from .transfer_user_in_response import TransferUserInResponse
-from .transfer_metadata import TransferMetadata
 from .transfer_authorization_guarantee_decision_rationale import (
     TransferAuthorizationGuaranteeDecisionRationale,
 )
+from .transfer_intent_get_failure_reason import TransferIntentGetFailureReason
+from .transfer_metadata import TransferMetadata
+from .transfer_user_in_response import TransferUserInResponse
 
 
 class TransferIntentGet(BaseModel):

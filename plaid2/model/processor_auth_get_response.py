@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .processor_number import ProcessorNumber
 from .account_base import AccountBase
+from .processor_number import ProcessorNumber
 
 
 class ProcessorAuthGetResponse(BaseModel):

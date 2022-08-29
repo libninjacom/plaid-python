@@ -1,8 +1,8 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .user_name import UserName
 from .user_address import UserAddress
 from .user_id_number import UserIdNumber
+from .user_name import UserName
 
 
 class IdentityVerificationRequestUser(BaseModel):

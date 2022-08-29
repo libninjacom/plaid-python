@@ -1,8 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .transaction_stream_amount import TransactionStreamAmount
-from .transaction_stream_amount import TransactionStreamAmount
 from .personal_finance_category import PersonalFinanceCategory
+from .transaction_stream_amount import TransactionStreamAmount
 
 
 class TransactionStream(BaseModel):

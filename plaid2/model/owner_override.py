@@ -1,8 +1,8 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .phone_number import PhoneNumber
-from .email import Email
 from .address import Address
+from .email import Email
+from .phone_number import PhoneNumber
 
 
 class OwnerOverride(BaseModel):

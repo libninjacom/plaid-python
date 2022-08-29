@@ -1,10 +1,10 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .income_verification_precheck_user import IncomeVerificationPrecheckUser
 from .income_verification_precheck_employer import IncomeVerificationPrecheckEmployer
 from .income_verification_precheck_military_info import (
     IncomeVerificationPrecheckMilitaryInfo,
 )
+from .income_verification_precheck_user import IncomeVerificationPrecheckUser
 
 
 class IncomeVerificationPrecheckRequest(BaseModel):

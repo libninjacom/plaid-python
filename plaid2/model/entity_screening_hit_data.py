@@ -2,12 +2,12 @@ from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
 from .entity_screening_hit_documents_items import EntityScreeningHitDocumentsItems
 from .entity_screening_hit_emails_items import EntityScreeningHitEmailsItems
-from .generic_screening_hit_location_items import GenericScreeningHitLocationItems
 from .entity_screening_hit_names_items import EntityScreeningHitNamesItems
+from .entity_screening_hit_urls_items import EntityScreeningHitUrlsItems
 from .entity_screening_hits_phone_number_items import (
     EntityScreeningHitsPhoneNumberItems,
 )
-from .entity_screening_hit_urls_items import EntityScreeningHitUrlsItems
+from .generic_screening_hit_location_items import GenericScreeningHitLocationItems
 
 
 class EntityScreeningHitData(BaseModel):

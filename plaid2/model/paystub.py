@@ -3,14 +3,14 @@ from pydantic import BaseModel, Field
 from .deductions import Deductions
 from .earnings import Earnings
 from .employee import Employee
-from .paystub_employer import PaystubEmployer
 from .employment_details import EmploymentDetails
+from .income_breakdown import IncomeBreakdown
 from .net_pay import NetPay
 from .pay_period_details import PayPeriodDetails
 from .paystub_details import PaystubDetails
-from .income_breakdown import IncomeBreakdown
-from .paystub_ytd_details import PaystubYtdDetails
+from .paystub_employer import PaystubEmployer
 from .paystub_verification import PaystubVerification
+from .paystub_ytd_details import PaystubYtdDetails
 
 
 class Paystub(BaseModel):

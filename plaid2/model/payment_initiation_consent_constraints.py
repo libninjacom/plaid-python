@@ -1,8 +1,8 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .payment_consent_valid_date_time import PaymentConsentValidDateTime
 from .payment_consent_max_payment_amount import PaymentConsentMaxPaymentAmount
 from .payment_consent_periodic_amount import PaymentConsentPeriodicAmount
+from .payment_consent_valid_date_time import PaymentConsentValidDateTime
 
 
 class PaymentInitiationConsentConstraints(BaseModel):

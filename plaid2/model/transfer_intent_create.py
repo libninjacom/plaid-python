@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .transfer_user_in_response import TransferUserInResponse
 from .transfer_metadata import TransferMetadata
+from .transfer_user_in_response import TransferUserInResponse
 
 
 class TransferIntentCreate(BaseModel):

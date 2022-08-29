@@ -1,7 +1,6 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
 from .pay import Pay
-from .pay import Pay
 
 
 class EarningsTotal(BaseModel):

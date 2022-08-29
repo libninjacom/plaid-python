@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .recipient_bacs import RecipientBacs
 from .numbers_international_iban import NumbersInternationalIban
+from .recipient_bacs import RecipientBacs
 
 
 class WalletNumbers(BaseModel):

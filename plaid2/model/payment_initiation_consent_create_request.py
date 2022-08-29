@@ -1,9 +1,9 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .payment_initiation_consent_constraints import PaymentInitiationConsentConstraints
 from .external_payment_initiation_consent_options import (
     ExternalPaymentInitiationConsentOptions,
 )
+from .payment_initiation_consent_constraints import PaymentInitiationConsentConstraints
 
 
 class PaymentInitiationConsentCreateRequest(BaseModel):

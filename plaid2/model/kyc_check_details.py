@@ -1,9 +1,9 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
 from .kyc_check_address_summary import KycCheckAddressSummary
-from .kyc_check_name_summary import KycCheckNameSummary
 from .kyc_check_date_of_birth_summary import KycCheckDateOfBirthSummary
 from .kyc_check_id_number_summary import KycCheckIdNumberSummary
+from .kyc_check_name_summary import KycCheckNameSummary
 from .kyc_check_phone_summary import KycCheckPhoneSummary
 
 

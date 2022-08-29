@@ -1,8 +1,8 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .physical_document_images import PhysicalDocumentImages
-from .physical_document_extracted_data import PhysicalDocumentExtractedData
 from .document_analysis import DocumentAnalysis
+from .physical_document_extracted_data import PhysicalDocumentExtractedData
+from .physical_document_images import PhysicalDocumentImages
 
 
 class DocumentaryVerificationDocument(BaseModel):

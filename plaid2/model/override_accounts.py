@@ -1,14 +1,14 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
+from .holdings_override import HoldingsOverride
+from .income_override import IncomeOverride
+from .inflow_model import InflowModel
+from .investments_transactions_override import InvestmentsTransactionsOverride
+from .liability_override import LiabilityOverride
 from .meta import Meta
 from .numbers import Numbers
-from .transaction_override import TransactionOverride
-from .holdings_override import HoldingsOverride
-from .investments_transactions_override import InvestmentsTransactionsOverride
 from .owner_override import OwnerOverride
-from .liability_override import LiabilityOverride
-from .inflow_model import InflowModel
-from .income_override import IncomeOverride
+from .transaction_override import TransactionOverride
 
 
 class OverrideAccounts(BaseModel):

@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .asset_report_user import AssetReportUser
 from .asset_report_item import AssetReportItem
+from .asset_report_user import AssetReportUser
 
 
 class AssetReport(BaseModel):

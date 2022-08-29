@@ -1,7 +1,5 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .earnings_total import EarningsTotal
-from .earnings_total import EarningsTotal
 from .earnings_breakdown import EarningsBreakdown
 from .earnings_total import EarningsTotal
 

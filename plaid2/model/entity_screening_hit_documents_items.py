@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .match_summary import MatchSummary
 from .entity_document import EntityDocument
+from .match_summary import MatchSummary
 
 
 class EntityScreeningHitDocumentsItems(BaseModel):

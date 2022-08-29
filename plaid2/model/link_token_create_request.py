@@ -1,24 +1,24 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .link_token_create_request_user import LinkTokenCreateRequestUser
-from .link_token_create_institution_data import LinkTokenCreateInstitutionData
 from .link_token_account_filters import LinkTokenAccountFilters
-from .link_token_eu_config import LinkTokenEuConfig
-from .link_token_create_request_payment_initiation import (
-    LinkTokenCreateRequestPaymentInitiation,
-)
+from .link_token_create_institution_data import LinkTokenCreateInstitutionData
+from .link_token_create_request_auth import LinkTokenCreateRequestAuth
 from .link_token_create_request_deposit_switch import (
     LinkTokenCreateRequestDepositSwitch,
+)
+from .link_token_create_request_identity_verification import (
+    LinkTokenCreateRequestIdentityVerification,
 )
 from .link_token_create_request_income_verification import (
     LinkTokenCreateRequestIncomeVerification,
 )
-from .link_token_create_request_auth import LinkTokenCreateRequestAuth
+from .link_token_create_request_payment_initiation import (
+    LinkTokenCreateRequestPaymentInitiation,
+)
 from .link_token_create_request_transfer import LinkTokenCreateRequestTransfer
 from .link_token_create_request_update import LinkTokenCreateRequestUpdate
-from .link_token_create_request_identity_verification import (
-    LinkTokenCreateRequestIdentityVerification,
-)
+from .link_token_create_request_user import LinkTokenCreateRequestUser
+from .link_token_eu_config import LinkTokenEuConfig
 
 
 class LinkTokenCreateRequest(BaseModel):

@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .recipient_bacs_nullable import RecipientBacsNullable
 from .payment_initiation_address import PaymentInitiationAddress
+from .recipient_bacs_nullable import RecipientBacsNullable
 
 
 class PaymentInitiationRecipientCreateRequest(BaseModel):

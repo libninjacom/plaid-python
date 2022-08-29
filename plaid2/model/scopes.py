@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .product_access import ProductAccess
 from .account_access import AccountAccess
+from .product_access import ProductAccess
 
 
 class Scopes(BaseModel):

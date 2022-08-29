@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
-from .match_summary import MatchSummary
 from .individual_screening_hit_names import IndividualScreeningHitNames
+from .match_summary import MatchSummary
 
 
 class ScreeningHitNamesItems(BaseModel):
