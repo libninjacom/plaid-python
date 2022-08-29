@@ -24,4 +24,5 @@ dev = [
     "mypy>=0.971",
     "pytest>=7.0.1",
     "types-requests>=2.28.9",
+    "pdoc>=0.4.1",
 ]
