@@ -5,17 +5,23 @@ from plaid2 import PlaidClient
 
 def main():
     client = PlaidClient.from_env()
-    response = client.item_get(access_token)
+    response = client.transfer_migrate_account(
+        account_number, routing_number, account_type
+    )
     print(f"{response!r}")
 
 
 async def async_main():
     client = AsyncPlaidClient.from_env()
-    response = await client.item_get(access_token)
+    response = await client.transfer_migrate_account(
+        account_number, routing_number, account_type
+    )
     print(f"{response!r}")
 
 
-access_token = "your access token"
+account_number = "your account number"
+routing_number = "your routing number"
+account_type = "your account type"
 
 if __name__ == "__main__":
     if os.environ.get("ASYNC"):

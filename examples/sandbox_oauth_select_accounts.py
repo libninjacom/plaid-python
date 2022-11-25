@@ -5,17 +5,18 @@ from plaid2 import PlaidClient
 
 def main():
     client = PlaidClient.from_env()
-    response = client.item_get(access_token)
+    response = client.sandbox_oauth_select_accounts(oauth_state_id, accounts)
     print(f"{response!r}")
 
 
 async def async_main():
     client = AsyncPlaidClient.from_env()
-    response = await client.item_get(access_token)
+    response = await client.sandbox_oauth_select_accounts(oauth_state_id, accounts)
     print(f"{response!r}")
 
 
-access_token = "your access token"
+oauth_state_id = "your oauth state id"
+accounts = ["your accounts"]
 
 if __name__ == "__main__":
     if os.environ.get("ASYNC"):

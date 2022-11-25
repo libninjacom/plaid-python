@@ -5,13 +5,13 @@ from plaid2 import PlaidClient
 
 def main():
     client = PlaidClient.from_env()
-    response = client.item_get(access_token)
+    response = client.item_access_token_invalidate(access_token)
     print(f"{response!r}")
 
 
 async def async_main():
     client = AsyncPlaidClient.from_env()
-    response = await client.item_get(access_token)
+    response = await client.item_access_token_invalidate(access_token)
     print(f"{response!r}")
 
 

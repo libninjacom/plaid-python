@@ -5,17 +5,17 @@ from plaid2 import PlaidClient
 
 def main():
     client = PlaidClient.from_env()
-    response = client.item_get(access_token)
+    response = client.payment_initiation_consent_get(consent_id)
     print(f"{response!r}")
 
 
 async def async_main():
     client = AsyncPlaidClient.from_env()
-    response = await client.item_get(access_token)
+    response = await client.payment_initiation_consent_get(consent_id)
     print(f"{response!r}")
 
 
-access_token = "your access token"
+consent_id = "your consent id"
 
 if __name__ == "__main__":
     if os.environ.get("ASYNC"):

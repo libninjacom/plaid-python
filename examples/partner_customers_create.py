@@ -5,17 +5,23 @@ from plaid2 import PlaidClient
 
 def main():
     client = PlaidClient.from_env()
-    response = client.item_get(access_token)
+    response = client.partner_customers_create(
+        company_name, is_diligence_attested, products
+    )
     print(f"{response!r}")
 
 
 async def async_main():
     client = AsyncPlaidClient.from_env()
-    response = await client.item_get(access_token)
+    response = await client.partner_customers_create(
+        company_name, is_diligence_attested, products
+    )
     print(f"{response!r}")
 
 
-access_token = "your access token"
+company_name = "your company name"
+is_diligence_attested = True
+products = ["your products"]
 
 if __name__ == "__main__":
     if os.environ.get("ASYNC"):

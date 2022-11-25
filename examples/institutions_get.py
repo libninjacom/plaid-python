@@ -5,17 +5,19 @@ from plaid2 import PlaidClient
 
 def main():
     client = PlaidClient.from_env()
-    response = client.item_get(access_token)
+    response = client.institutions_get(count, offset, country_codes)
     print(f"{response!r}")
 
 
 async def async_main():
     client = AsyncPlaidClient.from_env()
-    response = await client.item_get(access_token)
+    response = await client.institutions_get(count, offset, country_codes)
     print(f"{response!r}")
 
 
-access_token = "your access token"
+count = 1
+offset = 1
+country_codes = ["your country codes"]
 
 if __name__ == "__main__":
     if os.environ.get("ASYNC"):

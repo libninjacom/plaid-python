@@ -5,17 +5,20 @@ from plaid2 import PlaidClient
 
 def main():
     client = PlaidClient.from_env()
-    response = client.item_get(access_token)
+    response = client.deposit_switch_create(target_access_token, target_account_id)
     print(f"{response!r}")
 
 
 async def async_main():
     client = AsyncPlaidClient.from_env()
-    response = await client.item_get(access_token)
+    response = await client.deposit_switch_create(
+        target_access_token, target_account_id
+    )
     print(f"{response!r}")
 
 
-access_token = "your access token"
+target_access_token = "your target access token"
+target_account_id = "your target account id"
 
 if __name__ == "__main__":
     if os.environ.get("ASYNC"):
